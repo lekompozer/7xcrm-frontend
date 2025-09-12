@@ -8,7 +8,7 @@ export default function SubscriptionManagement() {
     const [selectedStat, setSelectedStat] = useState('total');
     // State để quản lý popup history
     const [showHistoryModal, setShowHistoryModal] = useState(false);
-    const [selectedCustomerHistory, setSelectedCustomerHistory] = useState<{ id: number, name: string, history: {date: string, action: string, plan: string, amount: string, status: string}[] } | null>(null);
+    const [selectedCustomerHistory, setSelectedCustomerHistory] = useState<{ id: number, name: string, history: { date: string, action: string, plan: string, amount: string, status: string }[] } | null>(null);
     // State để quản lý popup customer detail
     const [showCustomerModal, setShowCustomerModal] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState<{ [key: string]: string | number } | null>(null);
