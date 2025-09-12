@@ -40,8 +40,10 @@ export default function Notification({
                 }`}
             style={{ top: '80px' }}
         >
-            <div className={`max-w-md w-full shadow-lg rounded-lg pointer-events-auto overflow-hidden ${type === 'success' ? 'bg-green-500' : 'bg-red-500'
-                }`}>
+            <div 
+                className={`shadow-lg rounded-lg pointer-events-auto overflow-hidden ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}
+                style={{ width: '500px' }}
+            >
                 <div className="p-4">
                     <div className="flex items-start">
                         <div className="flex-shrink-0">

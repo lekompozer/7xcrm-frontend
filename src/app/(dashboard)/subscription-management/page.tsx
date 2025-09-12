@@ -21,10 +21,11 @@ export default function SubscriptionManagement() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
-    // Stats cho 6 loại subscription (thêm Total)
+    // Stats cho 7 loại subscription (thêm Total và Expired)
     const subscriptionStats = [
-        { id: 'total', name: 'Total', count: 971, color: 'bg-blue-500', previousCount: 890, period: timePeriod },
+        { id: 'total', name: 'Total', count: 1023, color: 'bg-blue-500', previousCount: 932, period: timePeriod },
         { id: 'trial', name: 'Trial', count: 125, color: 'bg-trial-custom', previousCount: 110, period: timePeriod },
+        { id: 'expired', name: 'Expired', count: 52, color: 'bg-gray-500', previousCount: 42, period: timePeriod },
         { id: 'basic', name: 'Basic Plan', count: 234, color: 'bg-green-500', previousCount: 210, period: timePeriod },
         { id: 'pro', name: 'Pro Plan', count: 456, color: 'bg-purple-500', previousCount: 420, period: timePeriod },
         { id: 'enterprise', name: 'Enterprise Plan', count: 89, color: 'bg-orange-500', previousCount: 95, period: timePeriod },

@@ -92,6 +92,8 @@ export default function SubscriptionStatsCards({
                 return 'bg-blue-500';
             case 'trial':
                 return 'bg-trial-custom'; // Custom #fcc82b color
+            case 'expired':
+                return 'bg-gray-500';
             case 'basic':
                 return 'bg-green-500';
             case 'pro':
