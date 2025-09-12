@@ -40,7 +40,7 @@ export default function Notification({
                 }`}
             style={{ top: '80px' }}
         >
-            <div 
+            <div
                 className={`shadow-lg rounded-lg pointer-events-auto overflow-hidden ${type === 'success' ? 'bg-green-500' : 'bg-red-500'}`}
                 style={{ width: '500px' }}
             >
