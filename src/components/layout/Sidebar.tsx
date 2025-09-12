@@ -55,9 +55,9 @@ export default function Sidebar() {
     };
 
     return (
-        <div className="flex h-full w-64 flex-col bg-gray-900" style={{ width: '256px' }}>
+        <div className="flex h-full w-64 flex-col" style={{ width: '256px', backgroundColor: '#ffffff' }}>
             <div className="flex h-16 shrink-0 items-center px-4">
-                <h1 className="text-xl font-bold text-white">7x CRM Admin</h1>
+                <h1 className="text-xl font-bold text-gray-900">7x CRM Admin</h1>
             </div>
             <nav className="flex flex-1 flex-col px-4 pb-4">
                 <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -68,9 +68,9 @@ export default function Sidebar() {
                                     {!item.children ? (
                                         <Link
                                             href={item.href}
-                                            className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold ${pathname === item.href
-                                                ? 'bg-gray-800 text-white'
-                                                : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                                            className={`group flex gap-x-3 rounded-md p-2 text-sm leading-6 ${pathname === item.href
+                                                ? 'bg-blue-100 text-blue-700 font-medium'
+                                                : 'text-gray-700 hover:text-blue-700 hover:bg-gray-100'
                                                 }`}
                                         >
                                             <item.icon
@@ -83,9 +83,9 @@ export default function Sidebar() {
                                         <div>
                                             <button
                                                 onClick={() => toggleSubmenu(item.name)}
-                                                className={`group flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm leading-6 font-semibold ${pathname.startsWith(item.href)
-                                                    ? 'bg-gray-800 text-white'
-                                                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                                                className={`group flex w-full items-center gap-x-3 rounded-md p-2 text-left text-sm leading-6 ${pathname.startsWith(item.href)
+                                                    ? 'bg-blue-100 text-blue-700 font-medium'
+                                                    : 'text-gray-700 hover:text-blue-700 hover:bg-gray-100'
                                                     }`}
                                             >
                                                 <item.icon
@@ -106,8 +106,8 @@ export default function Sidebar() {
                                                             <Link
                                                                 href={subItem.href}
                                                                 className={`group flex gap-x-3 rounded-md py-2 pl-8 pr-2 text-sm leading-6 ${pathname === subItem.href
-                                                                    ? 'bg-gray-800 text-white font-semibold'
-                                                                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                                                                    ? 'bg-blue-100 text-blue-700 font-medium'
+                                                                    : 'text-gray-600 hover:text-blue-700 hover:bg-gray-100'
                                                                     }`}
                                                             >
                                                                 <subItem.icon
