@@ -597,11 +597,13 @@ export default function SubscriptionManagement() {
     };
 
     return (
-        <div className="p-6">
+        <div>
             {/* Header */}
-            <div className="mb-8">
-                <h1 className="text-2xl font-bold text-gray-900">Subscription Management</h1>
-                <p className="text-gray-600">Manage customer subscriptions and plans</p>
+            <div className="mb-8 flex justify-between items-start">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Subscription Management</h1>
+                    <p className="text-gray-600">Manage customer subscriptions and plans</p>
+                </div>
             </div>
 
             {/* Stats Cards */}
