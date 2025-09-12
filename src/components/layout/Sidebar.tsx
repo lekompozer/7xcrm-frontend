@@ -12,7 +12,8 @@ import {
     UserGroupIcon,
     BanknotesIcon,
     Bars3Icon,
-    XMarkIcon
+    XMarkIcon,
+    UsersIcon
 } from '@heroicons/react/24/outline'; const menuItems = [
     {
         name: 'Home',
@@ -28,6 +29,11 @@ import {
         name: 'Marketing Services',
         href: '/marketing-services',
         icon: SpeakerWaveIcon,
+    },
+    {
+        name: 'Marketing Assistant',
+        href: '/marketing-assistants',
+        icon: UsersIcon,
     },
     {
         name: 'Settings',

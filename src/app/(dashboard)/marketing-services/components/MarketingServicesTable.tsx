@@ -50,7 +50,7 @@ export default function MarketingServicesTable({
         <div className="bg-white rounded-lg shadow">
             <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-lg font-medium text-gray-900">
-                    Marketing Services
+                    List Customers using Marketing Services
                     <span className="ml-2 text-sm text-gray-500">({filteredServices.length} total)</span>
                 </h3>
             </div>
