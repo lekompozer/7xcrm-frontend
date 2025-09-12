@@ -20,7 +20,7 @@ export default function MarketingAssistantPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [showAddModal, setShowAddModal] = useState(false);
-    
+
     const [assistants, setAssistants] = useState<MarketingAssistant[]>([
         {
             id: 1,
@@ -77,8 +77,8 @@ export default function MarketingAssistantPage() {
     // Filter assistants
     const filteredAssistants = assistants.filter(assistant => {
         const matchesSearch = assistant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             assistant.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             assistant.specialization.toLowerCase().includes(searchTerm.toLowerCase());
+            assistant.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            assistant.specialization.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || assistant.status.toLowerCase() === statusFilter;
         return matchesSearch && matchesStatus;
     });
@@ -90,30 +90,30 @@ export default function MarketingAssistantPage() {
     const totalCustomers = assistants.reduce((sum, a) => sum + a.customerCount, 0);
 
     const stats = [
-        { 
-            name: 'Total Assistants', 
-            value: totalAssistants, 
+        {
+            name: 'Total Assistants',
+            value: totalAssistants,
             icon: UsersIcon,
             color: 'bg-blue-500',
             textColor: 'text-blue-600'
         },
-        { 
-            name: 'Active Assistants', 
-            value: activeAssistants, 
+        {
+            name: 'Active Assistants',
+            value: activeAssistants,
             icon: CheckCircleIcon,
             color: 'bg-green-500',
             textColor: 'text-green-600'
         },
-        { 
-            name: 'Inactive Assistants', 
-            value: inactiveAssistants, 
+        {
+            name: 'Inactive Assistants',
+            value: inactiveAssistants,
             icon: XCircleIcon,
             color: 'bg-red-500',
             textColor: 'text-red-600'
         },
-        { 
-            name: 'Total Customers', 
-            value: totalCustomers, 
+        {
+            name: 'Total Customers',
+            value: totalCustomers,
             icon: UserIcon,
             color: 'bg-purple-500',
             textColor: 'text-purple-600'
@@ -121,10 +121,10 @@ export default function MarketingAssistantPage() {
     ];
 
     const toggleStatus = (id: number) => {
-        setAssistants(assistants.map(assistant => 
-            assistant.id === id 
-                ? { 
-                    ...assistant, 
+        setAssistants(assistants.map(assistant =>
+            assistant.id === id
+                ? {
+                    ...assistant,
                     status: assistant.status === 'Active' ? 'Inactive' : 'Active',
                     customerCount: assistant.status === 'Active' ? 0 : assistant.customerCount
                 }
@@ -213,7 +213,7 @@ export default function MarketingAssistantPage() {
                         Marketing Assistants ({filteredAssistants.length})
                     </h2>
                 </div>
-                
+
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
@@ -276,11 +276,10 @@ export default function MarketingAssistantPage() {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <button
                                                 onClick={() => toggleStatus(assistant.id)}
-                                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 ${
-                                                    assistant.status === 'Active' 
-                                                        ? 'bg-green-100 text-green-800' 
+                                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 ${assistant.status === 'Active'
+                                                        ? 'bg-green-100 text-green-800'
                                                         : 'bg-red-100 text-red-800'
-                                                }`}
+                                                    }`}
                                             >
                                                 {assistant.status}
                                             </button>

@@ -2,10 +2,13 @@
 
 import { CalendarIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
+import SubscriptionStatsCards from './components/SubscriptionStatsCards';
 
 export default function SubscriptionManagement() {
     // State để quản lý stat được chọn, mặc định là Total
     const [selectedStat, setSelectedStat] = useState('total');
+    // State để quản lý time period cho stats
+    const [timePeriod, setTimePeriod] = useState('this month');
     // State để quản lý popup history
     const [showHistoryModal, setShowHistoryModal] = useState(false);
     const [selectedCustomerHistory, setSelectedCustomerHistory] = useState<{ id: number, name: string, history: { date: string, action: string, plan: string, amount: string, status: string }[] } | null>(null);
@@ -20,12 +23,12 @@ export default function SubscriptionManagement() {
 
     // Stats cho 6 loại subscription (thêm Total)
     const subscriptionStats = [
-        { id: 'total', name: 'Total', count: 971, color: 'bg-gray-500' },
-        { id: 'trial', name: 'Trial', count: 125, color: 'bg-blue-500' },
-        { id: 'basic', name: 'Basic Plan', count: 234, color: 'bg-green-500' },
-        { id: 'pro', name: 'Pro Plan', count: 456, color: 'bg-purple-500' },
-        { id: 'enterprise', name: 'Enterprise Plan', count: 89, color: 'bg-orange-500' },
-        { id: 'cancelled', name: 'Cancelled', count: 67, color: 'bg-red-500' },
+        { id: 'total', name: 'Total', count: 971, color: 'bg-gray-500', previousCount: 890, period: timePeriod },
+        { id: 'trial', name: 'Trial', count: 125, color: 'bg-blue-500', previousCount: 110, period: timePeriod },
+        { id: 'basic', name: 'Basic Plan', count: 234, color: 'bg-green-500', previousCount: 210, period: timePeriod },
+        { id: 'pro', name: 'Pro Plan', count: 456, color: 'bg-purple-500', previousCount: 420, period: timePeriod },
+        { id: 'enterprise', name: 'Enterprise Plan', count: 89, color: 'bg-orange-500', previousCount: 95, period: timePeriod },
+        { id: 'cancelled', name: 'Cancelled', count: 67, color: 'bg-red-500', previousCount: 55, period: timePeriod },
     ];
 
     // Data với subscription types
@@ -550,6 +553,11 @@ export default function SubscriptionManagement() {
         setCurrentPage(1); // Reset về trang đầu khi thay đổi filter
     };
 
+    // Handle time period change
+    const handleTimePeriodChange = (period: string) => {
+        setTimePeriod(period);
+    };
+
     // Handle click View để hiển thị lịch sử
     const handleViewHistory = (customerId: number, customerName: string) => {
         setSelectedCustomerHistory({
@@ -596,26 +604,13 @@ export default function SubscriptionManagement() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
-                {subscriptionStats.map((stat) => (
-                    <div
-                        key={stat.id}
-                        onClick={() => handleStatClick(stat.id)}
-                        className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 ${selectedStat === stat.id
-                            ? 'border-blue-500 ring-2 ring-blue-200'
-                            : 'border-transparent'
-                            }`}
-                    >
-                        <div className="flex items-center">
-                            <div className={`w-3 h-3 rounded-full ${stat.color} mr-3`}></div>
-                            <div>
-                                <p className="text-sm text-gray-600">{stat.name}</p>
-                                <p className="text-2xl font-bold text-gray-900">{stat.count.toLocaleString()}</p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+            <SubscriptionStatsCards
+                stats={subscriptionStats}
+                selectedStat={selectedStat}
+                onStatClick={handleStatClick}
+                timePeriod={timePeriod}
+                onTimePeriodChange={handleTimePeriodChange}
+            />
 
             {/* Date Filter */}
             <div className="flex items-center space-x-4 mb-6">
