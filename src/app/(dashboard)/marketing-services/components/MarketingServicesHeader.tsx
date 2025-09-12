@@ -1,5 +1,3 @@
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
-
 interface MarketingServicesHeaderProps {
     onAddCustomer: () => void;
     onShowDeactivatedList: () => void;

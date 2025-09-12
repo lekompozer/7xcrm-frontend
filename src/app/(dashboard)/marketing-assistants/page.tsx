@@ -19,7 +19,6 @@ export default function MarketingAssistantPage() {
     // States
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
-    const [showAddModal, setShowAddModal] = useState(false);
 
     const [assistants, setAssistants] = useState<MarketingAssistant[]>([
         {
@@ -149,7 +148,7 @@ export default function MarketingAssistantPage() {
                     <p className="text-gray-600">Manage your marketing assistants and track their performance</p>
                 </div>
                 <button
-                    onClick={() => setShowAddModal(true)}
+                    onClick={() => console.log('Add Assistant modal will be implemented')}
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2"
                 >
                     <PlusIcon className="h-5 w-5" />
@@ -277,8 +276,8 @@ export default function MarketingAssistantPage() {
                                             <button
                                                 onClick={() => toggleStatus(assistant.id)}
                                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 ${assistant.status === 'Active'
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : 'bg-red-100 text-red-800'
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-red-100 text-red-800'
                                                     }`}
                                             >
                                                 {assistant.status}

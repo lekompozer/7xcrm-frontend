@@ -24,6 +24,10 @@ interface MarketingService {
     amount: string;
 }
 
+interface DeactivatedCustomer extends MarketingService {
+    deactivatedDate: string;
+}
+
 interface SystemUser {
     id: number;
     name: string;
@@ -48,7 +52,7 @@ export default function MarketingServicesPage() {
     const [selectedUser, setSelectedUser] = useState<SystemUser | null>(null);
     const [showDeactivatedList, setShowDeactivatedList] = useState(false);
     const [showRestoreCustomer, setShowRestoreCustomer] = useState(false);
-    const [selectedDeactivatedCustomer, setSelectedDeactivatedCustomer] = useState<any>(null);
+    const [selectedDeactivatedCustomer, setSelectedDeactivatedCustomer] = useState<DeactivatedCustomer | null>(null);
     const [showNewPackageForm, setShowNewPackageForm] = useState(false);
     const [timePeriod, setTimePeriod] = useState('this month');
     const [currentPage, setCurrentPage] = useState(1);
@@ -99,41 +103,6 @@ export default function MarketingServicesPage() {
         },
         // ... other deactivated customers
     ]);
-
-    const marketingStats = [
-        {
-            id: 'total',
-            name: 'Total Customers',
-            count: 456,
-            previousCount: 398,
-            period: timePeriod,
-            color: 'bg-gray-500'
-        },
-        {
-            id: 'basic',
-            name: 'Marketing Assistant Basic',
-            count: 189,
-            previousCount: 165,
-            period: timePeriod,
-            color: 'bg-blue-500'
-        },
-        {
-            id: 'premium',
-            name: 'Marketing Assistant Premium',
-            count: 178,
-            previousCount: 142,
-            period: timePeriod,
-            color: 'bg-purple-500'
-        },
-        {
-            id: 'pro',
-            name: 'Marketing Assistant Pro',
-            count: 89,
-            previousCount: 91,
-            period: timePeriod,
-            color: 'bg-orange-500'
-        },
-    ];
 
     // Function to get stats based on time period
     const getStatsForPeriod = (period: string) => {
@@ -608,7 +577,7 @@ export default function MarketingServicesPage() {
         setShowDeactivatedList(false);
     };
 
-    const handleRestoreCustomer = (customer: any) => {
+    const handleRestoreCustomer = (customer: DeactivatedCustomer) => {
         setSelectedDeactivatedCustomer(customer);
         setShowRestoreCustomer(true);
     };
@@ -732,7 +701,6 @@ export default function MarketingServicesPage() {
             />
 
             <MarketingServicesTable
-                services={marketingServices}
                 filteredServices={filteredServices}
                 currentPage={currentPage}
                 totalPages={totalPages}
