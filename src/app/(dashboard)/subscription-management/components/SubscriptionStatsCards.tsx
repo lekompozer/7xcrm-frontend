@@ -89,9 +89,9 @@ export default function SubscriptionStatsCards({
     const getSelectedBackgroundClass = (statId: string) => {
         switch (statId) {
             case 'total':
-                return 'bg-gray-500';
-            case 'trial':
                 return 'bg-blue-500';
+            case 'trial':
+                return 'bg-trial-custom'; // Custom #fcc82b color
             case 'basic':
                 return 'bg-green-500';
             case 'pro':
@@ -101,7 +101,7 @@ export default function SubscriptionStatsCards({
             case 'cancelled':
                 return 'bg-red-500';
             default:
-                return 'bg-gray-500';
+                return 'bg-blue-500';
         }
     };
 

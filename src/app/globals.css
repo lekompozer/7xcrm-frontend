@@ -34,3 +34,8 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Custom trial color */
+.bg-trial-custom {
+  background-color: #fcc82b;
+}

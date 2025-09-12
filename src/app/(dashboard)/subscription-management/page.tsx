@@ -23,8 +23,8 @@ export default function SubscriptionManagement() {
 
     // Stats cho 6 loại subscription (thêm Total)
     const subscriptionStats = [
-        { id: 'total', name: 'Total', count: 971, color: 'bg-gray-500', previousCount: 890, period: timePeriod },
-        { id: 'trial', name: 'Trial', count: 125, color: 'bg-blue-500', previousCount: 110, period: timePeriod },
+        { id: 'total', name: 'Total', count: 971, color: 'bg-blue-500', previousCount: 890, period: timePeriod },
+        { id: 'trial', name: 'Trial', count: 125, color: 'bg-trial-custom', previousCount: 110, period: timePeriod },
         { id: 'basic', name: 'Basic Plan', count: 234, color: 'bg-green-500', previousCount: 210, period: timePeriod },
         { id: 'pro', name: 'Pro Plan', count: 456, color: 'bg-purple-500', previousCount: 420, period: timePeriod },
         { id: 'enterprise', name: 'Enterprise Plan', count: 89, color: 'bg-orange-500', previousCount: 95, period: timePeriod },
