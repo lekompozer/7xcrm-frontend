@@ -58,7 +58,6 @@ src/
 │   ├── (dashboard)/          # Dashboard routes group
 │   │   ├── home/            # Trang chính
 │   │   ├── subscription-management/  # Quản lý subscription
-│   │   ├── customer-management/      # Quản lý khách hàng
 │   │   ├── marketing-assistant/      # Marketing assistant
 │   │   └── settings/        # Cài đặt hệ thống
 │   │       ├── user-management/      # Quản lý user

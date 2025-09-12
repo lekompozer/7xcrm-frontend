@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import {
     HomeIcon,
     CreditCardIcon,
-    UsersIcon,
     SpeakerWaveIcon,
     CogIcon,
     ChevronDownIcon,
@@ -22,11 +21,6 @@ import {
         name: 'Subscription Management',
         href: '/subscription-management',
         icon: CreditCardIcon,
-    },
-    {
-        name: 'Customer Management',
-        href: '/customer-management',
-        icon: UsersIcon,
     },
     {
         name: 'Marketing Assistant',
