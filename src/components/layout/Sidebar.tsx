@@ -23,8 +23,8 @@ import {
         icon: CreditCardIcon,
     },
     {
-        name: 'Marketing Assistant',
-        href: '/marketing-assistant',
+        name: 'Marketing Services',
+        href: '/marketing-services',
         icon: SpeakerWaveIcon,
     },
     {
@@ -55,7 +55,7 @@ export default function Sidebar() {
     };
 
     return (
-        <div className="flex h-full w-64 flex-col bg-gray-900">
+        <div className="flex h-full w-64 flex-col bg-gray-900" style={{ width: '256px' }}>
             <div className="flex h-16 shrink-0 items-center px-4">
                 <h1 className="text-xl font-bold text-white">7x CRM Admin</h1>
             </div>
