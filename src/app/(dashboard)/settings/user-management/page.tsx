@@ -217,7 +217,14 @@ export default function UserManagementPage() {
 
                 {/* Add User Modal */}
                 {showAddUserModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div
+                        className="fixed inset-0 flex items-center justify-center z-50"
+                        style={{
+                            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                            backdropFilter: 'blur(8px)',
+                            WebkitBackdropFilter: 'blur(8px)'
+                        }}
+                    >
                         <div className="bg-white rounded-lg max-w-md w-full mx-4">
                             {/* Modal Header */}
                             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
@@ -266,7 +273,8 @@ export default function UserManagementPage() {
                                         <select
                                             value={newUser.role}
                                             onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
+                                            style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
                                         >
                                             <option value="User">User</option>
                                             <option value="Admin">Admin</option>

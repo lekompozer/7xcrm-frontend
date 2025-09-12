@@ -14,6 +14,10 @@ export default function SubscriptionManagement() {
     const [selectedCustomer, setSelectedCustomer] = useState<{ [key: string]: string | number } | null>(null);
     const [activeTab, setActiveTab] = useState('information');
 
+    // State cho phân trang
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
     // Stats cho 6 loại subscription (thêm Total)
     const subscriptionStats = [
         { id: 'total', name: 'Total', count: 971, color: 'bg-gray-500' },
@@ -114,6 +118,116 @@ export default function SubscriptionManagement() {
             nextBilling: '2024-02-28',
             amount: '$0.00',
         },
+        {
+            id: 9,
+            customerName: 'Tom Wilson',
+            email: 'tom@example.com',
+            plan: 'pro',
+            planDisplay: 'Pro Plan',
+            status: 'Active',
+            startDate: '2024-02-01',
+            nextBilling: '2024-03-01',
+            amount: '$29.99',
+        },
+        {
+            id: 10,
+            customerName: 'Anna Martinez',
+            email: 'anna@example.com',
+            plan: 'enterprise',
+            planDisplay: 'Enterprise Plan',
+            status: 'Active',
+            startDate: '2024-02-05',
+            nextBilling: '2024-03-05',
+            amount: '$99.99',
+        },
+        {
+            id: 11,
+            customerName: 'Chris Anderson',
+            email: 'chris@example.com',
+            plan: 'basic',
+            planDisplay: 'Basic Plan',
+            status: 'Active',
+            startDate: '2024-02-10',
+            nextBilling: '2024-03-10',
+            amount: '$9.99',
+        },
+        {
+            id: 12,
+            customerName: 'Jessica Lee',
+            email: 'jessica@example.com',
+            plan: 'trial',
+            planDisplay: 'Trial',
+            status: 'Trial',
+            startDate: '2024-02-15',
+            nextBilling: '2024-03-15',
+            amount: '$0.00',
+        },
+        {
+            id: 13,
+            customerName: 'Mark Thompson',
+            email: 'mark@example.com',
+            plan: 'enterprise',
+            planDisplay: 'Enterprise Plan',
+            status: 'Active',
+            startDate: '2024-02-20',
+            nextBilling: '2024-03-20',
+            amount: '$99.99',
+        },
+        {
+            id: 14,
+            customerName: 'Rachel White',
+            email: 'rachel@example.com',
+            plan: 'cancelled',
+            planDisplay: 'Basic Plan',
+            status: 'Cancelled',
+            startDate: '2024-01-30',
+            nextBilling: '-',
+            amount: '-',
+        },
+        {
+            id: 15,
+            customerName: 'Kevin Miller',
+            email: 'kevin@example.com',
+            plan: 'pro',
+            planDisplay: 'Pro Plan',
+            status: 'Active',
+            startDate: '2024-02-25',
+            nextBilling: '2024-03-25',
+            amount: '$29.99',
+        },
+        {
+            id: 16,
+            customerName: 'Nicole Davis',
+            email: 'nicole@example.com',
+            plan: 'basic',
+            planDisplay: 'Basic Plan',
+            status: 'Active',
+            startDate: '2024-03-01',
+            nextBilling: '2024-04-01',
+            amount: '$9.99',
+        },
+        {
+            id: 17,
+            customerName: 'Alex Rodriguez',
+            email: 'alex@example.com',
+            plan: 'trial',
+            planDisplay: 'Trial',
+            status: 'Trial',
+            startDate: '2024-03-10',
+            nextBilling: '2024-04-10',
+            amount: '$0.00',
+        },
+        {
+            id: 18,
+            customerName: 'Samantha Clark',
+            email: 'samantha@example.com',
+            plan: 'enterprise',
+            planDisplay: 'Enterprise Plan',
+            status: 'Active',
+            startDate: '2024-03-15',
+            nextBilling: '2024-04-15',
+            amount: '$99.99',
+        },
     ];
 
     // Data lịch sử subscription cho mỗi customer
@@ -146,6 +260,38 @@ export default function SubscriptionManagement() {
         ],
         8: [ // Emma Garcia
             { date: '2024-01-28', action: 'Started Trial', plan: 'Trial', amount: '$0.00', status: 'Active' },
+        ],
+        9: [ // Tom Wilson
+            { date: '2024-02-01', action: 'Subscribed', plan: 'Pro Plan', amount: '$29.99', status: 'Success' },
+        ],
+        10: [ // Anna Martinez
+            { date: '2024-02-05', action: 'Subscribed', plan: 'Enterprise Plan', amount: '$99.99', status: 'Success' },
+            { date: '2024-01-20', action: 'Upgraded', plan: 'Pro → Enterprise Plan', amount: '$99.99', status: 'Success' },
+        ],
+        11: [ // Chris Anderson
+            { date: '2024-02-10', action: 'Subscribed', plan: 'Basic Plan', amount: '$9.99', status: 'Success' },
+        ],
+        12: [ // Jessica Lee
+            { date: '2024-02-15', action: 'Started Trial', plan: 'Trial', amount: '$0.00', status: 'Active' },
+        ],
+        13: [ // Mark Thompson
+            { date: '2024-02-20', action: 'Subscribed', plan: 'Enterprise Plan', amount: '$99.99', status: 'Success' },
+        ],
+        14: [ // Rachel White
+            { date: '2024-02-15', action: 'Cancelled', plan: 'Basic Plan', amount: '-', status: 'Cancelled' },
+            { date: '2024-01-30', action: 'Subscribed', plan: 'Basic Plan', amount: '$9.99', status: 'Success' },
+        ],
+        15: [ // Kevin Miller
+            { date: '2024-02-25', action: 'Subscribed', plan: 'Pro Plan', amount: '$29.99', status: 'Success' },
+        ],
+        16: [ // Nicole Davis
+            { date: '2024-03-01', action: 'Subscribed', plan: 'Basic Plan', amount: '$9.99', status: 'Success' },
+        ],
+        17: [ // Alex Rodriguez
+            { date: '2024-03-10', action: 'Started Trial', plan: 'Trial', amount: '$0.00', status: 'Active' },
+        ],
+        18: [ // Samantha Clark
+            { date: '2024-03-15', action: 'Subscribed', plan: 'Enterprise Plan', amount: '$99.99', status: 'Success' },
         ],
     };
 
@@ -254,6 +400,136 @@ export default function SubscriptionManagement() {
             source: 'Webinar',
             referrer: 'Marketing Webinar',
             notes: 'Trial from webinar attendee'
+        },
+        9: { // Tom Wilson
+            id: 9,
+            name: 'Tom Wilson',
+            email: 'tom@example.com',
+            phone: '+1 (555) 901-2345',
+            address: '369 Spruce Ave, Boston, MA 02101',
+            company: 'Wilson Tech',
+            joinDate: '2024-02-01',
+            totalSpent: '$29.99',
+            source: 'Google Ads',
+            referrer: 'Search Campaign',
+            notes: 'New customer, good engagement'
+        },
+        10: { // Anna Martinez
+            id: 10,
+            name: 'Anna Martinez',
+            email: 'anna@example.com',
+            phone: '+1 (555) 012-3456',
+            address: '741 Palm St, San Diego, CA 92101',
+            company: 'Martinez Consulting',
+            joinDate: '2024-01-20',
+            totalSpent: '$199.98',
+            source: 'Referral',
+            referrer: 'Partner Program',
+            notes: 'Upgraded from Pro to Enterprise'
+        },
+        11: { // Chris Anderson
+            id: 11,
+            name: 'Chris Anderson',
+            email: 'chris@example.com',
+            phone: '+1 (555) 123-4567',
+            address: '852 Ash Blvd, Phoenix, AZ 85001',
+            company: 'Anderson Design',
+            joinDate: '2024-02-10',
+            totalSpent: '$9.99',
+            source: 'Social Media',
+            referrer: 'Instagram Campaign',
+            notes: 'Small business owner'
+        },
+        12: { // Jessica Lee
+            id: 12,
+            name: 'Jessica Lee',
+            email: 'jessica@example.com',
+            phone: '+1 (555) 234-5678',
+            address: '963 Fir Dr, Las Vegas, NV 89101',
+            company: 'Lee & Partners',
+            joinDate: '2024-02-15',
+            totalSpent: '$0.00',
+            source: 'Organic Search',
+            referrer: 'Google Search',
+            notes: 'Currently in trial period'
+        },
+        13: { // Mark Thompson
+            id: 13,
+            name: 'Mark Thompson',
+            email: 'mark@example.com',
+            phone: '+1 (555) 345-6789',
+            address: '174 Hickory Ln, Nashville, TN 37201',
+            company: 'Thompson Industries',
+            joinDate: '2024-02-20',
+            totalSpent: '$99.99',
+            source: 'Email Marketing',
+            referrer: 'Newsletter',
+            notes: 'Enterprise customer, tech-savvy'
+        },
+        14: { // Rachel White
+            id: 14,
+            name: 'Rachel White',
+            email: 'rachel@example.com',
+            phone: '+1 (555) 456-7890',
+            address: '285 Poplar Way, Atlanta, GA 30301',
+            company: 'White Creative',
+            joinDate: '2024-01-30',
+            totalSpent: '$9.99',
+            source: 'Content Marketing',
+            referrer: 'Blog Post',
+            notes: 'Cancelled subscription, price sensitivity'
+        },
+        15: { // Kevin Miller
+            id: 15,
+            name: 'Kevin Miller',
+            email: 'kevin@example.com',
+            phone: '+1 (555) 567-8901',
+            address: '396 Redwood St, Sacramento, CA 95814',
+            company: 'Miller Solutions',
+            joinDate: '2024-02-25',
+            totalSpent: '$29.99',
+            source: 'Paid Search',
+            referrer: 'Google Ads',
+            notes: 'Professional services company'
+        },
+        16: { // Nicole Davis
+            id: 16,
+            name: 'Nicole Davis',
+            email: 'nicole@example.com',
+            phone: '+1 (555) 678-9012',
+            address: '507 Dogwood Ct, Richmond, VA 23220',
+            company: 'Davis Enterprises',
+            joinDate: '2024-03-01',
+            totalSpent: '$9.99',
+            source: 'Social Media',
+            referrer: 'LinkedIn Campaign',
+            notes: 'B2B focused customer'
+        },
+        17: { // Alex Rodriguez
+            id: 17,
+            name: 'Alex Rodriguez',
+            email: 'alex@example.com',
+            phone: '+1 (555) 789-0123',
+            address: '618 Magnolia Ave, New Orleans, LA 70112',
+            company: 'Rodriguez Media',
+            joinDate: '2024-03-10',
+            totalSpent: '$0.00',
+            source: 'Webinar',
+            referrer: 'Product Demo',
+            notes: 'Trial user, interested in media features'
+        },
+        18: { // Samantha Clark
+            id: 18,
+            name: 'Samantha Clark',
+            email: 'samantha@example.com',
+            phone: '+1 (555) 890-1234',
+            address: '729 Sycamore Rd, Minneapolis, MN 55401',
+            company: 'Clark Corp',
+            joinDate: '2024-03-15',
+            totalSpent: '$99.99',
+            source: 'Referral',
+            referrer: 'Customer Referral',
+            notes: 'Large enterprise client'
         }
     };
 
@@ -262,9 +538,16 @@ export default function SubscriptionManagement() {
         ? subscriptions
         : subscriptions.filter(sub => sub.plan === selectedStat);
 
+    // Tính toán phân trang
+    const totalPages = Math.ceil(filteredSubscriptions.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedSubscriptions = filteredSubscriptions.slice(startIndex, endIndex);
+
     // Handle click stat
     const handleStatClick = (statId: string) => {
         setSelectedStat(statId);
+        setCurrentPage(1); // Reset về trang đầu khi thay đổi filter
     };
 
     // Handle click View để hiển thị lịch sử
@@ -340,7 +623,7 @@ export default function SubscriptionManagement() {
                     <CalendarIcon className="h-5 w-5 text-gray-400" />
                     <span className="text-sm text-gray-600">Date Range:</span>
                 </div>
-                <select className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <select className="border border-gray-300 rounded-md px-3 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right" style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}>
                     <option>Last 30 days</option>
                     <option>Last 7 days</option>
                     <option>Last 90 days</option>
@@ -371,7 +654,7 @@ export default function SubscriptionManagement() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {filteredSubscriptions.map((subscription) => (
+                            {paginatedSubscriptions.map((subscription) => (
                                 <tr key={subscription.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div>
@@ -413,12 +696,99 @@ export default function SubscriptionManagement() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                        <div className="flex flex-1 justify-between sm:hidden">
+                            <button
+                                onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+                                disabled={currentPage === 1}
+                                className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''
+                                    }`}
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''
+                                    }`}
+                            >
+                                Next
+                            </button>
+                        </div>
+                        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                            <div>
+                                <p className="text-sm text-gray-700">
+                                    Showing{' '}
+                                    <span className="font-medium">{startIndex + 1}</span>
+                                    {' '}to{' '}
+                                    <span className="font-medium">
+                                        {Math.min(endIndex, filteredSubscriptions.length)}
+                                    </span>
+                                    {' '}of{' '}
+                                    <span className="font-medium">{filteredSubscriptions.length}</span>
+                                    {' '}results
+                                </p>
+                            </div>
+                            <div>
+                                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                    <button
+                                        onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className={`relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''
+                                            }`}
+                                    >
+                                        <span className="sr-only">Previous</span>
+                                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    {[...Array(totalPages)].map((_, index) => {
+                                        const pageNumber = index + 1;
+                                        return (
+                                            <button
+                                                key={pageNumber}
+                                                onClick={() => setCurrentPage(pageNumber)}
+                                                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${currentPage === pageNumber
+                                                    ? 'z-10 bg-blue-600 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
+                                                    : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                                                    }`}
+                                            >
+                                                {pageNumber}
+                                            </button>
+                                        );
+                                    })}
+                                    <button
+                                        onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''
+                                            }`}
+                                    >
+                                        <span className="sr-only">Next</span>
+                                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* History Modal */}
             {showHistoryModal && selectedCustomerHistory && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden mx-4">
+                <div
+                    className="fixed inset-0 flex items-center justify-center z-50"
+                    style={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)'
+                    }}
+                >
+                    <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden mx-4 shadow-2xl">
                         {/* Modal Header */}
                         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                             <h3 className="text-lg font-medium text-gray-900">
@@ -487,8 +857,15 @@ export default function SubscriptionManagement() {
 
             {/* Customer Detail Modal */}
             {showCustomerModal && selectedCustomer && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden mx-4">
+                <div
+                    className="fixed inset-0 flex items-center justify-center z-50"
+                    style={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)'
+                    }}
+                >
+                    <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden mx-4 shadow-2xl">
                         {/* Modal Header */}
                         <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                             <h3 className="text-lg font-medium text-gray-900">
@@ -603,7 +980,8 @@ export default function SubscriptionManagement() {
                                             <label className="block text-sm font-medium text-gray-700 mb-2">Source</label>
                                             <select
                                                 defaultValue={selectedCustomer.source}
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
+                                                style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
                                             >
                                                 <option value="Google Ads">Google Ads</option>
                                                 <option value="Facebook Ads">Facebook Ads</option>

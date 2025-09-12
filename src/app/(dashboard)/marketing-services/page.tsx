@@ -18,7 +18,12 @@ export default function MarketingAssistantPage() {
     const [showAddCustomer, setShowAddCustomer] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [userSearchTerm, setUserSearchTerm] = useState('');
-    const [selectedUser, setSelectedUser] = useState<{id: number, name: string, email: string, subscriptionPackage: string} | null>(null);
+    const [selectedUser, setSelectedUser] = useState<{ id: number, name: string, email: string, subscriptionPackage: string } | null>(null);
+
+    // State cho phân trang
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
     const [newCustomer, setNewCustomer] = useState({
         name: '',
         email: '',
@@ -46,7 +51,7 @@ export default function MarketingAssistantPage() {
 
     // Stats cho Marketing Assistant
     const marketingStats = [
-        { id: 'total', name: 'Total', count: 456, color: 'bg-gray-500' },
+        { id: 'total', name: 'Total Customers', count: 456, color: 'bg-gray-500' },
         { id: 'basic', name: 'Marketing Assistant Basic', count: 189, color: 'bg-blue-500' },
         { id: 'premium', name: 'Marketing Assistant Premium', count: 178, color: 'bg-purple-500' },
         { id: 'pro', name: 'Marketing Assistant Pro', count: 89, color: 'bg-orange-500' },
@@ -150,11 +155,132 @@ export default function MarketingAssistantPage() {
             startedDate: '2024-02-01',
             amount: '$49.99'
         },
+        {
+            id: 9,
+            customer: 'Tom Wilson',
+            email: 'tom@example.com',
+            subscriptionPackage: 'Pro Plan',
+            assistantName: 'Thomas Garcia',
+            status: 'Active',
+            marketingService: 'Marketing Assistant Pro',
+            registeredDate: '2024-02-01',
+            startedDate: '2024-02-03',
+            amount: '$199.99'
+        },
+        {
+            id: 10,
+            customer: 'Anna Martinez',
+            email: 'anna@example.com',
+            subscriptionPackage: 'Enterprise Plan',
+            assistantName: 'Jennifer Lee',
+            status: 'Active',
+            marketingService: 'Marketing Assistant Premium',
+            registeredDate: '2024-02-05',
+            startedDate: '2024-02-08',
+            amount: '$129.99'
+        },
+        {
+            id: 11,
+            customer: 'Chris Anderson',
+            email: 'chris@example.com',
+            subscriptionPackage: 'Basic Plan',
+            assistantName: 'Alex Martinez',
+            status: 'Active',
+            marketingService: 'Marketing Assistant Basic',
+            registeredDate: '2024-02-10',
+            startedDate: '2024-02-12',
+            amount: '$49.99'
+        },
+        {
+            id: 12,
+            customer: 'Jessica Lee',
+            email: 'jessica@example.com',
+            subscriptionPackage: 'Pro Plan',
+            assistantName: 'Emily Chen',
+            status: 'New',
+            marketingService: 'Marketing Assistant Pro',
+            registeredDate: '2024-02-15',
+            startedDate: '2024-02-18',
+            amount: '$199.99'
+        },
+        {
+            id: 13,
+            customer: 'Mark Thompson',
+            email: 'mark@example.com',
+            subscriptionPackage: 'Enterprise Plan',
+            assistantName: 'David Kim',
+            status: 'Active',
+            marketingService: 'Marketing Assistant Premium',
+            registeredDate: '2024-02-20',
+            startedDate: '2024-02-22',
+            amount: '$129.99'
+        },
+        {
+            id: 14,
+            customer: 'Rachel White',
+            email: 'rachel@example.com',
+            subscriptionPackage: 'Basic Plan',
+            assistantName: 'Maria Rodriguez',
+            status: 'Cancelled',
+            marketingService: 'Marketing Assistant Basic',
+            registeredDate: '2024-01-30',
+            startedDate: '2024-02-02',
+            amount: '$49.99'
+        },
+        {
+            id: 15,
+            customer: 'Kevin Miller',
+            email: 'kevin@example.com',
+            subscriptionPackage: 'Pro Plan',
+            assistantName: 'James Wilson',
+            status: 'Active',
+            marketingService: 'Marketing Assistant Pro',
+            registeredDate: '2024-02-25',
+            startedDate: '2024-02-28',
+            amount: '$199.99'
+        },
+        {
+            id: 16,
+            customer: 'Nicole Davis',
+            email: 'nicole@example.com',
+            subscriptionPackage: 'Enterprise Plan',
+            assistantName: 'Sophie Taylor',
+            status: 'New',
+            marketingService: 'Marketing Assistant Premium',
+            registeredDate: '2024-03-01',
+            startedDate: '2024-03-05',
+            amount: '$129.99'
+        },
+        {
+            id: 17,
+            customer: 'Alex Rodriguez',
+            email: 'alex@example.com',
+            subscriptionPackage: 'Basic Plan',
+            assistantName: 'Michael Brown',
+            status: 'Active',
+            marketingService: 'Marketing Assistant Basic',
+            registeredDate: '2024-03-10',
+            startedDate: '2024-03-12',
+            amount: '$49.99'
+        },
+        {
+            id: 18,
+            customer: 'Samantha Clark',
+            email: 'samantha@example.com',
+            subscriptionPackage: 'Pro Plan',
+            assistantName: 'Lisa Anderson',
+            status: 'Active',
+            marketingService: 'Marketing Assistant Pro',
+            registeredDate: '2024-03-15',
+            startedDate: '2024-03-18',
+            amount: '$199.99'
+        },
     ]);
 
     // Function để handle click vào stats
     const handleStatClick = (statId: string) => {
         setSelectedStat(statId);
+        setCurrentPage(1); // Reset về trang đầu
         // Sync serviceFilter với stat được chọn
         if (statId === 'total') {
             setServiceFilter('all');
@@ -166,6 +292,7 @@ export default function MarketingAssistantPage() {
     // Function để handle date filter change
     const handleDateFilterChange = (value: string) => {
         setDateFilter(value);
+        setCurrentPage(1); // Reset về trang đầu
         if (value === 'custom') {
             setShowCustomDate(true);
         } else {
@@ -294,6 +421,12 @@ export default function MarketingAssistantPage() {
         return matchesSearch && matchesStat && matchesStatus && matchesPackage && matchesService && matchesDate;
     });
 
+    // Tính toán phân trang
+    const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedServices = filteredServices.slice(startIndex, endIndex);
+
     return (
         <div>
             {/* Header */}
@@ -337,8 +470,9 @@ export default function MarketingAssistantPage() {
                     <div>
                         <select
                             value={statusFilter}
-                            onChange={(e) => setStatusFilter(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+                            className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
+                            style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
                         >
                             <option value="all">All Status</option>
                             <option value="new">New</option>
@@ -351,8 +485,9 @@ export default function MarketingAssistantPage() {
                     <div>
                         <select
                             value={packageFilter}
-                            onChange={(e) => setPackageFilter(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => { setPackageFilter(e.target.value); setCurrentPage(1); }}
+                            className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
+                            style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
                         >
                             <option value="all">All Packages</option>
                             <option value="basic">Basic Plan</option>
@@ -365,8 +500,9 @@ export default function MarketingAssistantPage() {
                     <div>
                         <select
                             value={serviceFilter}
-                            onChange={(e) => setServiceFilter(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            onChange={(e) => { setServiceFilter(e.target.value); setCurrentPage(1); }}
+                            className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
+                            style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
                         >
                             <option value="all">All Services</option>
                             <option value="basic">Basic</option>
@@ -380,7 +516,8 @@ export default function MarketingAssistantPage() {
                         <select
                             value={dateFilter}
                             onChange={(e) => handleDateFilterChange(e.target.value)}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
+                            style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
                         >
                             <option value="all">All Time</option>
                             <option value="thisweek">This Week</option>
@@ -461,7 +598,7 @@ export default function MarketingAssistantPage() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {filteredServices.map((service) => (
+                            {paginatedServices.map((service) => (
                                 <tr key={service.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div>
@@ -506,12 +643,99 @@ export default function MarketingAssistantPage() {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+                        <div className="flex flex-1 justify-between sm:hidden">
+                            <button
+                                onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+                                disabled={currentPage === 1}
+                                className={`relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''
+                                    }`}
+                            >
+                                Previous
+                            </button>
+                            <button
+                                onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                                className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''
+                                    }`}
+                            >
+                                Next
+                            </button>
+                        </div>
+                        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+                            <div>
+                                <p className="text-sm text-gray-700">
+                                    Showing{' '}
+                                    <span className="font-medium">{startIndex + 1}</span>
+                                    {' '}to{' '}
+                                    <span className="font-medium">
+                                        {Math.min(endIndex, filteredServices.length)}
+                                    </span>
+                                    {' '}of{' '}
+                                    <span className="font-medium">{filteredServices.length}</span>
+                                    {' '}results
+                                </p>
+                            </div>
+                            <div>
+                                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                                    <button
+                                        onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+                                        disabled={currentPage === 1}
+                                        className={`relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''
+                                            }`}
+                                    >
+                                        <span className="sr-only">Previous</span>
+                                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    {[...Array(totalPages)].map((_, index) => {
+                                        const pageNumber = index + 1;
+                                        return (
+                                            <button
+                                                key={pageNumber}
+                                                onClick={() => setCurrentPage(pageNumber)}
+                                                className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${currentPage === pageNumber
+                                                    ? 'z-10 bg-blue-600 text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
+                                                    : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                                                    }`}
+                                            >
+                                                {pageNumber}
+                                            </button>
+                                        );
+                                    })}
+                                    <button
+                                        onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+                                        disabled={currentPage === totalPages}
+                                        className={`relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 ${currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''
+                                            }`}
+                                    >
+                                        <span className="sr-only">Next</span>
+                                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Add Customer Popup */}
             {showAddCustomer && (
-                <div className="fixed inset-0 bg-black bg-opacity-60 overflow-y-auto h-full w-full z-50 flex items-center justify-center">
-                    <div className="relative mx-auto p-6 border w-full max-w-md shadow-xl rounded-lg bg-white">
+                <div
+                    className="fixed inset-0 overflow-y-auto h-full w-full z-50 flex items-center justify-center"
+                    style={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)'
+                    }}
+                >
+                    <div className="relative mx-auto p-6 w-full max-w-md shadow-2xl rounded-lg bg-white">
                         <div className="mb-4">
                             <div className="flex items-center justify-between mb-4">
                                 <h3 className="text-lg font-medium text-gray-900">
@@ -524,18 +748,16 @@ export default function MarketingAssistantPage() {
                                     ✕
                                 </button>
                             </div>
-                            
+
                             {/* Step Indicator */}
                             <div className="flex items-center mb-6">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                                    currentStep >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-                                }`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${currentStep >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                                    }`}>
                                     1
                                 </div>
                                 <div className={`flex-1 h-1 mx-2 ${currentStep >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                                    currentStep >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
-                                }`}>
+                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${currentStep >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
+                                    }`}>
                                     2
                                 </div>
                             </div>
@@ -567,9 +789,8 @@ export default function MarketingAssistantPage() {
                                                     <div
                                                         key={user.id}
                                                         onClick={() => setSelectedUser(user)}
-                                                        className={`p-3 cursor-pointer hover:bg-gray-50 border-b border-gray-100 last:border-b-0 ${
-                                                            selectedUser?.id === user.id ? 'bg-blue-50 border-blue-200' : ''
-                                                        }`}
+                                                        className={`p-3 cursor-pointer hover:bg-gray-50 border-b border-gray-100 last:border-b-0 ${selectedUser?.id === user.id ? 'bg-blue-50 border-blue-200' : ''
+                                                            }`}
                                                     >
                                                         <div className="font-medium text-gray-900">{user.name}</div>
                                                         <div className="text-sm text-gray-600">{user.email}</div>
@@ -606,8 +827,9 @@ export default function MarketingAssistantPage() {
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Marketing Service</label>
                                         <select
                                             value={newCustomer.marketingService}
-                                            onChange={(e) => setNewCustomer({...newCustomer, marketingService: e.target.value})}
-                                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            onChange={(e) => setNewCustomer({ ...newCustomer, marketingService: e.target.value })}
+                                            className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
+                                            style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
                                         >
                                             <option value="">Select service</option>
                                             <option value="Marketing Assistant Basic">Marketing Assistant Basic</option>
@@ -620,8 +842,9 @@ export default function MarketingAssistantPage() {
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Assistant Name</label>
                                         <select
                                             value={newCustomer.assistantName}
-                                            onChange={(e) => setNewCustomer({...newCustomer, assistantName: e.target.value})}
-                                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            onChange={(e) => setNewCustomer({ ...newCustomer, assistantName: e.target.value })}
+                                            className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
+                                            style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
                                         >
                                             <option value="">Select assistant</option>
                                             {availableAssistants.map((assistant) => (
@@ -634,8 +857,9 @@ export default function MarketingAssistantPage() {
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                                         <select
                                             value={newCustomer.status}
-                                            onChange={(e) => setNewCustomer({...newCustomer, status: e.target.value})}
-                                            className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            onChange={(e) => setNewCustomer({ ...newCustomer, status: e.target.value })}
+                                            className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
+                                            style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ite0nIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
                                         >
                                             <option value="New">New</option>
                                             <option value="Active">Active</option>
@@ -648,7 +872,7 @@ export default function MarketingAssistantPage() {
                                         <input
                                             type="date"
                                             value={newCustomer.startedDate}
-                                            onChange={(e) => setNewCustomer({...newCustomer, startedDate: e.target.value})}
+                                            onChange={(e) => setNewCustomer({ ...newCustomer, startedDate: e.target.value })}
                                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                     </div>
@@ -668,11 +892,10 @@ export default function MarketingAssistantPage() {
                                         <button
                                             onClick={proceedToStep2}
                                             disabled={!selectedUser}
-                                            className={`px-4 py-2 rounded-md transition-colors ${
-                                                selectedUser 
-                                                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            }`}
+                                            className={`px-4 py-2 rounded-md transition-colors ${selectedUser
+                                                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                }`}
                                         >
                                             Next
                                         </button>
@@ -688,11 +911,10 @@ export default function MarketingAssistantPage() {
                                         <button
                                             onClick={handleAddCustomer}
                                             disabled={!newCustomer.marketingService || !newCustomer.assistantName || !newCustomer.startedDate}
-                                            className={`px-4 py-2 rounded-md transition-colors ${
-                                                newCustomer.marketingService && newCustomer.assistantName && newCustomer.startedDate
-                                                    ? 'bg-green-600 text-white hover:bg-green-700'
-                                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                            }`}
+                                            className={`px-4 py-2 rounded-md transition-colors ${newCustomer.marketingService && newCustomer.assistantName && newCustomer.startedDate
+                                                ? 'bg-green-600 text-white hover:bg-green-700'
+                                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                                }`}
                                         >
                                             Save Customer
                                         </button>
