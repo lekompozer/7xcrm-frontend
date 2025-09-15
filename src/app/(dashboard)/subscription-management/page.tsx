@@ -1,6 +1,6 @@
 'use client';
 
-import { CalendarIcon } from '@heroicons/react/24/outline';
+import { CalendarIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import SubscriptionStatsCards from './components/SubscriptionStatsCards';
 
@@ -9,6 +9,8 @@ export default function SubscriptionManagement() {
     const [selectedStat, setSelectedStat] = useState('total');
     // State để quản lý time period cho stats
     const [timePeriod, setTimePeriod] = useState('this month');
+    // State để quản lý search
+    const [searchTerm, setSearchTerm] = useState('');
     // State để quản lý popup history
     const [showHistoryModal, setShowHistoryModal] = useState(false);
     const [selectedCustomerHistory, setSelectedCustomerHistory] = useState<{ id: number, name: string, history: { date: string, action: string, plan: string, amount: string, status: string }[] } | null>(null);
@@ -537,10 +539,22 @@ export default function SubscriptionManagement() {
         }
     };
 
-    // Lọc subscription theo stat được chọn
+    // Lọc subscription theo stat được chọn và search term
     const filteredSubscriptions = selectedStat === 'total'
-        ? subscriptions
-        : subscriptions.filter(sub => sub.plan === selectedStat);
+        ? subscriptions.filter(sub =>
+            searchTerm === '' ||
+            sub.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            sub.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            sub.planDisplay.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        : subscriptions.filter(sub =>
+            sub.plan === selectedStat && (
+                searchTerm === '' ||
+                sub.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                sub.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                sub.planDisplay.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        );
 
     // Tính toán phân trang
     const totalPages = Math.ceil(filteredSubscriptions.length / itemsPerPage);
@@ -615,19 +629,36 @@ export default function SubscriptionManagement() {
                 onTimePeriodChange={handleTimePeriodChange}
             />
 
-            {/* Date Filter */}
-            <div className="flex items-center space-x-4 mb-6">
-                <div className="flex items-center space-x-2">
-                    <CalendarIcon className="h-5 w-5 text-gray-400" />
-                    <span className="text-sm text-gray-600">Date Range:</span>
+            {/* Search and Date Filter */}
+            <div className="flex items-center justify-between mb-6 gap-6">
+                {/* Search Box */}
+                <div className="relative flex-1">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                        type="text"
+                        placeholder="Search customers or emails..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
                 </div>
-                <select className="border border-gray-300 rounded-md px-3 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right" style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}>
-                    <option>Last 30 days</option>
-                    <option>Last 7 days</option>
-                    <option>Last 90 days</option>
-                    <option>This month</option>
-                    <option>Custom range</option>
-                </select>
+
+                {/* Date Filter */}
+                <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                        <CalendarIcon className="h-5 w-5 text-gray-400" />
+                        <span className="text-sm text-gray-600">Date Range:</span>
+                    </div>
+                    <select className="border border-gray-300 rounded-md px-3 pr-10 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right" style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}>
+                        <option>Last 30 days</option>
+                        <option>Last 7 days</option>
+                        <option>Last 90 days</option>
+                        <option>This month</option>
+                        <option>Custom range</option>
+                    </select>
+                </div>
             </div>
 
             {/* Subscription Table */}
