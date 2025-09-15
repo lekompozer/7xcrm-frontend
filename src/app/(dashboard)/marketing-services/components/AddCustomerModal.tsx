@@ -194,9 +194,11 @@ export default function AddCustomerModal({
                                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
                                     >
                                         <option value="">Select service...</option>
-                                        <option value="Marketing Assistant Basic">Marketing Assistant Basic</option>
-                                        <option value="Marketing Assistant Premium">Marketing Assistant Premium</option>
-                                        <option value="Marketing Assistant Pro">Marketing Assistant Pro</option>
+                                        <option value="MA-1 — SevenX Launch & Enablement">MA-1 — SevenX Launch & Enablement</option>
+                                        <option value="MA-2 — Social, Fanpage & Website Management">MA-2 — Social, Fanpage & Website Management</option>
+                                        <option value="MA-3 — Performance Ads (Lead Generations)">MA-3 — Performance Ads (Lead Generations)</option>
+                                        <option value="MA-4 — Creative & Content Studio">MA-4 — Creative & Content Studio</option>
+                                        <option value="MA-5 — Contact & Converstion Management">MA-5 — Contact & Converstion Management</option>
                                     </select>
                                     <ChevronDownIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                                 </div>

@@ -39,3 +39,12 @@ body {
 .bg-trial-custom {
   background-color: #fcc82b;
 }
+
+/* Custom marketing assistant colors */
+.bg-ma1-custom {
+  background-color: #1E93AB;
+}
+
+.bg-ma5-custom {
+  background-color: #E45A92;
+}

@@ -95,7 +95,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Pro Plan',
             assistantName: 'Alex Martinez',
             status: 'Deactivated',
-            marketingService: 'Marketing Assistant Pro',
+            marketingService: 'MA-3 — Performance Ads (Lead Generations)',
             registeredDate: '2023-11-15',
             startedDate: '2023-11-20',
             deactivatedDate: '2024-01-10',
@@ -108,32 +108,40 @@ export default function MarketingServicesPage() {
     const getStatsForPeriod = (period: string) => {
         const baseStats = {
             total: { current: 456, previous: 398 },
-            basic: { current: 189, previous: 165 },
-            premium: { current: 178, previous: 142 },
-            pro: { current: 89, previous: 91 }
+            ma1: { current: 92, previous: 85 },
+            ma2: { current: 89, previous: 76 },
+            ma3: { current: 98, previous: 82 },
+            ma4: { current: 95, previous: 89 },
+            ma5: { current: 82, previous: 66 }
         };
 
         // Simulate different data for different periods
         if (period === 'this week') {
             return {
                 total: { current: 89, previous: 76 },
-                basic: { current: 35, previous: 32 },
-                premium: { current: 32, previous: 28 },
-                pro: { current: 22, previous: 16 }
+                ma1: { current: 18, previous: 16 },
+                ma2: { current: 17, previous: 15 },
+                ma3: { current: 19, previous: 16 },
+                ma4: { current: 18, previous: 17 },
+                ma5: { current: 17, previous: 12 }
             };
         } else if (period === 'this year') {
             return {
                 total: { current: 5234, previous: 4891 },
-                basic: { current: 2156, previous: 2034 },
-                premium: { current: 1987, previous: 1765 },
-                pro: { current: 1091, previous: 1092 }
+                ma1: { current: 1056, previous: 985 },
+                ma2: { current: 1023, previous: 896 },
+                ma3: { current: 1124, previous: 967 },
+                ma4: { current: 1089, previous: 1034 },
+                ma5: { current: 942, previous: 1009 }
             };
         } else if (period === 'all time') {
             return {
                 total: { current: 12456, previous: 11234 },
-                basic: { current: 5234, previous: 4891 },
-                premium: { current: 4123, previous: 3987 },
-                pro: { current: 3099, previous: 2356 }
+                ma1: { current: 2523, previous: 2234 },
+                ma2: { current: 2445, previous: 2189 },
+                ma3: { current: 2634, previous: 2345 },
+                ma4: { current: 2512, previous: 2398 },
+                ma5: { current: 2342, previous: 2068 }
             };
         }
 
@@ -148,31 +156,47 @@ export default function MarketingServicesPage() {
             count: currentStats.total.current,
             previousCount: currentStats.total.previous,
             period: timePeriod,
-            color: 'bg-gray-500'
-        },
-        {
-            id: 'basic',
-            name: 'Marketing Assistant Basic',
-            count: currentStats.basic.current,
-            previousCount: currentStats.basic.previous,
-            period: timePeriod,
             color: 'bg-blue-500'
         },
         {
-            id: 'premium',
-            name: 'Marketing Assistant Premium',
-            count: currentStats.premium.current,
-            previousCount: currentStats.premium.previous,
+            id: 'ma1',
+            name: 'MA-1 — SevenX Launch & Enablement',
+            count: currentStats.ma1.current,
+            previousCount: currentStats.ma1.previous,
+            period: timePeriod,
+            color: 'bg-ma1-custom'
+        },
+        {
+            id: 'ma2',
+            name: 'MA-2 — Social, Fanpage & Website Management',
+            count: currentStats.ma2.current,
+            previousCount: currentStats.ma2.previous,
+            period: timePeriod,
+            color: 'bg-green-500'
+        },
+        {
+            id: 'ma3',
+            name: 'MA-3 — Performance Ads (Lead Generations)',
+            count: currentStats.ma3.current,
+            previousCount: currentStats.ma3.previous,
             period: timePeriod,
             color: 'bg-purple-500'
         },
         {
-            id: 'pro',
-            name: 'Marketing Assistant Pro',
-            count: currentStats.pro.current,
-            previousCount: currentStats.pro.previous,
+            id: 'ma4',
+            name: 'MA-4 — Creative & Content Studio',
+            count: currentStats.ma4.current,
+            previousCount: currentStats.ma4.previous,
             period: timePeriod,
             color: 'bg-orange-500'
+        },
+        {
+            id: 'ma5',
+            name: 'MA-5 — Contact & Converstion Management',
+            count: currentStats.ma5.current,
+            previousCount: currentStats.ma5.previous,
+            period: timePeriod,
+            color: 'bg-ma5-custom'
         },
     ];
 
@@ -184,7 +208,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Pro Plan',
             assistantName: 'Alex Martinez',
             status: 'Active',
-            marketingService: 'Marketing Assistant Pro',
+            marketingService: 'MA-4 — Creative & Content Studio',
             registeredDate: '2024-01-15',
             startedDate: '2024-01-20',
             amount: '$199.99'
@@ -196,7 +220,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Basic Plan',
             assistantName: 'Emily Chen',
             status: 'Active',
-            marketingService: 'Marketing Assistant Basic',
+            marketingService: 'MA-1 — SevenX Launch & Enablement',
             registeredDate: '2024-01-10',
             startedDate: '2024-01-15',
             amount: '$99.99'
@@ -208,7 +232,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Enterprise Plan',
             assistantName: 'David Kim',
             status: 'Paused',
-            marketingService: 'Marketing Assistant Premium',
+            marketingService: 'MA-2 — Social, Fanpage & Website Management',
             registeredDate: '2024-01-05',
             startedDate: '2024-01-10',
             amount: '$299.99'
@@ -220,7 +244,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Pro Plan',
             assistantName: 'Maria Rodriguez',
             status: 'Active',
-            marketingService: 'Marketing Assistant Pro',
+            marketingService: 'MA-5 — Contact & Converstion Management',
             registeredDate: '2024-01-20',
             startedDate: '2024-01-25',
             amount: '$199.99'
@@ -232,7 +256,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Basic Plan',
             assistantName: 'James Wilson',
             status: 'Active',
-            marketingService: 'Marketing Assistant Basic',
+            marketingService: 'MA-1 — SevenX Launch & Enablement',
             registeredDate: '2024-01-18',
             startedDate: '2024-01-23',
             amount: '$99.99'
@@ -244,7 +268,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Premium Plan',
             assistantName: 'Sophie Taylor',
             status: 'Active',
-            marketingService: 'Marketing Assistant Premium',
+            marketingService: 'MA-3 — Performance Ads (Lead Generations)',
             registeredDate: '2024-01-12',
             startedDate: '2024-01-17',
             amount: '$149.99'
@@ -256,7 +280,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Enterprise Plan',
             assistantName: 'Michael Brown',
             status: 'New',
-            marketingService: 'Marketing Assistant Premium',
+            marketingService: 'MA-2 — Social, Fanpage & Website Management',
             registeredDate: '2024-01-25',
             startedDate: '2024-01-30',
             amount: '$299.99'
@@ -268,7 +292,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Pro Plan',
             assistantName: 'Lisa Anderson',
             status: 'Active',
-            marketingService: 'Marketing Assistant Pro',
+            marketingService: 'MA-3 — Performance Ads (Lead Generations)',
             registeredDate: '2024-01-08',
             startedDate: '2024-01-13',
             amount: '$199.99'
@@ -280,7 +304,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Basic Plan',
             assistantName: 'Thomas Garcia',
             status: 'Paused',
-            marketingService: 'Marketing Assistant Basic',
+            marketingService: 'MA-1 — SevenX Launch & Enablement',
             registeredDate: '2024-01-14',
             startedDate: '2024-01-19',
             amount: '$99.99'
@@ -292,7 +316,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Premium Plan',
             assistantName: 'Jennifer Lee',
             status: 'Active',
-            marketingService: 'Marketing Assistant Premium',
+            marketingService: 'MA-2 — Social, Fanpage & Website Management',
             registeredDate: '2024-01-22',
             startedDate: '2024-01-27',
             amount: '$149.99'
@@ -304,7 +328,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Pro Plan',
             assistantName: 'Alex Martinez',
             status: 'Active',
-            marketingService: 'Marketing Assistant Pro',
+            marketingService: 'MA-4 — Creative & Content Studio',
             registeredDate: '2024-01-16',
             startedDate: '2024-01-21',
             amount: '$199.99'
@@ -316,7 +340,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Basic Plan',
             assistantName: 'Emily Chen',
             status: 'New',
-            marketingService: 'Marketing Assistant Basic',
+            marketingService: 'MA-1 — SevenX Launch & Enablement',
             registeredDate: '2024-01-24',
             startedDate: '2024-01-29',
             amount: '$99.99'
@@ -328,7 +352,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Enterprise Plan',
             assistantName: 'David Kim',
             status: 'Active',
-            marketingService: 'Marketing Assistant Premium',
+            marketingService: 'MA-3 — Performance Ads (Lead Generations)',
             registeredDate: '2024-01-11',
             startedDate: '2024-01-16',
             amount: '$299.99'
@@ -340,7 +364,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Premium Plan',
             assistantName: 'Maria Rodriguez',
             status: 'Active',
-            marketingService: 'Marketing Assistant Premium',
+            marketingService: 'MA-5 — Contact & Converstion Management',
             registeredDate: '2024-01-19',
             startedDate: '2024-01-24',
             amount: '$149.99'
@@ -352,7 +376,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Pro Plan',
             assistantName: 'James Wilson',
             status: 'Paused',
-            marketingService: 'Marketing Assistant Pro',
+            marketingService: 'MA-4 — Creative & Content Studio',
             registeredDate: '2024-01-13',
             startedDate: '2024-01-18',
             amount: '$199.99'
@@ -364,7 +388,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Basic Plan',
             assistantName: 'Sophie Taylor',
             status: 'Active',
-            marketingService: 'Marketing Assistant Basic',
+            marketingService: 'MA-2 — Social, Fanpage & Website Management',
             registeredDate: '2024-01-17',
             startedDate: '2024-01-22',
             amount: '$99.99'
@@ -376,7 +400,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Enterprise Plan',
             assistantName: 'Michael Brown',
             status: 'Active',
-            marketingService: 'Marketing Assistant Premium',
+            marketingService: 'MA-5 — Contact & Converstion Management',
             registeredDate: '2024-01-21',
             startedDate: '2024-01-26',
             amount: '$299.99'
@@ -388,7 +412,7 @@ export default function MarketingServicesPage() {
             subscriptionPackage: 'Premium Plan',
             assistantName: 'Lisa Anderson',
             status: 'New',
-            marketingService: 'Marketing Assistant Premium',
+            marketingService: 'MA-1 — SevenX Launch & Enablement',
             registeredDate: '2024-01-23',
             startedDate: '2024-01-28',
             amount: '$149.99'
@@ -403,9 +427,11 @@ export default function MarketingServicesPage() {
             service.marketingService.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesStat = selectedStat === 'total' ||
-            (selectedStat === 'basic' && service.marketingService.includes('Basic')) ||
-            (selectedStat === 'premium' && service.marketingService.includes('Premium')) ||
-            (selectedStat === 'pro' && service.marketingService.includes('Pro'));
+            (selectedStat === 'ma1' && service.marketingService.includes('MA-1')) ||
+            (selectedStat === 'ma2' && service.marketingService.includes('MA-2')) ||
+            (selectedStat === 'ma3' && service.marketingService.includes('MA-3')) ||
+            (selectedStat === 'ma4' && service.marketingService.includes('MA-4')) ||
+            (selectedStat === 'ma5' && service.marketingService.includes('MA-5'));
 
         const matchesStatus = statusFilter === 'all' ||
             service.status.toLowerCase() === statusFilter.toLowerCase();
@@ -416,9 +442,11 @@ export default function MarketingServicesPage() {
             (packageFilter === 'enterprise' && service.subscriptionPackage.includes('Enterprise'));
 
         const matchesService = serviceFilter === 'all' ||
-            (serviceFilter === 'basic' && service.marketingService.includes('Basic')) ||
-            (serviceFilter === 'premium' && service.marketingService.includes('Premium')) ||
-            (serviceFilter === 'pro' && service.marketingService.includes('Pro'));
+            (serviceFilter === 'ma1' && service.marketingService.includes('MA-1')) ||
+            (serviceFilter === 'ma2' && service.marketingService.includes('MA-2')) ||
+            (serviceFilter === 'ma3' && service.marketingService.includes('MA-3')) ||
+            (serviceFilter === 'ma4' && service.marketingService.includes('MA-4')) ||
+            (serviceFilter === 'ma5' && service.marketingService.includes('MA-5'));
 
         const matchesDate = (() => {
             if (dateFilter === 'all') return true;

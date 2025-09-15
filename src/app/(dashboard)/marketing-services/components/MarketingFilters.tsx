@@ -91,9 +91,11 @@ export default function MarketingFilters({
                         className="w-full border border-gray-300 rounded-md px-3 pr-8 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
                     >
                         <option value="all">All Services</option>
-                        <option value="basic">Basic</option>
-                        <option value="premium">Premium</option>
-                        <option value="pro">Pro</option>
+                        <option value="ma1">MA-1 — SevenX Launch & Enablement</option>
+                        <option value="ma2">MA-2 — Social, Fanpage & Website Management</option>
+                        <option value="ma3">MA-3 — Performance Ads (Lead Generations)</option>
+                        <option value="ma4">MA-4 — Creative & Content Studio</option>
+                        <option value="ma5">MA-5 — Contact & Converstion Management</option>
                     </select>
                     <ChevronDownIcon className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                 </div>
