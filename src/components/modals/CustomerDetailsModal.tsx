@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { XMarkIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { Customer } from '@/types/customer';
 
@@ -68,7 +68,7 @@ export default function CustomerDetailsModal({
     }, [customer]);
 
     // Dynamic subscription data based on customer
-    const getSubscriptionData = () => {
+    const getSubscriptionData = useCallback(() => {
         if (!customer) return [];
 
         // Trial users: Mike Johnson, Emma Garcia, Jessica Lee, Alex Rodriguez
@@ -125,10 +125,18 @@ export default function CustomerDetailsModal({
                 paymentMethod: 'Credit Card'
             }
         ];
-    };
+    }, [customer]);
 
     // Initialize subscription data state
-    const [subscriptionData, setSubscriptionData] = useState<any[]>([]);
+    const [subscriptionData, setSubscriptionData] = useState<{
+        id: number;
+        package: string;
+        startDate: string;
+        endDate: string;
+        status: string;
+        amount: string;
+        paymentMethod: string;
+    }[]>([]);
 
     // Update subscription data when customer changes
     useEffect(() => {
@@ -136,7 +144,7 @@ export default function CustomerDetailsModal({
             const newSubscriptionData = getSubscriptionData();
             setSubscriptionData(newSubscriptionData);
         }
-    }, [customer]);
+    }, [customer, getSubscriptionData]);
 
     // Sort subscriptions: Active first, then by most recent start date
     const sortedSubscriptionData = [...subscriptionData].sort((a, b) => {
@@ -300,48 +308,53 @@ export default function CustomerDetailsModal({
     ];
 
     return (
-        <div
-            className="fixed inset-0 flex items-center justify-center z-50"
-            style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)'
-            }}
-        >
-            <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden mx-4 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose}></div>
+            <div className="relative bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl max-w-4xl w-full mx-4 border border-gray-200 max-h-[90vh] overflow-hidden">
                 {/* Modal Header */}
-                <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                    <h3 className="text-lg font-medium text-gray-900">
-                        Customer Details - {customer.name}
-                    </h3>
+                <div className="flex items-center justify-between p-6 border-b border-gray-200/50">
+                    <div className="flex items-center space-x-4">
+                        <div className="h-12 w-12 rounded-full bg-blue-500 flex items-center justify-center">
+                            <span className="text-lg font-medium text-white">
+                                {customer?.name?.split(' ').map(n => n[0]).join('') || 'C'}
+                            </span>
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-medium text-gray-900">
+                                {customer?.name || 'Customer Details'}
+                            </h3>
+                            <p className="text-sm text-gray-500">{customer?.email}</p>
+                        </div>
+                    </div>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600"
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
                     >
                         <XMarkIcon className="w-6 h-6" />
                     </button>
                 </div>
 
-                {/* Tab Navigation */}
-                <div className="border-b border-gray-200">
-                    <nav className="flex space-x-8 px-6">
-                        {tabs.map((tab) => (
-                            <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
-                                    ? 'border-blue-500 text-blue-600'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                    }`}
-                            >
-                                {tab.name}
-                            </button>
-                        ))}
-                    </nav>
-                </div>
+                {/* Content Area */}
+                <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                    {/* Tabs */}
+                    <div className="border-b border-gray-200 mb-6">
+                        <nav className="flex space-x-8">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tab.id
+                                        ? 'border-blue-500 text-blue-600'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                        }`}
+                                >
+                                    {tab.name}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
 
-                {/* Modal Body */}
-                <div className="px-6 py-6 max-h-[500px] overflow-y-auto">
+                    {/* Tab Content */}
                     {/* Information Tab */}
                     {activeTab === 'information' && (
                         <div className="space-y-6">
