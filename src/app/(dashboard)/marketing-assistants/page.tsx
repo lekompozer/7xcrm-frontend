@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { PlusIcon, MagnifyingGlassIcon, UsersIcon, UserIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import AssistantDetailsModal from './components/AssistantDetailsModal';
 
 // Types
 interface MarketingAssistant {
@@ -9,16 +10,35 @@ interface MarketingAssistant {
     name: string;
     email: string;
     specialization: string;
-    status: 'Active' | 'Inactive';
+    status: 'Active' | 'Inactive' | 'Paused';
     customerCount: number;
     joinedDate: string;
     phoneNumber: string;
+    startWorkDate?: string;
+    address?: string;
+    department?: string;
+    skills?: string[];
+    certifications?: string[];
+    cvFiles?: { name: string; uploadDate: string; url: string }[];
+}
+
+interface Customer {
+    id: number;
+    name: string;
+    email: string;
+    subscriptionPackage: string;
+    marketingService: string;
+    status: string;
+    startedDate: string;
+    totalAmount: string;
 }
 
 export default function MarketingAssistantPage() {
     // States
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [selectedAssistant, setSelectedAssistant] = useState<MarketingAssistant | null>(null);
 
     const [assistants, setAssistants] = useState<MarketingAssistant[]>([
         {
@@ -29,7 +49,14 @@ export default function MarketingAssistantPage() {
             status: 'Active',
             customerCount: 25,
             joinedDate: '2023-01-15',
-            phoneNumber: '+1 (555) 123-4567'
+            phoneNumber: '+1 (555) 123-4567',
+            startWorkDate: '2023-01-20',
+            department: 'Marketing',
+            skills: ['Facebook Ads', 'Instagram Marketing', 'Content Creation', 'Analytics'],
+            cvFiles: [
+                { name: 'Alex_Martinez_CV.pdf', uploadDate: '2023-01-10', url: '#' },
+                { name: 'Portfolio_2023.pdf', uploadDate: '2023-01-12', url: '#' }
+            ]
         },
         {
             id: 2,
@@ -39,7 +66,13 @@ export default function MarketingAssistantPage() {
             status: 'Active',
             customerCount: 30,
             joinedDate: '2023-02-20',
-            phoneNumber: '+1 (555) 234-5678'
+            phoneNumber: '+1 (555) 234-5678',
+            startWorkDate: '2023-02-25',
+            department: 'Marketing',
+            skills: ['Content Strategy', 'SEO Writing', 'Blog Management', 'Copywriting'],
+            cvFiles: [
+                { name: 'Emily_Chen_Resume.pdf', uploadDate: '2023-02-15', url: '#' }
+            ]
         },
         {
             id: 3,
@@ -49,17 +82,23 @@ export default function MarketingAssistantPage() {
             status: 'Active',
             customerCount: 22,
             joinedDate: '2023-03-10',
-            phoneNumber: '+1 (555) 345-6789'
+            phoneNumber: '+1 (555) 345-6789',
+            startWorkDate: '2023-03-15',
+            department: 'Marketing',
+            skills: ['Email Automation', 'Campaign Design', 'A/B Testing', 'Customer Segmentation']
         },
         {
             id: 4,
             name: 'Maria Rodriguez',
             email: 'maria.rodriguez@7xcrm.com',
             specialization: 'SEO & Analytics',
-            status: 'Inactive',
+            status: 'Paused',
             customerCount: 0,
             joinedDate: '2023-04-05',
-            phoneNumber: '+1 (555) 456-7890'
+            phoneNumber: '+1 (555) 456-7890',
+            startWorkDate: '2023-04-10',
+            department: 'Marketing',
+            skills: ['Google Analytics', 'SEO Optimization', 'Keyword Research', 'Data Analysis']
         },
         {
             id: 5,
@@ -69,23 +108,62 @@ export default function MarketingAssistantPage() {
             status: 'Active',
             customerCount: 18,
             joinedDate: '2023-05-12',
-            phoneNumber: '+1 (555) 567-8901'
+            phoneNumber: '+1 (555) 567-8901',
+            startWorkDate: '2023-05-17',
+            department: 'Marketing',
+            skills: ['Google Ads', 'Facebook Ads', 'PPC Management', 'ROI Optimization']
         }
     ]);
+
+    // Sample customer data for the modal
+    const sampleCustomers: Customer[] = [
+        {
+            id: 1,
+            name: 'John Doe',
+            email: 'john@example.com',
+            subscriptionPackage: 'Pro Plan',
+            marketingService: 'MA-1 — SevenX Launch & Enablement',
+            status: 'Active',
+            startedDate: '2024-01-15',
+            totalAmount: '$199.99'
+        },
+        {
+            id: 2,
+            name: 'Sarah Johnson',
+            email: 'sarah@example.com',
+            subscriptionPackage: 'Basic Plan',
+            marketingService: 'MA-2 — Social, Fanpage & Website Management',
+            status: 'Active',
+            startedDate: '2024-01-10',
+            totalAmount: '$99.99'
+        },
+        {
+            id: 3,
+            name: 'Mike Chen',
+            email: 'mike@example.com',
+            subscriptionPackage: 'Enterprise Plan',
+            marketingService: 'MA-3 — Performance Ads (Lead Generations)',
+            status: 'Paused',
+            startedDate: '2024-01-05',
+            totalAmount: '$299.99'
+        }
+    ];
 
     // Filter assistants
     const filteredAssistants = assistants.filter(assistant => {
         const matchesSearch = assistant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             assistant.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
             assistant.specialization.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = statusFilter === 'all' || assistant.status.toLowerCase() === statusFilter;
+        const matchesStatus = statusFilter === 'all' ||
+            assistant.status.toLowerCase() === statusFilter ||
+            (statusFilter === 'inactive' && (assistant.status === 'Inactive' || assistant.status === 'Paused'));
         return matchesSearch && matchesStatus;
     });
 
     // Statistics
     const totalAssistants = assistants.length;
     const activeAssistants = assistants.filter(a => a.status === 'Active').length;
-    const inactiveAssistants = assistants.filter(a => a.status === 'Inactive').length;
+    const inactiveAssistants = assistants.filter(a => a.status === 'Inactive' || a.status === 'Paused').length;
     const totalCustomers = assistants.reduce((sum, a) => sum + a.customerCount, 0);
 
     const stats = [
@@ -126,6 +204,28 @@ export default function MarketingAssistantPage() {
                     ...assistant,
                     status: assistant.status === 'Active' ? 'Inactive' : 'Active',
                     customerCount: assistant.status === 'Active' ? 0 : assistant.customerCount
+                }
+                : assistant
+        ));
+    };
+
+    const handleViewAssistant = (assistant: MarketingAssistant) => {
+        setSelectedAssistant(assistant);
+        setShowDetailsModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowDetailsModal(false);
+        setSelectedAssistant(null);
+    };
+
+    const handleStatusChange = (id: number, status: 'Active' | 'Inactive' | 'Paused') => {
+        setAssistants(assistants.map(assistant =>
+            assistant.id === id
+                ? {
+                    ...assistant,
+                    status: status,
+                    customerCount: status === 'Inactive' ? 0 : assistant.customerCount
                 }
                 : assistant
         ));
@@ -260,7 +360,8 @@ export default function MarketingAssistantPage() {
                                                     </div>
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-sm font-medium text-gray-900">
+                                                    <div className="text-sm font-medium text-gray-900 hover:text-blue-600 cursor-pointer"
+                                                        onClick={() => handleViewAssistant(assistant)}>
                                                         {assistant.name}
                                                     </div>
                                                     <div className="text-sm text-gray-500">
@@ -277,7 +378,9 @@ export default function MarketingAssistantPage() {
                                                 onClick={() => toggleStatus(assistant.id)}
                                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium cursor-pointer hover:opacity-80 ${assistant.status === 'Active'
                                                     ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
+                                                    : assistant.status === 'Paused'
+                                                        ? 'bg-yellow-100 text-yellow-800'
+                                                        : 'bg-red-100 text-red-800'
                                                     }`}
                                             >
                                                 {assistant.status}
@@ -299,7 +402,9 @@ export default function MarketingAssistantPage() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex items-center space-x-2">
-                                                <button className="text-blue-600 hover:text-blue-900">
+                                                <button
+                                                    onClick={() => handleViewAssistant(assistant)}
+                                                    className="text-blue-600 hover:text-blue-900">
                                                     View
                                                 </button>
                                                 <button className="text-green-600 hover:text-green-900">
@@ -317,6 +422,15 @@ export default function MarketingAssistantPage() {
                     </table>
                 </div>
             </div>
+
+            {/* Assistant Details Modal */}
+            <AssistantDetailsModal
+                isOpen={showDetailsModal}
+                onClose={handleCloseModal}
+                assistant={selectedAssistant}
+                customers={sampleCustomers}
+                onStatusChange={handleStatusChange}
+            />
         </div>
     );
 }

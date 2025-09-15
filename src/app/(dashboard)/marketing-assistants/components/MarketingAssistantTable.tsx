@@ -15,12 +15,14 @@ interface MarketingAssistantTableProps {
     assistants: MarketingAssistant[];
     onDeleteAssistant: (id: number) => void;
     onToggleStatus: (id: number) => void;
+    onViewAssistant: (assistant: MarketingAssistant) => void;
 }
 
 export default function MarketingAssistantTable({
     assistants,
     onDeleteAssistant,
-    onToggleStatus
+    onToggleStatus,
+    onViewAssistant
 }: MarketingAssistantTableProps) {
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -89,7 +91,8 @@ export default function MarketingAssistantTable({
                                             </div>
                                         </div>
                                         <div className="ml-4">
-                                            <div className="text-sm font-medium text-gray-900">
+                                            <div className="text-sm font-medium text-blue-600 hover:text-blue-900 hover:underline cursor-pointer"
+                                                onClick={() => onViewAssistant(assistant)}>
                                                 {assistant.name}
                                             </div>
                                             <div className="text-sm text-gray-500">
@@ -126,7 +129,7 @@ export default function MarketingAssistantTable({
                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div className="flex items-center space-x-2">
                                         <button
-                                            onClick={() => {/* TODO: Implement view details */ }}
+                                            onClick={() => onViewAssistant(assistant)}
                                             className="text-blue-600 hover:text-blue-900 p-1 rounded"
                                             title="View Details"
                                         >
