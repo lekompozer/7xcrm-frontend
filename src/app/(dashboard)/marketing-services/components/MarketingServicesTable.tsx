@@ -18,6 +18,7 @@ interface MarketingServicesTableProps {
     startIndex: number;
     endIndex: number;
     onPageChange: (page: number) => void;
+    onCustomerClick?: (customerName: string) => void;
 }
 
 export default function MarketingServicesTable({
@@ -26,7 +27,8 @@ export default function MarketingServicesTable({
     totalPages,
     startIndex,
     endIndex,
-    onPageChange
+    onPageChange,
+    onCustomerClick
 }: MarketingServicesTableProps) {
     const paginatedServices = filteredServices.slice(startIndex, endIndex);
 
@@ -85,7 +87,12 @@ export default function MarketingServicesTable({
                             <tr key={service.id} className="hover:bg-gray-50">
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div>
-                                        <div className="text-sm font-medium text-gray-900">{service.customer}</div>
+                                        <div
+                                            className={`text-sm font-medium ${onCustomerClick ? 'text-blue-600 hover:text-blue-800 cursor-pointer hover:underline' : 'text-gray-900'}`}
+                                            onClick={() => onCustomerClick?.(service.customer)}
+                                        >
+                                            {service.customer}
+                                        </div>
                                         <div className="text-sm text-gray-500">{service.email}</div>
                                     </div>
                                 </td>

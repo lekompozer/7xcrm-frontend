@@ -9,6 +9,8 @@ import AddCustomerModal from './components/AddCustomerModal';
 import DeactivatedListModal from './components/DeactivatedListModal';
 import RestoreCustomerModal from './components/RestoreCustomerModal';
 import Notification from './components/Notification';
+import CustomerDetailsModal from '@/components/modals/CustomerDetailsModal';
+import { Customer } from '@/types/customer';
 
 // Types
 interface MarketingService {
@@ -61,6 +63,11 @@ export default function MarketingServicesPage() {
         type: 'success' as 'success' | 'error',
         isVisible: false
     });
+
+    // Customer Details Modal State
+    const [showCustomerModal, setShowCustomerModal] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+
     const itemsPerPage = 10;
 
     const [newCustomer, setNewCustomer] = useState({
@@ -419,6 +426,114 @@ export default function MarketingServicesPage() {
         }
     ]);
 
+    // Customer Details Data - mapped from marketing services
+    const customerDetails: { [key: string]: Customer } = {
+        'John Doe': {
+            id: 1,
+            name: 'John Doe',
+            email: 'john@example.com',
+            phone: '+1 (555) 123-4567',
+            address: '123 Main St, New York, NY 10001',
+            company: 'Tech Solutions Inc.',
+            joinDate: '2024-01-15',
+            totalSpent: '$199.99',
+            source: 'Google Ads',
+            referrer: 'Marketing Campaign',
+            notes: 'Subscribed to Creative & Content Studio service. Very engaged customer.'
+        },
+        'Sarah Smith': {
+            id: 2,
+            name: 'Sarah Smith',
+            email: 'sarah@example.com',
+            phone: '+1 (555) 234-5678',
+            address: '456 Oak Ave, Los Angeles, CA 90210',
+            company: 'Design Studio LLC',
+            joinDate: '2024-01-10',
+            totalSpent: '$299.99',
+            source: 'Social Media',
+            referrer: 'Facebook Ad',
+            notes: 'Enterprise client using Social Media Management service.'
+        },
+        'Michael Chen': {
+            id: 3,
+            name: 'Michael Chen',
+            email: 'michael@example.com',
+            phone: '+1 (555) 345-6789',
+            address: '789 Pine St, Chicago, IL 60601',
+            company: 'StartupCo',
+            joinDate: '2024-01-05',
+            totalSpent: '$99.99',
+            source: 'Referral',
+            referrer: 'Business Partner',
+            notes: 'New customer using SevenX Launch & Enablement. Needs close follow-up.'
+        },
+        'Lisa Johnson': {
+            id: 4,
+            name: 'Lisa Johnson',
+            email: 'lisa@example.com',
+            phone: '+1 (555) 456-7890',
+            address: '321 Elm St, Seattle, WA 98101',
+            company: 'Marketing Pro',
+            joinDate: '2024-01-20',
+            totalSpent: '$199.99',
+            source: 'Organic Search',
+            referrer: 'Website',
+            notes: 'Active user of Contact & Conversion Management service.'
+        },
+        'David Wilson': {
+            id: 5,
+            name: 'David Wilson',
+            email: 'david@example.com',
+            phone: '+1 (555) 567-8901',
+            address: '654 Maple Dr, Austin, TX 73301',
+            company: 'Wilson Enterprises',
+            joinDate: '2024-01-18',
+            totalSpent: '$99.99',
+            source: 'Email Marketing',
+            referrer: 'Newsletter',
+            notes: 'Basic plan subscriber. Interested in upgrading to Pro plan.'
+        },
+        'Emma Taylor': {
+            id: 6,
+            name: 'Emma Taylor',
+            email: 'emma@example.com',
+            phone: '+1 (555) 678-9012',
+            address: '987 Cedar Ln, Miami, FL 33101',
+            company: 'Taylor Marketing',
+            joinDate: '2024-01-12',
+            totalSpent: '$149.99',
+            source: 'Content Marketing',
+            referrer: 'Blog Post',
+            notes: 'Premium subscriber using Performance Ads service. Very satisfied.'
+        },
+        'Robert Brown': {
+            id: 7,
+            name: 'Robert Brown',
+            email: 'robert@example.com',
+            phone: '+1 (555) 789-0123',
+            address: '147 Birch Ave, Denver, CO 80201',
+            company: 'Brown Corp',
+            joinDate: '2024-01-25',
+            totalSpent: '$299.99',
+            source: 'Webinar',
+            referrer: 'Product Demo',
+            notes: 'New Enterprise customer. Just started with Social Media Management.'
+        },
+        'Jessica Garcia': {
+            id: 8,
+            name: 'Jessica Garcia',
+            email: 'jessica@example.com',
+            phone: '+1 (555) 890-1234',
+            address: '258 Spruce St, Portland, OR 97201',
+            company: 'Garcia Digital',
+            joinDate: '2024-01-08',
+            totalSpent: '$199.99',
+            source: 'Direct',
+            referrer: 'Word of Mouth',
+            notes: 'Pro plan subscriber using Performance Ads. High engagement.'
+        }
+    };
+
     // Filter logic
     const filteredServices = marketingServices.filter(service => {
         const matchesSearch = service.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -477,6 +592,15 @@ export default function MarketingServicesPage() {
 
         return matchesSearch && matchesStat && matchesStatus && matchesPackage && matchesService && matchesDate;
     });
+
+    // Customer modal handler
+    const handleViewCustomer = (customerName: string) => {
+        const customer = customerDetails[customerName];
+        if (customer) {
+            setSelectedCustomer(customer);
+            setShowCustomerModal(true);
+        }
+    };
 
     // Pagination
     const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
@@ -735,9 +859,19 @@ export default function MarketingServicesPage() {
                 startIndex={startIndex}
                 endIndex={endIndex}
                 onPageChange={setCurrentPage}
+                onCustomerClick={handleViewCustomer}
             />
 
             {/* Modals */}
+            {selectedCustomer && (
+                <CustomerDetailsModal
+                    isOpen={showCustomerModal}
+                    onClose={() => setShowCustomerModal(false)}
+                    customer={selectedCustomer}
+                    readonly={true}
+                />
+            )}
+
             <AddCustomerModal
                 isOpen={showAddCustomer}
                 onClose={handleCloseAddCustomer}

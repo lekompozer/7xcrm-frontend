@@ -3,6 +3,8 @@
 import { CalendarIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import SubscriptionStatsCards from './components/SubscriptionStatsCards';
+import CustomerDetailsModal from '@/components/modals/CustomerDetailsModal';
+import { Customer } from '@/types/customer';
 
 export default function SubscriptionManagement() {
     // State để quản lý stat được chọn, mặc định là Total
@@ -11,13 +13,9 @@ export default function SubscriptionManagement() {
     const [timePeriod, setTimePeriod] = useState('this month');
     // State để quản lý search
     const [searchTerm, setSearchTerm] = useState('');
-    // State để quản lý popup history
-    const [showHistoryModal, setShowHistoryModal] = useState(false);
-    const [selectedCustomerHistory, setSelectedCustomerHistory] = useState<{ id: number, name: string, history: { date: string, action: string, plan: string, amount: string, status: string }[] } | null>(null);
     // State để quản lý popup customer detail
     const [showCustomerModal, setShowCustomerModal] = useState(false);
-    const [selectedCustomer, setSelectedCustomer] = useState<{ [key: string]: string | number } | null>(null);
-    const [activeTab, setActiveTab] = useState('information');
+    const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
 
     // State cho phân trang
     const [currentPage, setCurrentPage] = useState(1);
@@ -236,73 +234,8 @@ export default function SubscriptionManagement() {
         },
     ];
 
-    // Data lịch sử subscription cho mỗi customer
-    const subscriptionHistories: { [key: number]: { date: string, action: string, plan: string, amount: string, status: string }[] } = {
-        1: [ // John Doe
-            { date: '2024-01-15', action: 'Subscribed', plan: 'Pro Plan', amount: '$29.99', status: 'Success' },
-            { date: '2023-12-01', action: 'Upgraded', plan: 'Basic → Pro Plan', amount: '$29.99', status: 'Success' },
-            { date: '2023-11-15', action: 'Subscribed', plan: 'Basic Plan', amount: '$9.99', status: 'Success' },
-        ],
-        2: [ // Jane Smith
-            { date: '2024-01-10', action: 'Subscribed', plan: 'Basic Plan', amount: '$9.99', status: 'Success' },
-            { date: '2023-10-10', action: 'Trial Ended', plan: 'Trial → Basic Plan', amount: '$9.99', status: 'Success' },
-        ],
-        3: [ // Mike Johnson
-            { date: '2024-01-25', action: 'Started Trial', plan: 'Trial', amount: '$0.00', status: 'Active' },
-        ],
-        4: [ // Sarah Wilson
-            { date: '2024-01-05', action: 'Subscribed', plan: 'Enterprise Plan', amount: '$99.99', status: 'Success' },
-            { date: '2023-11-20', action: 'Upgraded', plan: 'Pro → Enterprise Plan', amount: '$99.99', status: 'Success' },
-        ],
-        5: [ // David Brown
-            { date: '2024-01-12', action: 'Subscribed', plan: 'Pro Plan', amount: '$29.99', status: 'Success' },
-        ],
-        6: [ // Lisa Davis
-            { date: '2024-01-20', action: 'Subscribed', plan: 'Basic Plan', amount: '$9.99', status: 'Success' },
-        ],
-        7: [ // Robert Taylor
-            { date: '2024-01-15', action: 'Cancelled', plan: 'Pro Plan', amount: '-', status: 'Cancelled' },
-            { date: '2023-12-01', action: 'Subscribed', plan: 'Pro Plan', amount: '$29.99', status: 'Success' },
-        ],
-        8: [ // Emma Garcia
-            { date: '2024-01-28', action: 'Started Trial', plan: 'Trial', amount: '$0.00', status: 'Active' },
-        ],
-        9: [ // Tom Wilson
-            { date: '2024-02-01', action: 'Subscribed', plan: 'Pro Plan', amount: '$29.99', status: 'Success' },
-        ],
-        10: [ // Anna Martinez
-            { date: '2024-02-05', action: 'Subscribed', plan: 'Enterprise Plan', amount: '$99.99', status: 'Success' },
-            { date: '2024-01-20', action: 'Upgraded', plan: 'Pro → Enterprise Plan', amount: '$99.99', status: 'Success' },
-        ],
-        11: [ // Chris Anderson
-            { date: '2024-02-10', action: 'Subscribed', plan: 'Basic Plan', amount: '$9.99', status: 'Success' },
-        ],
-        12: [ // Jessica Lee
-            { date: '2024-02-15', action: 'Started Trial', plan: 'Trial', amount: '$0.00', status: 'Active' },
-        ],
-        13: [ // Mark Thompson
-            { date: '2024-02-20', action: 'Subscribed', plan: 'Enterprise Plan', amount: '$99.99', status: 'Success' },
-        ],
-        14: [ // Rachel White
-            { date: '2024-02-15', action: 'Cancelled', plan: 'Basic Plan', amount: '-', status: 'Cancelled' },
-            { date: '2024-01-30', action: 'Subscribed', plan: 'Basic Plan', amount: '$9.99', status: 'Success' },
-        ],
-        15: [ // Kevin Miller
-            { date: '2024-02-25', action: 'Subscribed', plan: 'Pro Plan', amount: '$29.99', status: 'Success' },
-        ],
-        16: [ // Nicole Davis
-            { date: '2024-03-01', action: 'Subscribed', plan: 'Basic Plan', amount: '$9.99', status: 'Success' },
-        ],
-        17: [ // Alex Rodriguez
-            { date: '2024-03-10', action: 'Started Trial', plan: 'Trial', amount: '$0.00', status: 'Active' },
-        ],
-        18: [ // Samantha Clark
-            { date: '2024-03-15', action: 'Subscribed', plan: 'Enterprise Plan', amount: '$99.99', status: 'Success' },
-        ],
-    };
-
     // Data chi tiết customer
-    const customerDetails: { [key: number]: { [key: string]: string | number } } = {
+    const customerDetails: { [key: number]: Customer } = {
         1: { // John Doe
             id: 1,
             name: 'John Doe',
@@ -574,40 +507,30 @@ export default function SubscriptionManagement() {
     };
 
     // Handle click View để hiển thị lịch sử
-    const handleViewHistory = (customerId: number, customerName: string) => {
-        setSelectedCustomerHistory({
-            id: customerId,
-            name: customerName,
-            history: subscriptionHistories[customerId] || []
-        });
-        setShowHistoryModal(true);
-    };
-
-    // Handle close modal
-    const handleCloseModal = () => {
-        setShowHistoryModal(false);
-        setSelectedCustomerHistory(null);
+    // Handle click view detail để hiển thị thông tin chi tiết customer
+    const handleViewDetail = (customerId: number) => {
+        setSelectedCustomer(customerDetails[customerId]);
+        setShowCustomerModal(true);
     };
 
     // Handle click customer name để hiển thị thông tin chi tiết
     const handleViewCustomer = (customerId: number) => {
         setSelectedCustomer(customerDetails[customerId]);
         setShowCustomerModal(true);
-        setActiveTab('information');
     };
 
     // Handle close customer modal
     const handleCloseCustomerModal = () => {
         setShowCustomerModal(false);
         setSelectedCustomer(null);
-        setActiveTab('information');
     };
 
     // Handle save customer information
-    const handleSaveCustomer = () => {
+    const handleSaveCustomer = (customer: Customer) => {
         // Logic để save customer info sẽ được implement sau
-        console.log('Saving customer:', selectedCustomer);
-        handleCloseCustomerModal();
+        console.log('Saving customer:', customer);
+        setShowCustomerModal(false);
+        setSelectedCustomer(null);
     };
 
     return (
@@ -679,7 +602,7 @@ export default function SubscriptionManagement() {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Next Billing</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">History</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Detail</th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -714,7 +637,7 @@ export default function SubscriptionManagement() {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{subscription.amount}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
-                                            onClick={() => handleViewHistory(subscription.id, subscription.customerName)}
+                                            onClick={() => handleViewDetail(subscription.id)}
                                             className="text-blue-600 hover:text-blue-900"
                                         >
                                             View
@@ -807,263 +730,13 @@ export default function SubscriptionManagement() {
                 )}
             </div>
 
-            {/* History Modal */}
-            {showHistoryModal && selectedCustomerHistory && (
-                <div
-                    className="fixed inset-0 flex items-center justify-center z-50"
-                    style={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                        backdropFilter: 'blur(8px)',
-                        WebkitBackdropFilter: 'blur(8px)'
-                    }}
-                >
-                    <div className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden mx-4 shadow-2xl">
-                        {/* Modal Header */}
-                        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                            <h3 className="text-lg font-medium text-gray-900">
-                                Subscription History - {selectedCustomerHistory.name}
-                            </h3>
-                            <button
-                                onClick={handleCloseModal}
-                                className="text-gray-400 hover:text-gray-600"
-                            >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        {/* Modal Body */}
-                        <div className="px-6 py-4 max-h-96 overflow-y-auto">
-                            {selectedCustomerHistory.history.length > 0 ? (
-                                <div className="space-y-4">
-                                    {selectedCustomerHistory.history.map((historyItem: { date: string, action: string, plan: string, amount: string, status: string }, index: number) => (
-                                        <div key={index} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
-                                            <div className={`w-3 h-3 rounded-full mt-1 ${historyItem.status === 'Success' ? 'bg-green-500' :
-                                                historyItem.status === 'Active' ? 'bg-blue-500' :
-                                                    historyItem.status === 'Cancelled' ? 'bg-red-500' : 'bg-gray-500'
-                                                }`}></div>
-                                            <div className="flex-1">
-                                                <div className="flex justify-between items-start">
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-900">{historyItem.action}</p>
-                                                        <p className="text-sm text-gray-600">{historyItem.plan}</p>
-                                                        <p className="text-xs text-gray-500">{historyItem.date}</p>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <p className="text-sm font-medium text-gray-900">{historyItem.amount}</p>
-                                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${historyItem.status === 'Success' ? 'bg-green-100 text-green-800' :
-                                                            historyItem.status === 'Active' ? 'bg-blue-100 text-blue-800' :
-                                                                historyItem.status === 'Cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
-                                                            }`}>
-                                                            {historyItem.status}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-center py-8">
-                                    <p className="text-gray-500">No subscription history found</p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Modal Footer */}
-                        <div className="px-6 py-4 border-t border-gray-200 flex justify-end">
-                            <button
-                                onClick={handleCloseModal}
-                                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             {/* Customer Detail Modal */}
-            {showCustomerModal && selectedCustomer && (
-                <div
-                    className="fixed inset-0 flex items-center justify-center z-50"
-                    style={{
-                        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                        backdropFilter: 'blur(8px)',
-                        WebkitBackdropFilter: 'blur(8px)'
-                    }}
-                >
-                    <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden mx-4 shadow-2xl">
-                        {/* Modal Header */}
-                        <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                            <h3 className="text-lg font-medium text-gray-900">
-                                Customer Details - {selectedCustomer.name}
-                            </h3>
-                            <button
-                                onClick={handleCloseCustomerModal}
-                                className="text-gray-400 hover:text-gray-600"
-                            >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        {/* Tab Navigation */}
-                        <div className="border-b border-gray-200">
-                            <nav className="flex space-x-8 px-6">
-                                <button
-                                    onClick={() => setActiveTab('information')}
-                                    className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'information'
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                        }`}
-                                >
-                                    Information
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('source')}
-                                    className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'source'
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                        }`}
-                                >
-                                    Source
-                                </button>
-                            </nav>
-                        </div>
-
-                        {/* Modal Body */}
-                        <div className="px-6 py-6 max-h-96 overflow-y-auto">
-                            {/* Information Tab */}
-                            {activeTab === 'information' && (
-                                <div className="space-y-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                                            <input
-                                                type="text"
-                                                defaultValue={selectedCustomer.name}
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                            <input
-                                                type="email"
-                                                defaultValue={selectedCustomer.email}
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                                            <input
-                                                type="tel"
-                                                defaultValue={selectedCustomer.phone}
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
-                                            <input
-                                                type="text"
-                                                defaultValue={selectedCustomer.company}
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                                            <input
-                                                type="text"
-                                                defaultValue={selectedCustomer.address}
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Join Date</label>
-                                            <input
-                                                type="date"
-                                                defaultValue={selectedCustomer.joinDate}
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Total Spent</label>
-                                            <input
-                                                type="text"
-                                                defaultValue={selectedCustomer.totalSpent}
-                                                readOnly
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 text-gray-600"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Source Tab */}
-                            {activeTab === 'source' && (
-                                <div className="space-y-6">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Source</label>
-                                            <select
-                                                defaultValue={selectedCustomer.source}
-                                                className="w-full border border-gray-300 rounded-md px-3 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white bg-no-repeat bg-right"
-                                                style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDEuNUw2IDYuNUwxMSAxLjUiIHN0cm9rZT0iIzZCNzI4MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K')", backgroundPosition: "right 10px center", backgroundSize: "12px 8px" }}
-                                            >
-                                                <option value="Google Ads">Google Ads</option>
-                                                <option value="Facebook Ads">Facebook Ads</option>
-                                                <option value="Social Media">Social Media</option>
-                                                <option value="Organic Search">Organic Search</option>
-                                                <option value="Email Marketing">Email Marketing</option>
-                                                <option value="Content Marketing">Content Marketing</option>
-                                                <option value="Referral">Referral</option>
-                                                <option value="Webinar">Webinar</option>
-                                                <option value="Direct">Direct</option>
-                                                <option value="Other">Other</option>
-                                            </select>
-                                        </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Referrer</label>
-                                            <input
-                                                type="text"
-                                                defaultValue={selectedCustomer.referrer}
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                            />
-                                        </div>
-                                        <div className="md:col-span-2">
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
-                                            <textarea
-                                                rows={4}
-                                                defaultValue={selectedCustomer.notes}
-                                                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                                placeholder="Add notes about this customer..."
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Modal Footer */}
-                        <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-3">
-                            <button
-                                onClick={handleCloseCustomerModal}
-                                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSaveCustomer}
-                                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                            >
-                                Save Changes
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <CustomerDetailsModal
+                isOpen={showCustomerModal}
+                onClose={handleCloseCustomerModal}
+                customer={selectedCustomer}
+                onSave={handleSaveCustomer}
+            />
         </div>
     );
 }
