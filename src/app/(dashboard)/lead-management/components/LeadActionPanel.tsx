@@ -102,8 +102,8 @@ export default function LeadActionPanel({ isOpen, onClose, lead }: LeadActionPan
             setIsVisible(true);
             setTimeout(() => setIsAnimating(true), 50);
         } else {
-            setIsAnimating(false);
-            setTimeout(() => setIsVisible(false), 350);
+            setTimeout(() => setIsAnimating(false), 100);
+            setTimeout(() => setIsVisible(false), 550);
         }
     }, [isOpen]);
 
@@ -142,13 +142,13 @@ export default function LeadActionPanel({ isOpen, onClose, lead }: LeadActionPan
         <div className="fixed inset-0 z-50 overflow-hidden">
             {/* Invisible Backdrop for click-to-close */}
             <div
-                className={`absolute inset-0 transition-opacity duration-300 ease-in-out ${isAnimating ? 'opacity-100' : 'opacity-0'
+                className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${isAnimating ? 'opacity-100' : 'opacity-0'
                     }`}
                 onClick={onClose}
             ></div>
 
             {/* Panel */}
-            <div className={`absolute right-0 top-0 h-full w-96 bg-white/90 backdrop-blur-md shadow-2xl border-l border-gray-200/50 flex flex-col transform transition-all duration-300 ease-in-out ${isAnimating ? 'translate-x-0' : 'translate-x-full'
+            <div className={`absolute right-0 top-0 h-full w-96 bg-white/90 backdrop-blur-md shadow-2xl border-l border-gray-200/50 flex flex-col transform transition-all duration-500 ease-in-out ${isAnimating ? 'translate-x-0' : 'translate-x-full'
                 }`}>
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-gray-200/50 bg-white/80 backdrop-blur-sm">
