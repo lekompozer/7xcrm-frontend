@@ -13,12 +13,18 @@ import {
     BanknotesIcon,
     Bars3Icon,
     XMarkIcon,
-    UsersIcon
+    UsersIcon,
+    UserPlusIcon
 } from '@heroicons/react/24/outline'; const menuItems = [
     {
         name: 'Home',
         href: '/home',
         icon: HomeIcon,
+    },
+    {
+        name: 'Lead Management',
+        href: '/lead-management',
+        icon: UserPlusIcon,
     },
     {
         name: 'Subscription Management',
