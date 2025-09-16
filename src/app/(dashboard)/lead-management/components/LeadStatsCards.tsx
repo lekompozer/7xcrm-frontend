@@ -33,8 +33,21 @@ export default function LeadStatsCards({
     const checkScrollPosition = () => {
         if (scrollContainerRef.current) {
             const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-            setCanScrollLeft(scrollLeft > 0);
-            setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+            const canLeft = scrollLeft > 0;
+            const canRight = scrollLeft < scrollWidth - clientWidth - 1;
+
+            // Debug logging
+            console.log('Scroll Check:', {
+                scrollLeft,
+                scrollWidth,
+                clientWidth,
+                canLeft,
+                canRight,
+                difference: scrollWidth - clientWidth
+            });
+
+            setCanScrollLeft(canLeft);
+            setCanScrollRight(canRight);
         }
     };
 
@@ -54,12 +67,24 @@ export default function LeadStatsCards({
 
     // Check scroll position on mount and when stats change
     useEffect(() => {
-        checkScrollPosition();
+        // Use setTimeout to ensure DOM is fully rendered
+        const timer = setTimeout(() => {
+            checkScrollPosition();
+        }, 100);
+
         const container = scrollContainerRef.current;
         if (container) {
             container.addEventListener('scroll', checkScrollPosition);
-            return () => container.removeEventListener('scroll', checkScrollPosition);
+            // Also trigger on resize
+            window.addEventListener('resize', checkScrollPosition);
+            return () => {
+                container.removeEventListener('scroll', checkScrollPosition);
+                window.removeEventListener('resize', checkScrollPosition);
+                clearTimeout(timer);
+            };
         }
+
+        return () => clearTimeout(timer);
     }, [stats]);
 
     const calculateRatio = (current: number, previous: number) => {

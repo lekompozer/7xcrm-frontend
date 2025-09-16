@@ -1,321 +1,515 @@
-import { useState } from 'react';
+'use client';
+
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { Lead } from '@/types/lead';
+import CustomizeColumnsPanel from './CustomizeColumnsPanel';
 import {
-    ChevronUpDownIcon,
     ChevronUpIcon,
     ChevronDownIcon,
-    EyeIcon,
-    PhoneIcon,
-    EnvelopeIcon,
-    CalendarIcon
+    DocumentMagnifyingGlassIcon,
+    EllipsisVerticalIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon
 } from '@heroicons/react/24/outline';
-import { Lead } from '@/types/lead';
+import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
+
+interface Column {
+    id: string;
+    name: string;
+    width: number;
+    visible: boolean;
+    sticky: 'left' | 'right' | 'none';
+    draggable: boolean;
+}
 
 interface LeadTableProps {
     leads: Lead[];
     onViewLead: (lead: Lead) => void;
     onScheduleAppointment: (lead: Lead) => void;
+    isCustomizePanelOpen?: boolean;
+    onCustomizePanelClose?: () => void;
 }
 
-type SortField = 'name' | 'stage' | 'value' | 'lastInteraction' | 'dateAdded';
-type SortDirection = 'asc' | 'desc';
+// Function to get stage color
+const getStageColor = (stage: string) => {
+    switch (stage) {
+        case 'New':
+            return 'bg-[#1E93AB] text-white';
+        case 'Contacted':
+            return 'bg-yellow-100 text-yellow-800';
+        case 'Consulted':
+            return 'bg-orange-100 text-orange-800';
+        case 'Quote':
+            return 'bg-purple-100 text-purple-800';
+        case 'Closed':
+            return 'bg-green-100 text-green-800';
+        case 'Lost':
+            return 'bg-red-100 text-red-800';
+        default:
+            return 'bg-gray-100 text-gray-800';
+    }
+};
 
-export default function LeadTable({ leads, onViewLead, onScheduleAppointment }: LeadTableProps) {
-    const [sortField, setSortField] = useState<SortField>('dateAdded');
-    const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
+// Function to get status color
+const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+        case 'interest':
+            return 'bg-pink-100 text-pink-800';
+        case 'hot interest':
+            return 'bg-red-100 text-red-800';
+        case 'close':
+            return 'bg-green-100 text-green-800';
+        default:
+            return 'bg-gray-100 text-gray-800';
+    }
+};
 
-    const handleSort = (field: SortField) => {
-        if (sortField === field) {
-            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-        } else {
-            setSortField(field);
-            setSortDirection('asc');
-        }
-    };
+// Function to generate avatar
+const generateAvatar = (contactName: string, leadId?: string) => {
+    // Some leads will have real profile images
+    const hasRealAvatar = leadId && ['#ED18CB23', '#ED18CB26', '#ED18CB29'].includes(leadId);
 
-    const getSortIcon = (field: SortField) => {
-        if (sortField !== field) {
-            return <ChevronUpDownIcon className="h-4 w-4" />;
-        }
-        return sortDirection === 'asc' ?
-            <ChevronUpIcon className="h-4 w-4" /> :
-            <ChevronDownIcon className="h-4 w-4" />;
-    };
+    if (hasRealAvatar) {
+        return (
+            <img
+                src={`https://images.unsplash.com/photo-${leadId === '#ED18CB23' ? '1472099645785-5658abf4ff4e' : leadId === '#ED18CB26' ? '1494790108755-2616c4901d52' : '1507003211169-0a1dd7228f2d'}?w=40&h=40&fit=crop&crop=face`}
+                alt={contactName}
+                className="w-8 h-8 min-w-[2rem] min-h-[2rem] rounded-full object-cover flex-shrink-0"
+            />
+        );
+    }
 
-    const sortedLeads = [...leads].sort((a, b) => {
-        let aValue: string | number | undefined = a[sortField];
-        let bValue: string | number | undefined = b[sortField];
-
-        // Handle undefined values
-        if (aValue === undefined) aValue = '';
-        if (bValue === undefined) bValue = '';
-
-        // Handle date sorting
-        if (sortField === 'lastInteraction' || sortField === 'dateAdded') {
-            aValue = new Date(aValue as string).getTime();
-            bValue = new Date(bValue as string).getTime();
-        }
-
-        // Handle string sorting
-        if (typeof aValue === 'string' && typeof bValue === 'string') {
-            aValue = aValue.toLowerCase();
-            bValue = bValue.toLowerCase();
-        }
-
-        if (sortDirection === 'asc') {
-            return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-        } else {
-            return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-        }
-    });
-
-    const totalPages = Math.ceil(sortedLeads.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedLeads = sortedLeads.slice(startIndex, startIndex + itemsPerPage);
-
-    const getStageColor = (stage: string) => {
-        switch (stage) {
-            case 'New': return 'bg-blue-100 text-blue-800';
-            case 'Contacted': return 'bg-yellow-100 text-yellow-800';
-            case 'Consulted': return 'bg-purple-100 text-purple-800';
-            case 'Quote': return 'bg-orange-100 text-orange-800';
-            case 'Closed': return 'bg-green-100 text-green-800';
-            case 'Lost': return 'bg-red-100 text-red-800';
-            default: return 'bg-gray-100 text-gray-800';
-        }
-    };
-
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(amount);
-    };
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        });
-    };
-
-    const getTimeSince = (dateString: string) => {
-        const now = new Date();
-        const date = new Date(dateString);
-        const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-
-        if (diffInDays === 0) return 'Today';
-        if (diffInDays === 1) return 'Yesterday';
-        if (diffInDays < 7) return `${diffInDays} days ago`;
-        if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
-        return `${Math.floor(diffInDays / 30)} months ago`;
-    };
+    // Generate initials for avatar
+    const initials = contactName
+        .split(' ')
+        .map(name => name.charAt(0).toUpperCase())
+        .join('')
+        .slice(0, 2);
 
     return (
-        <div className="bg-white rounded-lg shadow">
-            {/* Table */}
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                        <tr>
-                            <th
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                onClick={() => handleSort('name')}
-                            >
-                                <div className="flex items-center space-x-1">
-                                    <span>Lead</span>
-                                    {getSortIcon('name')}
-                                </div>
-                            </th>
-                            <th
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                onClick={() => handleSort('stage')}
-                            >
-                                <div className="flex items-center space-x-1">
-                                    <span>Stage</span>
-                                    {getSortIcon('stage')}
-                                </div>
-                            </th>
-                            <th
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                onClick={() => handleSort('value')}
-                            >
-                                <div className="flex items-center space-x-1">
-                                    <span>Value</span>
-                                    {getSortIcon('value')}
-                                </div>
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Owner
-                            </th>
-                            <th
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                onClick={() => handleSort('lastInteraction')}
-                            >
-                                <div className="flex items-center space-x-1">
-                                    <span>Last Contact</span>
-                                    {getSortIcon('lastInteraction')}
-                                </div>
-                            </th>
-                            <th
-                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-                                onClick={() => handleSort('dateAdded')}
-                            >
-                                <div className="flex items-center space-x-1">
-                                    <span>Added</span>
-                                    {getSortIcon('dateAdded')}
-                                </div>
-                            </th>
-                            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {paginatedLeads.map((lead) => (
-                            <tr key={lead.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="flex items-center">
-                                        <div className="flex-shrink-0 h-10 w-10">
-                                            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center text-white font-medium">
-                                                {lead.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                                            </div>
-                                        </div>
-                                        <div className="ml-4">
-                                            <div
-                                                className="text-sm font-medium text-gray-900 cursor-pointer hover:text-blue-600"
-                                                onClick={() => onViewLead(lead)}
-                                            >
-                                                {lead.name}
-                                            </div>
-                                            <div className="text-sm text-gray-500">{lead.email}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStageColor(lead.stage)}`}>
-                                        {lead.stage}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {lead.value ? formatCurrency(lead.value) : '-'}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {lead.owner}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {lead.lastInteraction ? (
-                                        <>
-                                            <div>{formatDate(lead.lastInteraction)}</div>
-                                            <div className="text-xs text-gray-400">{getTimeSince(lead.lastInteraction)}</div>
-                                        </>
-                                    ) : (
-                                        <div className="text-gray-400">No contact</div>
-                                    )}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {formatDate(lead.dateAdded)}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <div className="flex justify-end space-x-2">
-                                        <button
-                                            onClick={() => onViewLead(lead)}
-                                            className="text-blue-600 hover:text-blue-900 p-1 hover:bg-blue-50 rounded"
-                                            title="View Details"
-                                        >
-                                            <EyeIcon className="h-4 w-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => window.open(`tel:${lead.phone}`, '_self')}
-                                            className="text-green-600 hover:text-green-900 p-1 hover:bg-green-50 rounded"
-                                            title="Call Lead"
-                                        >
-                                            <PhoneIcon className="h-4 w-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => window.open(`mailto:${lead.email}`, '_self')}
-                                            className="text-purple-600 hover:text-purple-900 p-1 hover:bg-purple-50 rounded"
-                                            title="Send Email"
-                                        >
-                                            <EnvelopeIcon className="h-4 w-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => onScheduleAppointment(lead)}
-                                            className="text-orange-600 hover:text-orange-900 p-1 hover:bg-orange-50 rounded"
-                                            title="Schedule Appointment"
-                                        >
-                                            <CalendarIcon className="h-4 w-4" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+        <div className="w-8 h-8 min-w-[2rem] min-h-[2rem] rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-medium flex-shrink-0">
+            {initials}
+        </div>
+    );
+};
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-                <div className="px-6 py-3 flex items-center justify-between border-t border-gray-200">
-                    <div className="flex-1 flex justify-between items-center">
-                        <div className="text-sm text-gray-700">
-                            Showing <span className="font-medium">{startIndex + 1}</span> to{' '}
-                            <span className="font-medium">{Math.min(startIndex + itemsPerPage, leads.length)}</span> of{' '}
-                            <span className="font-medium">{leads.length}</span> results
-                        </div>
-                        <div className="flex space-x-2">
+export default function LeadTable({
+    leads,
+    onViewLead,
+    onScheduleAppointment,
+    isCustomizePanelOpen = false,
+    onCustomizePanelClose = () => { }
+}: LeadTableProps) {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+    const [showRightShadow, setShowRightShadow] = useState(true);
+    const dropdownRef = useRef<HTMLButtonElement>(null);
+    const tableContainerRef = useRef<HTMLDivElement>(null);
+    const [columns, setColumns] = useState<Column[]>([
+        { id: 'selection', name: 'Selection', width: 50, visible: true, sticky: 'left', draggable: false },
+        { id: 'lead', name: 'Lead', width: 250, visible: true, sticky: 'left', draggable: false },
+        { id: 'leadId', name: 'Lead ID', width: 108, visible: true, sticky: 'none', draggable: true },
+        { id: 'stage', name: 'Stage', width: 100, visible: true, sticky: 'none', draggable: true },
+        { id: 'source', name: 'Source', width: 140, visible: true, sticky: 'none', draggable: true },
+        { id: 'status', name: 'Status', width: 100, visible: true, sticky: 'none', draggable: true },
+        { id: 'cellphone', name: 'Cellphone', width: 130, visible: true, sticky: 'none', draggable: true },
+        { id: 'state', name: 'State', width: 120, visible: true, sticky: 'none', draggable: true },
+        { id: 'leadType', name: 'Lead Type', width: 100, visible: true, sticky: 'none', draggable: true },
+        { id: 'contactName', name: 'Contact Name', width: 200, visible: false, sticky: 'none', draggable: true },
+        { id: 'workPhone', name: 'Work Phone', width: 130, visible: false, sticky: 'none', draggable: true },
+        { id: 'agent', name: 'Agent', width: 150, visible: false, sticky: 'none', draggable: true },
+        { id: 'owner', name: 'Owner', width: 150, visible: false, sticky: 'none', draggable: true },
+        { id: 'cellphone2', name: 'Cellphone 2', width: 130, visible: false, sticky: 'none', draggable: true },
+        { id: 'homePhone', name: 'Home Phone', width: 130, visible: false, sticky: 'none', draggable: true },
+        { id: 'email', name: 'Email', width: 200, visible: false, sticky: 'none', draggable: true },
+        { id: 'gender', name: 'Gender', width: 100, visible: false, sticky: 'none', draggable: true },
+        { id: 'dateOfBirth', name: 'Date of Birth', width: 120, visible: false, sticky: 'none', draggable: true },
+        { id: 'policyStatus', name: 'Policy Status', width: 120, visible: false, sticky: 'none', draggable: true },
+        { id: 'leadTag', name: 'Lead Tag', width: 120, visible: false, sticky: 'none', draggable: true },
+        { id: 'city', name: 'City', width: 120, visible: false, sticky: 'none', draggable: true },
+        { id: 'usaCitizen', name: 'USA Citizen', width: 120, visible: false, sticky: 'none', draggable: true },
+        { id: 'greenCard', name: 'Green Card', width: 120, visible: false, sticky: 'none', draggable: true },
+        { id: 'driverLicense', name: 'Driver License', width: 130, visible: false, sticky: 'none', draggable: true },
+        { id: 'actions', name: 'Actions', width: 120, visible: true, sticky: 'right', draggable: false },
+    ]);
+
+    const itemsPerPage = 10;
+    const visibleColumns = useMemo(() => columns.filter(col => col.visible), [columns]);
+    const tableWidth = useMemo(() => visibleColumns.reduce((total, col) => total + col.width, 0), [visibleColumns]);
+    const totalPages = Math.ceil(leads.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedLeads = leads.slice(startIndex, startIndex + itemsPerPage);
+
+    // Calculate left positions for sticky columns
+    const getLeftPosition = (columnId: string) => {
+        const columnIndex = visibleColumns.findIndex(col => col.id === columnId);
+        if (columnIndex === -1) return 0;
+
+        let leftPosition = 0;
+        for (let i = 0; i < columnIndex; i++) {
+            const col = visibleColumns[i];
+            if (col.sticky === 'left') {
+                leftPosition += col.width;
+            } else {
+                break;
+            }
+        }
+        return leftPosition;
+    };
+
+    // Calculate right positions for sticky columns
+    const getRightPosition = (columnId: string) => {
+        const columnIndex = visibleColumns.findIndex(col => col.id === columnId);
+        if (columnIndex === -1) return 0;
+
+        let rightPosition = 0;
+        for (let i = visibleColumns.length - 1; i > columnIndex; i--) {
+            const col = visibleColumns[i];
+            if (col.sticky === 'right') {
+                rightPosition += col.width;
+            } else {
+                break;
+            }
+        }
+        return rightPosition;
+    };
+
+    const handleSelectLead = (leadId: string) => {
+        const newSelected = new Set(selectedLeads);
+        if (newSelected.has(leadId)) {
+            newSelected.delete(leadId);
+        } else {
+            newSelected.add(leadId);
+        }
+        setSelectedLeads(newSelected);
+    };
+
+    const handleSelectAll = () => {
+        if (selectedLeads.size === paginatedLeads.length && paginatedLeads.length > 0) {
+            // If all current page leads are selected, deselect all
+            setSelectedLeads(new Set());
+        } else {
+            // Select all leads in current page
+            setSelectedLeads(new Set(paginatedLeads.map(lead => lead.id)));
+        }
+    };
+
+    const isAllSelected = paginatedLeads.length > 0 && selectedLeads.size === paginatedLeads.length;
+    const isIndeterminate = selectedLeads.size > 0 && selectedLeads.size < paginatedLeads.length;
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = () => {
+            setOpenDropdown(null);
+        };
+
+        if (openDropdown) {
+            document.addEventListener('click', handleClickOutside);
+            return () => document.removeEventListener('click', handleClickOutside);
+        }
+    }, [openDropdown]);
+
+    // Handle scroll to show/hide right shadow
+    useEffect(() => {
+        const handleScroll = (e: Event) => {
+            const container = e.target as HTMLElement;
+            const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+            setShowRightShadow(!isAtEnd);
+        };
+
+        const container = tableContainerRef.current;
+        if (container) {
+            container.addEventListener('scroll', handleScroll);
+            // Check initial state
+            const isAtEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+            setShowRightShadow(!isAtEnd);
+
+            return () => container.removeEventListener('scroll', handleScroll);
+        }
+    }, []);
+
+    const renderCellContent = (column: Column, lead: Lead) => {
+        switch (column.id) {
+            case 'selection':
+                return (
+                    <div className="flex justify-center">
+                        <input
+                            type="checkbox"
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            checked={selectedLeads.has(lead.id)}
+                            onChange={() => handleSelectLead(lead.id)}
+                        />
+                    </div>
+                );
+            case 'lead':
+                return (
+                    <div className="flex items-center space-x-3">
+                        {generateAvatar(lead.name, lead.id)}
+                        <div className="min-w-0 flex-1">
                             <button
-                                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                                disabled={currentPage === 1}
-                                className="px-3 py-1 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={() => onViewLead(lead)}
+                                className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer hover:underline text-left truncate block w-full"
                             >
-                                Previous
+                                {lead.name}
                             </button>
-
-                            {/* Page Numbers */}
-                            <div className="flex space-x-1">
-                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                                    let pageNumber;
-                                    if (totalPages <= 5) {
-                                        pageNumber = i + 1;
-                                    } else {
-                                        if (currentPage <= 3) {
-                                            pageNumber = i + 1;
-                                        } else if (currentPage >= totalPages - 2) {
-                                            pageNumber = totalPages - 4 + i;
-                                        } else {
-                                            pageNumber = currentPage - 2 + i;
-                                        }
-                                    }
-
-                                    return (
-                                        <button
-                                            key={pageNumber}
-                                            onClick={() => setCurrentPage(pageNumber)}
-                                            className={`px-3 py-1 text-sm border rounded-md ${currentPage === pageNumber
-                                                    ? 'bg-blue-600 text-white border-blue-600'
-                                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                                                }`}
-                                        >
-                                            {pageNumber}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-
+                            <div className="text-sm text-gray-500 truncate">{lead.email}</div>
+                        </div>
+                    </div>
+                );
+            case 'leadId':
+                return lead.id;
+            case 'stage':
+                return (
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStageColor(lead.stage)}`}>
+                        {lead.stage}
+                    </span>
+                );
+            case 'source':
+                return lead.source;
+            case 'status':
+                return (
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(lead.status)}`}>
+                        {lead.status}
+                    </span>
+                );
+            case 'cellphone':
+                return lead.phone;
+            case 'state':
+                return lead.state || '-';
+            case 'leadType':
+                return lead.leadType;
+            case 'contactName':
+                return lead.name;
+            case 'workPhone':
+                return lead.workPhone || '-';
+            case 'agent':
+                return lead.agent || '-';
+            case 'owner':
+                return lead.owner;
+            case 'actions':
+                return (
+                    <div className="flex items-center justify-center space-x-2 relative">
+                        <button
+                            onClick={() => onViewLead(lead)}
+                            className="p-1 text-blue-600 hover:text-blue-700 rounded-full hover:bg-blue-50 transition-colors"
+                            title="View Details"
+                        >
+                            <HiOutlineClipboardDocumentList className="h-4 w-4" />
+                        </button>
+                        <div className="relative">
                             <button
-                                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                                disabled={currentPage === totalPages}
-                                className="px-3 py-1 text-sm border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                ref={dropdownRef}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    setDropdownPosition({
+                                        top: rect.bottom + window.scrollY + 4,
+                                        left: rect.right - 128 + window.scrollX
+                                    });
+                                    setOpenDropdown(openDropdown === lead.id ? null : lead.id);
+                                }}
+                                className="p-1 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-50 transition-colors"
+                                title="More Actions"
+                                data-dropdown-trigger={lead.id}
                             >
-                                Next
+                                <EllipsisVerticalIcon className="h-4 w-4" />
                             </button>
                         </div>
                     </div>
+                );
+            default:
+                return '-';
+        }
+    };
+
+    return (
+        <div className="bg-white shadow-sm rounded-lg relative">
+            <div className="relative">
+                <div className="overflow-x-auto relative" ref={tableContainerRef}>
+                    {/* Shadow indicator for scrollable content on the right */}
+                    {showRightShadow && (
+                        <div className="absolute top-0 right-30 bottom-0 w-8 bg-gradient-to-l from-gray-200 to-transparent opacity-50 pointer-events-none z-20"></div>
+                    )}
+                    <table className="w-full divide-y divide-gray-200 table-fixed" style={{ minWidth: `${tableWidth}px` }}>
+                        <thead className="bg-gray-50">
+                            <tr>
+                                {visibleColumns.map((column) => {
+                                    const stickyStyle = column.sticky === 'left'
+                                        ? { left: `${getLeftPosition(column.id)}px` }
+                                        : column.sticky === 'right'
+                                            ? { right: '0px' }
+                                            : {};
+
+                                    return (
+                                        <th
+                                            key={column.id}
+                                            className={`px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider text-left ${
+                                                // Border phải cho sticky left columns
+                                                column.sticky === 'left'
+                                                    ? 'border-r border-gray-200'
+                                                    : ''
+                                                } ${
+                                                // Border trái cho sticky right columns (actions)
+                                                column.sticky === 'right'
+                                                    ? 'border-l border-gray-200'
+                                                    : ''
+                                                } ${column.sticky === 'left'
+                                                    ? 'sticky z-10 bg-gray-50'
+                                                    : column.sticky === 'right'
+                                                        ? 'sticky z-20 bg-gray-50'
+                                                        : ''
+                                                }`}
+                                            style={{
+                                                width: `${column.width}px`,
+                                                minWidth: `${column.width}px`,
+                                                ...stickyStyle
+                                            }}
+                                        >
+                                            {column.id === 'selection' ? (
+                                                <div className="flex justify-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                                        checked={isAllSelected}
+                                                        ref={(el) => {
+                                                            if (el) el.indeterminate = isIndeterminate;
+                                                        }}
+                                                        onChange={handleSelectAll}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                column.name
+                                            )}
+                                        </th>
+                                    );
+                                })}
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-100">
+                            {paginatedLeads.map((lead, index) => (
+                                <tr
+                                    key={lead.id}
+                                    className={`group transition-all duration-200 border-l-4 border-l-transparent hover:border-l-blue-500 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                                        }`}
+                                >
+                                    {visibleColumns.map((column) => {
+                                        const stickyStyle = column.sticky === 'left'
+                                            ? { left: `${getLeftPosition(column.id)}px` }
+                                            : column.sticky === 'right'
+                                                ? { right: '0px' }
+                                                : {};
+
+                                        return (
+                                            <td
+                                                key={column.id}
+                                                className={`px-6 py-4 whitespace-nowrap text-sm text-gray-900 ${
+                                                    // Border phải cho sticky left columns
+                                                    column.sticky === 'left'
+                                                        ? 'border-r border-gray-200'
+                                                        : ''
+                                                    } ${
+                                                    // Border trái cho sticky right columns (actions)
+                                                    column.sticky === 'right'
+                                                        ? 'border-l border-gray-200'
+                                                        : ''
+                                                    } ${column.sticky !== 'none'
+                                                        ? `sticky z-10 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                                                        }`
+                                                        : ''
+                                                    }`}
+                                                style={{
+                                                    width: `${column.width}px`,
+                                                    minWidth: `${column.width}px`,
+                                                    ...stickyStyle
+                                                }}
+                                            >
+                                                {renderCellContent(column, lead)}
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                <div className="text-sm text-gray-700">
+                    Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, leads.length)} of {leads.length} leads
+                </div>
+                <div className="flex items-center space-x-2">
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <ChevronLeftIcon className="h-5 w-5" />
+                    </button>
+                    <div className="flex items-center space-x-1">
+                        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                            const page = i + 1;
+                            return (
+                                <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    className={`px-3 py-1 text-sm rounded-md ${page === currentPage
+                                        ? 'bg-blue-600 text-white'
+                                        : 'text-gray-700 hover:bg-gray-100'
+                                        }`}
+                                >
+                                    {page}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    <button
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        className="p-2 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <ChevronRightIcon className="h-5 w-5" />
+                    </button>
+                </div>
+            </div>
+
+            <CustomizeColumnsPanel
+                isOpen={isCustomizePanelOpen}
+                onClose={onCustomizePanelClose}
+                columns={columns}
+                onColumnsChange={setColumns}
+            />
+
+            {/* Dropdown Menu - Rendered outside table to avoid overflow issues */}
+            {openDropdown && (
+                <div
+                    className="fixed w-32 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+                    style={{
+                        top: `${dropdownPosition.top}px`,
+                        left: `${dropdownPosition.left}px`
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <button
+                        onClick={() => {
+                            console.log('Edit lead:', openDropdown);
+                            setOpenDropdown(null);
+                        }}
+                        className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 rounded-t-md"
+                    >
+                        <span>Edit</span>
+                    </button>
+                    <button
+                        onClick={() => {
+                            console.log('Hide lead:', openDropdown);
+                            setOpenDropdown(null);
+                        }}
+                        className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 rounded-b-md"
+                    >
+                        <span>Hide</span>
+                    </button>
                 </div>
             )}
         </div>

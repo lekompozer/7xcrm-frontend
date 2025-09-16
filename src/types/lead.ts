@@ -3,13 +3,16 @@ export interface Lead {
     name: string;
     email: string;
     phone: string;
+    workPhone?: string;
     company?: string;
     position?: string;
     leadType: 'Individual' | 'Business' | 'Partner';
     stage: 'New' | 'Contacted' | 'Consulted' | 'Quote' | 'Closed' | 'Lost';
-    status: 'Active' | 'Inactive' | 'Converted';
+    status: 'Cold' | 'Unidentified' | 'Follow Later' | 'Interest' | 'Hot Interest' | 'Close' | 'Stop' | 'Re-buy' | 'Change Mind' | 'Denied';
     source: 'Website' | 'Social Media' | 'Referral' | 'Cold Call' | 'Email Campaign' | 'Event';
     owner: string;
+    agent?: string;
+    state?: string;
     dateAdded: string;
     birthday?: string;
     lastInteraction?: string;

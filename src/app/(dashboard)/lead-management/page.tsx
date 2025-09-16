@@ -6,14 +6,29 @@ import {
     ArrowDownTrayIcon,
     FunnelIcon,
     CalendarIcon,
-    MagnifyingGlassIcon
+    MagnifyingGlassIcon,
+    Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 import LeadStatsCards from './components/LeadStatsCards';
 import LeadSearchBar from './components/LeadSearchBar';
 import LeadFilterPanel from './components/LeadFilterPanel';
 import LeadTable from './components/LeadTable';
 import { sampleLeads } from './data/sampleLeads';
-import { Lead, LeadFilters, LeadStats } from '@/types/lead';
+import { Lead, LeadStats } from '@/types/lead';
+
+interface FilterOption {
+    value: string;
+    label: string;
+    selected: boolean;
+}
+
+interface LeadFilters {
+    owners: FilterOption[];
+    leadTypes: FilterOption[];
+    stages: FilterOption[];
+    statuses: FilterOption[];
+    sources: FilterOption[];
+}
 
 // Sample stats data for the cards
 const statsData: LeadStats[] = [
@@ -68,11 +83,53 @@ const statsData: LeadStats[] = [
 ];
 
 export default function LeadManagementPage() {
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
+    const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const [isFilterPanelOpen, setIsFilterPanelOpen] = useState(false);
-    const [filters, setFilters] = useState<LeadFilters>({});
-    const [selectedStat, setSelectedStat] = useState<string | null>('total');
-    const [timePeriod, setTimePeriod] = useState('this month');
+    const [selectedStat, setSelectedStat] = useState<string>('total');
+    const [timePeriod, setTimePeriod] = useState<string>('this-month');
+    const [filters, setFilters] = useState<LeadFilters>({
+        owners: [
+            { value: 'John Smith', label: 'John Smith', selected: false },
+            { value: 'Sarah Johnson', label: 'Sarah Johnson', selected: false },
+            { value: 'Mike Chen', label: 'Mike Chen', selected: false },
+            { value: 'Emily Davis', label: 'Emily Davis', selected: false },
+        ],
+        leadTypes: [
+            { value: 'Customer', label: 'Customer', selected: false },
+            { value: 'Prospect', label: 'Prospect', selected: false },
+            { value: 'Hidden', label: 'Hidden', selected: false },
+        ],
+        stages: [
+            { value: 'New', label: 'New', selected: false },
+            { value: 'Contacted', label: 'Contacted', selected: false },
+            { value: 'Consulted', label: 'Consulted', selected: false },
+            { value: 'Quote', label: 'Quote', selected: false },
+            { value: 'Closed', label: 'Closed', selected: false },
+            { value: 'Lost', label: 'Lost', selected: false },
+        ],
+        statuses: [
+            { value: 'Cold', label: 'Cold 10%', selected: false },
+            { value: 'Unidentified', label: 'Unidentified 25%', selected: false },
+            { value: 'Follow Later', label: 'Follow Later 50%', selected: false },
+            { value: 'Interest', label: 'Interest 75%', selected: false },
+            { value: 'Hot Interest', label: 'Hot Interest 85%', selected: false },
+            { value: 'Close', label: 'Close 99.99%', selected: false },
+            { value: 'Stop', label: 'Stop 0%', selected: false },
+            { value: 'Re-buy', label: 'Re-buy', selected: false },
+            { value: 'Change Mind', label: 'Change Mind', selected: false },
+            { value: 'Denied', label: 'Denied', selected: false },
+        ],
+        sources: [
+            { value: 'Website', label: 'Website', selected: false },
+            { value: 'Social Media', label: 'Social Media', selected: false },
+            { value: 'Referral', label: 'Referral', selected: false },
+            { value: 'Cold Call', label: 'Cold Call', selected: false },
+            { value: 'Email Campaign', label: 'Email Campaign', selected: false },
+            { value: 'Event', label: 'Event', selected: false },
+        ],
+    });
 
     // Filter leads based on search term and filters
     const filteredLeads = useMemo(() => {
@@ -87,45 +144,30 @@ export default function LeadManagementPage() {
             );
         }
 
-        // Apply quick filters - remove this section since we don't have quick filters anymore
-
-        // Apply advanced filters
-        if (filters.owner) {
-            filtered = filtered.filter(lead => lead.owner === filters.owner);
-        }
-        if (filters.leadType) {
-            filtered = filtered.filter(lead => lead.leadType === filters.leadType);
-        }
-        if (filters.stage) {
-            filtered = filtered.filter(lead => lead.stage === filters.stage);
-        }
-        if (filters.status) {
-            filtered = filtered.filter(lead => lead.status === filters.status);
-        }
-        if (filters.source) {
-            filtered = filtered.filter(lead => lead.source === filters.source);
+        // Apply checkbox filters
+        const selectedOwners = filters.owners.filter(owner => owner.selected).map(owner => owner.value);
+        if (selectedOwners.length > 0) {
+            filtered = filtered.filter(lead => selectedOwners.includes(lead.owner));
         }
 
-        // Apply date filters
-        if (filters.dateAddedFrom || filters.dateAddedTo) {
-            filtered = filtered.filter(lead => {
-                const leadDate = new Date(lead.dateAdded);
-                const fromDate = filters.dateAddedFrom ? new Date(filters.dateAddedFrom) : null;
-                const toDate = filters.dateAddedTo ? new Date(filters.dateAddedTo) : null;
-
-                return (!fromDate || leadDate >= fromDate) && (!toDate || leadDate <= toDate);
-            });
+        const selectedLeadTypes = filters.leadTypes.filter(type => type.selected).map(type => type.value);
+        if (selectedLeadTypes.length > 0) {
+            filtered = filtered.filter(lead => selectedLeadTypes.includes(lead.leadType));
         }
 
-        if (filters.interactionFrom || filters.interactionTo) {
-            filtered = filtered.filter(lead => {
-                if (!lead.lastInteraction) return false;
-                const interactionDate = new Date(lead.lastInteraction);
-                const fromDate = filters.interactionFrom ? new Date(filters.interactionFrom) : null;
-                const toDate = filters.interactionTo ? new Date(filters.interactionTo) : null;
+        const selectedStages = filters.stages.filter(stage => stage.selected).map(stage => stage.value);
+        if (selectedStages.length > 0) {
+            filtered = filtered.filter(lead => selectedStages.includes(lead.stage));
+        }
 
-                return (!fromDate || interactionDate >= fromDate) && (!toDate || interactionDate <= toDate);
-            });
+        const selectedStatuses = filters.statuses.filter(status => status.selected).map(status => status.value);
+        if (selectedStatuses.length > 0) {
+            filtered = filtered.filter(lead => selectedStatuses.includes(lead.status));
+        }
+
+        const selectedSources = filters.sources.filter(source => source.selected).map(source => source.value);
+        if (selectedSources.length > 0) {
+            filtered = filtered.filter(lead => selectedSources.includes(lead.source));
         }
 
         // Apply selected stat filter
@@ -153,14 +195,19 @@ export default function LeadManagementPage() {
     }, [searchTerm, filters, selectedStat]);
 
     const handleApplyFilters = useCallback(() => {
-        setIsFilterPanelOpen(false);
+        setIsFilterOpen(false);
     }, []);
 
     const handleClearFilters = useCallback(() => {
-        setFilters({});
-        // Keep selectedStat as 'total' instead of clearing it
+        setFilters({
+            owners: filters.owners.map(owner => ({ ...owner, selected: false })),
+            leadTypes: filters.leadTypes.map(type => ({ ...type, selected: false })),
+            stages: filters.stages.map(stage => ({ ...stage, selected: false })),
+            statuses: filters.statuses.map(status => ({ ...status, selected: false })),
+            sources: filters.sources.map(source => ({ ...source, selected: false })),
+        });
         setSelectedStat('total');
-    }, []);
+    }, [filters]);
 
     const handleViewLead = useCallback((lead: Lead) => {
         // TODO: Open lead details modal
@@ -219,7 +266,7 @@ export default function LeadManagementPage() {
             <LeadStatsCards
                 stats={statsData}
                 selectedStat={selectedStat}
-                onStatSelect={setSelectedStat}
+                onStatSelect={(statId) => setSelectedStat(statId || 'total')}
                 timePeriod={timePeriod}
                 onTimePeriodChange={setTimePeriod}
             />
@@ -228,7 +275,9 @@ export default function LeadManagementPage() {
             <LeadSearchBar
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
-                onFilterToggle={() => setIsFilterPanelOpen(true)}
+                onFilterToggle={() => setIsFilterOpen(true)}
+                filters={filters}
+                onFiltersChange={setFilters}
             />
 
             {/* Search and Results Summary */}
@@ -249,6 +298,15 @@ export default function LeadManagementPage() {
                         />
                     </div>
 
+                    {/* Customize Button */}
+                    <button
+                        onClick={() => setIsCustomizeOpen(true)}
+                        className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 transition-colors flex-shrink-0"
+                    >
+                        <Cog6ToothIcon className="h-4 w-4 mr-2" />
+                        Customize
+                    </button>
+
                     {(Object.keys(filters).length > 0 || (selectedStat && selectedStat !== 'total')) && (
                         <button
                             onClick={handleClearFilters}
@@ -267,19 +325,36 @@ export default function LeadManagementPage() {
                         </span>
                     )}
                 </div>
-            </div>            {/* Lead Table */}
+            </div>
+
+            {/* Lead Table */}
             <LeadTable
                 leads={filteredLeads}
                 onViewLead={handleViewLead}
                 onScheduleAppointment={handleScheduleAppointment}
+                isCustomizePanelOpen={isCustomizeOpen}
+                onCustomizePanelClose={() => setIsCustomizeOpen(false)}
             />
 
+            {/* Filter Panel - Temporarily disabled */}
             {/* Filter Panel */}
             <LeadFilterPanel
-                isOpen={isFilterPanelOpen}
-                onClose={() => setIsFilterPanelOpen(false)}
-                filters={filters}
-                onFiltersChange={setFilters}
+                isOpen={isFilterOpen}
+                onClose={() => setIsFilterOpen(false)}
+                filters={{
+                    status: '',
+                    stage: '',
+                    source: '',
+                    owner: '',
+                    leadType: '',
+                    dateAddedFrom: '',
+                    dateAddedTo: '',
+                    birthdayFrom: '',
+                    birthdayTo: '',
+                    interactionFrom: '',
+                    interactionTo: ''
+                }}
+                onFiltersChange={() => { }}
                 onApplyFilters={handleApplyFilters}
                 onClearFilters={handleClearFilters}
             />

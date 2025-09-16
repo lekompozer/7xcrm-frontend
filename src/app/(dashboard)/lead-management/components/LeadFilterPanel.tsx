@@ -1,6 +1,26 @@
 import { XMarkIcon, CalendarIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { LeadFilters } from '@/types/lead';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+
+interface FilterOption {
+    value: string;
+    label: string;
+    selected: boolean;
+}
+
+interface AdvancedLeadFilters {
+    owners: FilterOption[];
+    leadTypes: FilterOption[];
+    stages: FilterOption[];
+    statuses: FilterOption[];
+    sources: FilterOption[];
+    dateAddedFrom: string;
+    dateAddedTo: string;
+    birthdayFrom: string;
+    birthdayTo: string;
+    interactionFrom: string;
+    interactionTo: string;
+}
 
 interface LeadFilterPanelProps {
     isOpen: boolean;
@@ -21,6 +41,55 @@ export default function LeadFilterPanel({
 }: LeadFilterPanelProps) {
     const [isVisible, setIsVisible] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+    const [advancedFilters, setAdvancedFilters] = useState<AdvancedLeadFilters>({
+        owners: [
+            { value: 'John Smith', label: 'John Smith', selected: false },
+            { value: 'Sarah Johnson', label: 'Sarah Johnson', selected: false },
+            { value: 'Mike Chen', label: 'Mike Chen', selected: false },
+            { value: 'Emily Davis', label: 'Emily Davis', selected: false },
+        ],
+        leadTypes: [
+            { value: 'Customer', label: 'Customer', selected: false },
+            { value: 'Prospect', label: 'Prospect', selected: false },
+            { value: 'Hidden', label: 'Hidden', selected: false },
+        ],
+        stages: [
+            { value: 'New', label: 'New', selected: false },
+            { value: 'Contacted', label: 'Contacted', selected: false },
+            { value: 'Consulted', label: 'Consulted', selected: false },
+            { value: 'Quote', label: 'Quote', selected: false },
+            { value: 'Closed', label: 'Closed', selected: false },
+            { value: 'Lost', label: 'Lost', selected: false },
+        ],
+        statuses: [
+            { value: 'Cold', label: 'Cold 10%', selected: false },
+            { value: 'Unidentified', label: 'Unidentified 25%', selected: false },
+            { value: 'Follow Later', label: 'Follow Later 50%', selected: false },
+            { value: 'Interest', label: 'Interest 75%', selected: false },
+            { value: 'Hot Interest', label: 'Hot Interest 85%', selected: false },
+            { value: 'Close', label: 'Close 99.99%', selected: false },
+            { value: 'Stop', label: 'Stop 0%', selected: false },
+            { value: 'Re-buy', label: 'Re-buy', selected: false },
+            { value: 'Change Mind', label: 'Change Mind', selected: false },
+            { value: 'Denied', label: 'Denied', selected: false },
+        ],
+        sources: [
+            { value: 'Website', label: 'Website', selected: false },
+            { value: 'Social Media', label: 'Social Media', selected: false },
+            { value: 'Referral', label: 'Referral', selected: false },
+            { value: 'Cold Call', label: 'Cold Call', selected: false },
+            { value: 'Email Campaign', label: 'Email Campaign', selected: false },
+            { value: 'Event', label: 'Event', selected: false },
+        ],
+        dateAddedFrom: '',
+        dateAddedTo: '',
+        birthdayFrom: '',
+        birthdayTo: '',
+        interactionFrom: '',
+        interactionTo: ''
+    });
+    const dropdownRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
     useEffect(() => {
         if (isOpen) {
@@ -32,11 +101,118 @@ export default function LeadFilterPanel({
         }
     }, [isOpen]);
 
-    const handleFilterChange = (key: keyof LeadFilters, value: string) => {
-        onFiltersChange({
-            ...filters,
-            [key]: value || undefined
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (openDropdown && dropdownRefs.current[openDropdown]) {
+                const dropdownElement = dropdownRefs.current[openDropdown];
+                if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
+                    setOpenDropdown(null);
+                }
+            }
+        };
+
+        if (openDropdown) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }
+    }, [openDropdown]);
+
+    const handleOptionToggle = (filterType: keyof AdvancedLeadFilters, optionValue: string) => {
+        if (typeof advancedFilters[filterType] === 'object' && Array.isArray(advancedFilters[filterType])) {
+            const filterArray = advancedFilters[filterType] as FilterOption[];
+            const optionIndex = filterArray.findIndex(option => option.value === optionValue);
+
+            if (optionIndex !== -1) {
+                const newFilters = { ...advancedFilters };
+                (newFilters[filterType] as FilterOption[])[optionIndex].selected = !filterArray[optionIndex].selected;
+                setAdvancedFilters(newFilters);
+            }
+        }
+    };
+
+    const getSelectedCount = (filterArray: FilterOption[]) => {
+        return filterArray.filter(option => option.selected).length;
+    };
+
+    const getDropdownLabel = (filterArray: FilterOption[], defaultLabel: string) => {
+        const selectedCount = getSelectedCount(filterArray);
+        if (selectedCount === 0) return defaultLabel;
+        if (selectedCount === 1) {
+            const selected = filterArray.find(option => option.selected);
+            return selected ? selected.label : defaultLabel;
+        }
+        return `${selectedCount} selected`;
+    };
+
+    const renderCheckboxDropdown = (
+        filterType: keyof AdvancedLeadFilters,
+        defaultLabel: string,
+        options: FilterOption[]
+    ) => {
+        const isOpen = openDropdown === filterType;
+
+        return (
+            <div
+                className="relative"
+                ref={(el) => {
+                    dropdownRefs.current[filterType] = el;
+                }}
+            >
+                <button
+                    onClick={() => setOpenDropdown(isOpen ? null : filterType)}
+                    className="w-full px-3 py-2 text-left text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors flex items-center justify-between"
+                >
+                    <span className="truncate">{getDropdownLabel(options, defaultLabel)}</span>
+                    <ChevronDownIcon
+                        className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    />
+                </button>
+
+                {isOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
+                        {options.map((option) => (
+                            <label
+                                key={option.value}
+                                className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm"
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={option.selected}
+                                    onChange={() => handleOptionToggle(filterType, option.value)}
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-3"
+                                />
+                                <span className="text-gray-700">{option.label}</span>
+                            </label>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    const handleDateChange = (field: keyof AdvancedLeadFilters, value: string) => {
+        setAdvancedFilters(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
+    const handleClearAll = () => {
+        setAdvancedFilters({
+            owners: advancedFilters.owners.map(owner => ({ ...owner, selected: false })),
+            leadTypes: advancedFilters.leadTypes.map(type => ({ ...type, selected: false })),
+            stages: advancedFilters.stages.map(stage => ({ ...stage, selected: false })),
+            statuses: advancedFilters.statuses.map(status => ({ ...status, selected: false })),
+            sources: advancedFilters.sources.map(source => ({ ...source, selected: false })),
+            dateAddedFrom: '',
+            dateAddedTo: '',
+            birthdayFrom: '',
+            birthdayTo: '',
+            interactionFrom: '',
+            interactionTo: ''
         });
+        onClearFilters();
     };
 
     if (!isVisible) return null;
@@ -72,20 +248,7 @@ export default function LeadFilterPanel({
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Owner
                             </label>
-                            <div className="relative">
-                                <select
-                                    value={filters.owner || ''}
-                                    onChange={(e) => handleFilterChange('owner', e.target.value)}
-                                    className="w-full pr-10 pl-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                                >
-                                    <option value="">All Owners</option>
-                                    <option value="John Smith">John Smith</option>
-                                    <option value="Sarah Johnson">Sarah Johnson</option>
-                                    <option value="Mike Chen">Mike Chen</option>
-                                    <option value="Emily Davis">Emily Davis</option>
-                                </select>
-                                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                            </div>
+                            {renderCheckboxDropdown('owners', 'All Owners', advancedFilters.owners)}
                         </div>
 
                         {/* Lead Type Filter */}
@@ -93,19 +256,7 @@ export default function LeadFilterPanel({
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Lead Type
                             </label>
-                            <div className="relative">
-                                <select
-                                    value={filters.leadType || ''}
-                                    onChange={(e) => handleFilterChange('leadType', e.target.value)}
-                                    className="w-full pr-10 pl-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                                >
-                                    <option value="">All Types</option>
-                                    <option value="Individual">Individual</option>
-                                    <option value="Business">Business</option>
-                                    <option value="Partner">Partner</option>
-                                </select>
-                                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                            </div>
+                            {renderCheckboxDropdown('leadTypes', 'All Types', advancedFilters.leadTypes)}
                         </div>
 
                         {/* Stage Filter */}
@@ -113,22 +264,7 @@ export default function LeadFilterPanel({
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Stage
                             </label>
-                            <div className="relative">
-                                <select
-                                    value={filters.stage || ''}
-                                    onChange={(e) => handleFilterChange('stage', e.target.value)}
-                                    className="w-full pr-10 pl-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                                >
-                                    <option value="">All Stages</option>
-                                    <option value="New">New</option>
-                                    <option value="Contacted">Contacted</option>
-                                    <option value="Consulted">Consulted</option>
-                                    <option value="Quote">Quote</option>
-                                    <option value="Closed">Closed</option>
-                                    <option value="Lost">Lost</option>
-                                </select>
-                                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                            </div>
+                            {renderCheckboxDropdown('stages', 'All Stages', advancedFilters.stages)}
                         </div>
 
                         {/* Status Filter */}
@@ -136,19 +272,7 @@ export default function LeadFilterPanel({
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Status
                             </label>
-                            <div className="relative">
-                                <select
-                                    value={filters.status || ''}
-                                    onChange={(e) => handleFilterChange('status', e.target.value)}
-                                    className="w-full pr-10 pl-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                                >
-                                    <option value="">All Statuses</option>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                    <option value="Converted">Converted</option>
-                                </select>
-                                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                            </div>
+                            {renderCheckboxDropdown('statuses', 'All Statuses', advancedFilters.statuses)}
                         </div>
 
                         {/* Source Filter */}
@@ -156,22 +280,7 @@ export default function LeadFilterPanel({
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Source
                             </label>
-                            <div className="relative">
-                                <select
-                                    value={filters.source || ''}
-                                    onChange={(e) => handleFilterChange('source', e.target.value)}
-                                    className="w-full pr-10 pl-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
-                                >
-                                    <option value="">All Sources</option>
-                                    <option value="Website">Website</option>
-                                    <option value="Social Media">Social Media</option>
-                                    <option value="Referral">Referral</option>
-                                    <option value="Cold Call">Cold Call</option>
-                                    <option value="Email Campaign">Email Campaign</option>
-                                    <option value="Event">Event</option>
-                                </select>
-                                <ChevronDownIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                            </div>
+                            {renderCheckboxDropdown('sources', 'All Sources', advancedFilters.sources)}
                         </div>
 
                         {/* Date Added Range */}
@@ -185,8 +294,8 @@ export default function LeadFilterPanel({
                                     <div className="relative">
                                         <input
                                             type="date"
-                                            value={filters.dateAddedFrom || ''}
-                                            onChange={(e) => handleFilterChange('dateAddedFrom', e.target.value)}
+                                            value={advancedFilters.dateAddedFrom}
+                                            onChange={(e) => handleDateChange('dateAddedFrom', e.target.value)}
                                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                         <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -197,8 +306,8 @@ export default function LeadFilterPanel({
                                     <div className="relative">
                                         <input
                                             type="date"
-                                            value={filters.dateAddedTo || ''}
-                                            onChange={(e) => handleFilterChange('dateAddedTo', e.target.value)}
+                                            value={advancedFilters.dateAddedTo}
+                                            onChange={(e) => handleDateChange('dateAddedTo', e.target.value)}
                                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                         <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -218,8 +327,8 @@ export default function LeadFilterPanel({
                                     <div className="relative">
                                         <input
                                             type="date"
-                                            value={filters.birthdayFrom || ''}
-                                            onChange={(e) => handleFilterChange('birthdayFrom', e.target.value)}
+                                            value={advancedFilters.birthdayFrom}
+                                            onChange={(e) => handleDateChange('birthdayFrom', e.target.value)}
                                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                         <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -230,8 +339,8 @@ export default function LeadFilterPanel({
                                     <div className="relative">
                                         <input
                                             type="date"
-                                            value={filters.birthdayTo || ''}
-                                            onChange={(e) => handleFilterChange('birthdayTo', e.target.value)}
+                                            value={advancedFilters.birthdayTo}
+                                            onChange={(e) => handleDateChange('birthdayTo', e.target.value)}
                                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                         <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -251,8 +360,8 @@ export default function LeadFilterPanel({
                                     <div className="relative">
                                         <input
                                             type="date"
-                                            value={filters.interactionFrom || ''}
-                                            onChange={(e) => handleFilterChange('interactionFrom', e.target.value)}
+                                            value={advancedFilters.interactionFrom}
+                                            onChange={(e) => handleDateChange('interactionFrom', e.target.value)}
                                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                         <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -263,8 +372,8 @@ export default function LeadFilterPanel({
                                     <div className="relative">
                                         <input
                                             type="date"
-                                            value={filters.interactionTo || ''}
-                                            onChange={(e) => handleFilterChange('interactionTo', e.target.value)}
+                                            value={advancedFilters.interactionTo}
+                                            onChange={(e) => handleDateChange('interactionTo', e.target.value)}
                                             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         />
                                         <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
@@ -279,13 +388,16 @@ export default function LeadFilterPanel({
                 <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
                     <div className="flex space-x-3">
                         <button
-                            onClick={onClearFilters}
+                            onClick={handleClearAll}
                             className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                         >
                             Clear All
                         </button>
                         <button
-                            onClick={onApplyFilters}
+                            onClick={() => {
+                                onApplyFilters();
+                                onClose();
+                            }}
                             className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 transition-colors"
                         >
                             Apply Filters
