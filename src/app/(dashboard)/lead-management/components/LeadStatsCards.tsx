@@ -111,21 +111,23 @@ export default function LeadStatsCards({
         }
     };
 
-    // Define background colors for selected state
+    // Define background colors for selected state - matching LeadTable stage colors
     const getSelectedBackgroundClass = (statId: string) => {
         switch (statId) {
             case 'total':
                 return 'bg-blue-500';
             case 'new':
-                return 'bg-green-500';
+                return 'bg-[#1E93AB]'; // MA-1 blue to match stage color
             case 'contacted':
                 return 'bg-yellow-500';
             case 'consulted':
-                return 'bg-purple-500';
-            case 'quote':
                 return 'bg-orange-500';
+            case 'quote':
+                return 'bg-purple-500';
             case 'closed':
-                return 'bg-emerald-500';
+                return 'bg-green-500';
+            case 'lost':
+                return 'bg-red-500';
             default:
                 return 'bg-blue-500';
         }

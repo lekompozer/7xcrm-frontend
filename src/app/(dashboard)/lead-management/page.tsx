@@ -79,6 +79,14 @@ const statsData: LeadStats[] = [
         color: 'emerald',
         previousCount: 8,
         period: 'this month'
+    },
+    {
+        id: 'lost',
+        name: 'Lost',
+        count: 8,
+        color: 'red',
+        previousCount: 5,
+        period: 'this month'
     }
 ];
 
@@ -187,6 +195,9 @@ export default function LeadManagementPage() {
                     break;
                 case 'closed':
                     filtered = filtered.filter(lead => lead.stage === 'Closed');
+                    break;
+                case 'lost':
+                    filtered = filtered.filter(lead => lead.stage === 'Lost');
                     break;
             }
         }
