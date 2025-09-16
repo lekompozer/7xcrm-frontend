@@ -73,29 +73,44 @@ export default function CustomizeColumnsPanel({
     const handleVisibilityToggle = (index: number) => {
         const newColumns = [...localColumns];
         const column = newColumns[index];
-        const wasVisible = column.visible;
-
+        
+        // Simply toggle visibility without moving position
         column.visible = !column.visible;
-
-        // If column is being made visible and it's not already in the right position,
-        // move it to just before the Actions column
-        if (!wasVisible && column.visible && column.id !== 'actions' && column.id !== 'selection' && column.id !== 'lead') {
-            // Remove the column from its current position
-            const removedColumn = newColumns.splice(index, 1)[0];
-
-            // Find the Actions column index
-            const actionsIndex = newColumns.findIndex(col => col.id === 'actions');
-
-            // Insert before Actions column, or at the end if Actions not found
-            const insertIndex = actionsIndex !== -1 ? actionsIndex : newColumns.length;
-            newColumns.splice(insertIndex, 0, removedColumn);
-        }
-
+        
         setLocalColumns(newColumns);
     };
 
     const handleApply = () => {
-        onColumnsChange(localColumns);
+        // When applying, ensure sticky columns (selection, lead, actions) are preserved
+        const finalColumns = [...localColumns];
+        
+        // Find and remove Actions column
+        const actionsIndex = finalColumns.findIndex(col => col.id === 'actions');
+        let actionsColumn = null;
+        if (actionsIndex !== -1) {
+            actionsColumn = finalColumns.splice(actionsIndex, 1)[0];
+        }
+        
+        // If Actions column exists, add it to the end
+        if (actionsColumn) {
+            finalColumns.push(actionsColumn);
+        }
+        
+        // Ensure selection and lead columns are at the beginning and sticky
+        const selectionIndex = finalColumns.findIndex(col => col.id === 'selection');
+        const leadIndex = finalColumns.findIndex(col => col.id === 'lead');
+        
+        if (selectionIndex !== -1) {
+            finalColumns[selectionIndex].visible = true;
+            finalColumns[selectionIndex].sticky = 'left';
+        }
+        
+        if (leadIndex !== -1) {
+            finalColumns[leadIndex].visible = true;
+            finalColumns[leadIndex].sticky = 'left';
+        }
+        
+        onColumnsChange(finalColumns);
         onClose();
     };
 
@@ -169,8 +184,8 @@ export default function CustomizeColumnsPanel({
                                 {localColumns
                                     .map((column, index) => ({ column, originalIndex: index }))
                                     .filter(({ column }) => {
-                                        // Default fields are typically visible by default
-                                        const defaultFields = ['selection', 'lead', 'leadId', 'stage', 'source', 'status', 'cellphone', 'state', 'leadType', 'actions'];
+                                        // Default fields are visible by default, but exclude sticky columns
+                                        const defaultFields = ['leadId', 'stage', 'source', 'status', 'cellphone', 'state', 'leadType'];
                                         return defaultFields.includes(column.id);
                                     })
                                     .map(({ column, originalIndex }) => (
@@ -228,9 +243,10 @@ export default function CustomizeColumnsPanel({
                                 {localColumns
                                     .map((column, index) => ({ column, originalIndex: index }))
                                     .filter(({ column }) => {
-                                        // Other fields are additional optional fields
-                                        const defaultFields = ['selection', 'lead', 'leadId', 'stage', 'source', 'status', 'cellphone', 'state', 'leadType', 'actions'];
-                                        return !defaultFields.includes(column.id);
+                                        // Other fields are additional optional fields, exclude sticky columns
+                                        const defaultFields = ['leadId', 'stage', 'source', 'status', 'cellphone', 'state', 'leadType'];
+                                        const stickyFields = ['selection', 'lead', 'actions']; // These should not appear in customize panel
+                                        return !defaultFields.includes(column.id) && !stickyFields.includes(column.id);
                                     })
                                     .map(({ column, originalIndex }) => (
                                         <div
