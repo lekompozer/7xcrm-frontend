@@ -4,7 +4,6 @@ import { useState, useMemo, useCallback } from 'react';
 import {
     PlusIcon,
     ArrowDownTrayIcon,
-    FunnelIcon,
     CalendarIcon,
     MagnifyingGlassIcon,
     Cog6ToothIcon
@@ -93,7 +92,7 @@ const statsData: LeadStats[] = [
 export default function LeadManagementPage() {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
-    const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+    const [_selectedLeads, _setSelectedLeads] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStat, setSelectedStat] = useState<string>('total');
     const [timePeriod, setTimePeriod] = useState<string>('this-month');

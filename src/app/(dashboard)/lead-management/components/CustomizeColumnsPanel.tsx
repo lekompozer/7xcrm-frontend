@@ -73,43 +73,43 @@ export default function CustomizeColumnsPanel({
     const handleVisibilityToggle = (index: number) => {
         const newColumns = [...localColumns];
         const column = newColumns[index];
-        
+
         // Simply toggle visibility without moving position
         column.visible = !column.visible;
-        
+
         setLocalColumns(newColumns);
     };
 
     const handleApply = () => {
         // When applying, ensure sticky columns (selection, lead, actions) are preserved
         const finalColumns = [...localColumns];
-        
+
         // Find and remove Actions column
         const actionsIndex = finalColumns.findIndex(col => col.id === 'actions');
         let actionsColumn = null;
         if (actionsIndex !== -1) {
             actionsColumn = finalColumns.splice(actionsIndex, 1)[0];
         }
-        
+
         // If Actions column exists, add it to the end
         if (actionsColumn) {
             finalColumns.push(actionsColumn);
         }
-        
+
         // Ensure selection and lead columns are at the beginning and sticky
         const selectionIndex = finalColumns.findIndex(col => col.id === 'selection');
         const leadIndex = finalColumns.findIndex(col => col.id === 'lead');
-        
+
         if (selectionIndex !== -1) {
             finalColumns[selectionIndex].visible = true;
             finalColumns[selectionIndex].sticky = 'left';
         }
-        
+
         if (leadIndex !== -1) {
             finalColumns[leadIndex].visible = true;
             finalColumns[leadIndex].sticky = 'left';
         }
-        
+
         onColumnsChange(finalColumns);
         onClose();
     };
@@ -158,11 +158,11 @@ export default function CustomizeColumnsPanel({
             ></div>
 
             {/* Slide-in Panel */}
-            <div className={`absolute inset-y-0 right-0 max-w-md w-full bg-white shadow-2xl z-10 transform transition-all duration-300 ease-in-out ${isAnimating ? 'translate-x-0' : 'translate-x-full'
+            <div className={`absolute inset-y-0 right-0 max-w-md w-full bg-white/90 backdrop-blur-md shadow-2xl border-l border-gray-200/50 z-10 transform transition-all duration-300 ease-in-out ${isAnimating ? 'translate-x-0' : 'translate-x-full'
                 }`}>
                 <div className="flex flex-col h-full">
                     {/* Header */}
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white sticky top-0 z-10">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200/50 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
                         <h2 className="text-lg font-semibold text-gray-900">Customize Columns</h2>
                         <button
                             onClick={onClose}

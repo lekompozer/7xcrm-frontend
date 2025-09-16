@@ -34,8 +34,8 @@ interface LeadFilterPanelProps {
 export default function LeadFilterPanel({
     isOpen,
     onClose,
-    filters,
-    onFiltersChange,
+    filters: _filters,
+    onFiltersChange: _onFiltersChange,
     onApplyFilters,
     onClearFilters
 }: LeadFilterPanelProps) {
@@ -161,7 +161,7 @@ export default function LeadFilterPanel({
             >
                 <button
                     onClick={() => setOpenDropdown(isOpen ? null : filterType)}
-                    className="w-full px-3 py-2 text-left text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors flex items-center justify-between"
+                    className="w-full px-3 py-2 text-left text-sm bg-white/80 backdrop-blur-sm border border-gray-300/60 rounded-md hover:bg-gray-50/80 hover:backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 flex items-center justify-between"
                 >
                     <span className="truncate">{getDropdownLabel(options, defaultLabel)}</span>
                     <ChevronDownIcon
@@ -170,11 +170,11 @@ export default function LeadFilterPanel({
                 </button>
 
                 {isOpen && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white/95 backdrop-blur-md border border-gray-200/60 rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
                         {options.map((option) => (
                             <label
                                 key={option.value}
-                                className="flex items-center px-3 py-2 hover:bg-gray-50 cursor-pointer text-sm"
+                                className="flex items-center px-3 py-2 hover:bg-gray-50/80 hover:backdrop-blur-sm cursor-pointer text-sm transition-all duration-150"
                             >
                                 <input
                                     type="checkbox"
@@ -227,10 +227,10 @@ export default function LeadFilterPanel({
             ></div>
 
             {/* Slide-in Panel */}
-            <div className={`absolute inset-y-0 right-0 max-w-md w-full bg-white shadow-2xl z-10 transform transition-all duration-300 ease-in-out ${isAnimating ? 'translate-x-0' : 'translate-x-full'
+            <div className={`absolute inset-y-0 right-0 max-w-md w-full bg-white/90 backdrop-blur-md shadow-2xl border-l border-gray-200/50 z-10 transform transition-all duration-300 ease-in-out ${isAnimating ? 'translate-x-0' : 'translate-x-full'
                 }`}>
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-white sticky top-0 z-10">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200/50 bg-white/80 backdrop-blur-sm sticky top-0 z-10">
                     <h2 className="text-lg font-semibold text-gray-900">Advanced Filters</h2>
                     <button
                         onClick={onClose}
@@ -385,11 +385,11 @@ export default function LeadFilterPanel({
                 </div>
 
                 {/* Footer Actions */}
-                <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <div className="px-6 py-4 border-t border-gray-200/50 bg-gray-50/80 backdrop-blur-sm">
                     <div className="flex space-x-3">
                         <button
                             onClick={handleClearAll}
-                            className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                            className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white/80 backdrop-blur-sm border border-gray-300/60 rounded-md hover:bg-gray-50/80 hover:backdrop-blur-md transition-all duration-200"
                         >
                             Clear All
                         </button>
@@ -398,7 +398,7 @@ export default function LeadFilterPanel({
                                 onApplyFilters();
                                 onClose();
                             }}
-                            className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 transition-colors"
+                            className="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600/90 backdrop-blur-sm border border-transparent rounded-md hover:bg-blue-700/90 transition-all duration-200"
                         >
                             Apply Filters
                         </button>

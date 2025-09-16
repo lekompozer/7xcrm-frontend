@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { Lead } from '@/types/lead';
 import CustomizeColumnsPanel from './CustomizeColumnsPanel';
+import LeadActionPanel from './LeadActionPanel';
 import {
-    ChevronUpIcon,
-    ChevronDownIcon,
-    DocumentMagnifyingGlassIcon,
     EllipsisVerticalIcon,
     ChevronLeftIcon,
     ChevronRightIcon
@@ -71,9 +70,11 @@ const generateAvatar = (contactName: string, leadId?: string) => {
 
     if (hasRealAvatar) {
         return (
-            <img
+            <Image
                 src={`https://images.unsplash.com/photo-${leadId === '#ED18CB23' ? '1472099645785-5658abf4ff4e' : leadId === '#ED18CB26' ? '1494790108755-2616c4901d52' : '1507003211169-0a1dd7228f2d'}?w=40&h=40&fit=crop&crop=face`}
                 alt={contactName}
+                width={32}
+                height={32}
                 className="w-8 h-8 min-w-[2rem] min-h-[2rem] rounded-full object-cover flex-shrink-0"
             />
         );
@@ -96,7 +97,7 @@ const generateAvatar = (contactName: string, leadId?: string) => {
 export default function LeadTable({
     leads,
     onViewLead,
-    onScheduleAppointment,
+    onScheduleAppointment: _onScheduleAppointment,
     isCustomizePanelOpen = false,
     onCustomizePanelClose = () => { }
 }: LeadTableProps) {
@@ -105,6 +106,8 @@ export default function LeadTable({
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const [showRightShadow, setShowRightShadow] = useState(true);
+    const [isActionPanelOpen, setIsActionPanelOpen] = useState(false);
+    const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
     const dropdownRef = useRef<HTMLButtonElement>(null);
     const tableContainerRef = useRef<HTMLDivElement>(null);
     const [columns, setColumns] = useState<Column[]>([
@@ -160,7 +163,7 @@ export default function LeadTable({
     };
 
     // Calculate right positions for sticky columns
-    const getRightPosition = (columnId: string) => {
+    const _getRightPosition = (columnId: string) => {
         const columnIndex = visibleColumns.findIndex(col => col.id === columnId);
         if (columnIndex === -1) return 0;
 
@@ -194,6 +197,16 @@ export default function LeadTable({
             // Select all leads in current page
             setSelectedLeads(new Set(paginatedLeads.map(lead => lead.id)));
         }
+    };
+
+    const handleOpenActionPanel = (lead: Lead) => {
+        setSelectedLead(lead);
+        setIsActionPanelOpen(true);
+    };
+
+    const handleCloseActionPanel = () => {
+        setIsActionPanelOpen(false);
+        setSelectedLead(null);
     };
 
     const isAllSelected = paginatedLeads.length > 0 && selectedLeads.size === paginatedLeads.length;
@@ -292,11 +305,11 @@ export default function LeadTable({
                 return (
                     <div className="flex items-center justify-center space-x-2 relative">
                         <button
-                            onClick={() => onViewLead(lead)}
-                            className="p-1 text-blue-600 hover:text-blue-700 rounded-full hover:bg-blue-50 transition-colors"
-                            title="View Details"
+                            onClick={() => handleOpenActionPanel(lead)}
+                            className="p-2 text-blue-600 hover:text-blue-700 rounded-full hover:bg-blue-100 transition-all duration-200 cursor-pointer"
+                            title="View Lead Actions"
                         >
-                            <HiOutlineClipboardDocumentList className="h-4 w-4" />
+                            <HiOutlineClipboardDocumentList className="h-5 w-5" />
                         </button>
                         <div className="relative">
                             <button
@@ -511,6 +524,15 @@ export default function LeadTable({
                         <span>Hide</span>
                     </button>
                 </div>
+            )}
+
+            {/* Lead Action Panel */}
+            {selectedLead && (
+                <LeadActionPanel
+                    isOpen={isActionPanelOpen}
+                    onClose={handleCloseActionPanel}
+                    lead={selectedLead}
+                />
             )}
         </div>
     );
