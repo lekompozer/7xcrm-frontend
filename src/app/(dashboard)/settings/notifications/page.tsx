@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PlusIcon, BellIcon, EnvelopeIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, BellIcon, EnvelopeIcon, TrashIcon, PencilIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface NotificationTemplate {
     id: number;
@@ -363,11 +363,42 @@ export default function NotificationsPage() {
             targetUsers: ['{Action_user}'],
             status: 'active',
             createdAt: '2024-01-08'
+        },
+        {
+            id: 5,
+            name: 'Old Promotion Email',
+            type: 'email',
+            subject: 'Special Offer - Limited Time',
+            content: 'Take advantage of our special promotion offer.',
+            triggerEvent: 'Thông báo khác',
+            targetUsers: ['All Users'],
+            status: 'inactive',
+            createdAt: '2023-12-01'
         }
     ]);
 
     const [showModal, setShowModal] = useState(false);
     const [editingNotification, setEditingNotification] = useState<NotificationTemplate | null>(null);
+    const [filterType, setFilterType] = useState<'all' | 'popup' | 'email' | 'inactive'>('all');
+
+    // Filter notifications based on selected filter
+    const filteredNotifications = notifications.filter(notification => {
+        switch (filterType) {
+            case 'popup':
+                return notification.type === 'popup' && notification.status === 'active';
+            case 'email':
+                return notification.type === 'email' && notification.status === 'active';
+            case 'inactive':
+                return notification.status === 'inactive';
+            case 'all':
+            default:
+                return notification.status === 'active';
+        }
+    });
+
+    const handleCardClick = (type: 'all' | 'popup' | 'email' | 'inactive') => {
+        setFilterType(type);
+    };
 
     const handleAddNotification = () => {
         setEditingNotification(null);
@@ -422,34 +453,67 @@ export default function NotificationsPage() {
             </div>
 
             {/* Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white rounded-lg shadow p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div 
+                    onClick={() => handleCardClick('all')}
+                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                        filterType === 'all' ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+                    }`}
+                >
                     <div className="flex items-center">
                         <BellIcon className="h-8 w-8 text-blue-600" />
                         <div className="ml-4">
-                            <p className="text-sm font-medium text-gray-600">Total Notifications</p>
-                            <p className="text-2xl font-bold text-gray-900">{notifications.length}</p>
-                        </div>
-                    </div>
-                </div>
-                <div className="bg-white rounded-lg shadow p-6">
-                    <div className="flex items-center">
-                        <EnvelopeIcon className="h-8 w-8 text-green-600" />
-                        <div className="ml-4">
-                            <p className="text-sm font-medium text-gray-600">Email Templates</p>
+                            <p className="text-sm font-medium text-gray-600">Total Notifications (Active)</p>
                             <p className="text-2xl font-bold text-gray-900">
-                                {notifications.filter(n => n.type === 'email').length}
+                                {notifications.filter(n => n.status === 'active').length}
                             </p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-white rounded-lg shadow p-6">
+                <div 
+                    onClick={() => handleCardClick('popup')}
+                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                        filterType === 'popup' ? 'ring-2 ring-orange-500 bg-orange-50' : 'hover:bg-gray-50'
+                    }`}
+                >
                     <div className="flex items-center">
                         <BellIcon className="h-8 w-8 text-orange-600" />
                         <div className="ml-4">
-                            <p className="text-sm font-medium text-gray-600">Active Notifications</p>
+                            <p className="text-sm font-medium text-gray-600">Popup Notifications (Active)</p>
                             <p className="text-2xl font-bold text-gray-900">
-                                {notifications.filter(n => n.status === 'active').length}
+                                {notifications.filter(n => n.type === 'popup' && n.status === 'active').length}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div 
+                    onClick={() => handleCardClick('email')}
+                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                        filterType === 'email' ? 'ring-2 ring-green-500 bg-green-50' : 'hover:bg-gray-50'
+                    }`}
+                >
+                    <div className="flex items-center">
+                        <EnvelopeIcon className="h-8 w-8 text-green-600" />
+                        <div className="ml-4">
+                            <p className="text-sm font-medium text-gray-600">Email Notifications (Active)</p>
+                            <p className="text-2xl font-bold text-gray-900">
+                                {notifications.filter(n => n.type === 'email' && n.status === 'active').length}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div 
+                    onClick={() => handleCardClick('inactive')}
+                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                        filterType === 'inactive' ? 'ring-2 ring-red-500 bg-red-50' : 'hover:bg-gray-50'
+                    }`}
+                >
+                    <div className="flex items-center">
+                        <XMarkIcon className="h-8 w-8 text-red-600" />
+                        <div className="ml-4">
+                            <p className="text-sm font-medium text-gray-600">Total Notifications (Inactive)</p>
+                            <p className="text-2xl font-bold text-gray-900">
+                                {notifications.filter(n => n.status === 'inactive').length}
                             </p>
                         </div>
                     </div>
@@ -458,8 +522,33 @@ export default function NotificationsPage() {
 
             {/* Notifications Table */}
             <div className="bg-white rounded-lg shadow overflow-hidden">
-                <div className="px-6 py-4 border-b border-gray-200">
-                    <h2 className="text-lg font-medium text-gray-900">Notification Templates</h2>
+                <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <div>
+                        <h2 className="text-lg font-medium text-gray-900">Notification Templates</h2>
+                        {filterType !== 'all' && (
+                            <div className="flex items-center mt-1">
+                                <span className="text-sm text-gray-500">Filtered by: </span>
+                                <span className={`ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                    filterType === 'popup' ? 'bg-orange-100 text-orange-800' :
+                                    filterType === 'email' ? 'bg-green-100 text-green-800' :
+                                    'bg-red-100 text-red-800'
+                                }`}>
+                                    {filterType === 'popup' ? 'Popup (Active)' :
+                                     filterType === 'email' ? 'Email (Active)' :
+                                     'Inactive Notifications'}
+                                </span>
+                                <button
+                                    onClick={() => handleCardClick('all')}
+                                    className="ml-2 text-xs text-blue-600 hover:text-blue-800 underline"
+                                >
+                                    Clear filter
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                        Showing {filteredNotifications.length} of {notifications.length} notifications
+                    </div>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
@@ -486,7 +575,7 @@ export default function NotificationsPage() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {notifications.map((notification) => (
+                            {filteredNotifications.map((notification) => (
                                 <tr key={notification.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center">
