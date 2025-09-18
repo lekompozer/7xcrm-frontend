@@ -454,11 +454,10 @@ export default function NotificationsPage() {
 
             {/* Statistics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div 
+                <div
                     onClick={() => handleCardClick('all')}
-                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
-                        filterType === 'all' ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
-                    }`}
+                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${filterType === 'all' ? 'ring-2 ring-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+                        }`}
                 >
                     <div className="flex items-center">
                         <BellIcon className="h-8 w-8 text-blue-600" />
@@ -470,11 +469,10 @@ export default function NotificationsPage() {
                         </div>
                     </div>
                 </div>
-                <div 
+                <div
                     onClick={() => handleCardClick('popup')}
-                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
-                        filterType === 'popup' ? 'ring-2 ring-orange-500 bg-orange-50' : 'hover:bg-gray-50'
-                    }`}
+                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${filterType === 'popup' ? 'ring-2 ring-orange-500 bg-orange-50' : 'hover:bg-gray-50'
+                        }`}
                 >
                     <div className="flex items-center">
                         <BellIcon className="h-8 w-8 text-orange-600" />
@@ -486,11 +484,10 @@ export default function NotificationsPage() {
                         </div>
                     </div>
                 </div>
-                <div 
+                <div
                     onClick={() => handleCardClick('email')}
-                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
-                        filterType === 'email' ? 'ring-2 ring-green-500 bg-green-50' : 'hover:bg-gray-50'
-                    }`}
+                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${filterType === 'email' ? 'ring-2 ring-green-500 bg-green-50' : 'hover:bg-gray-50'
+                        }`}
                 >
                     <div className="flex items-center">
                         <EnvelopeIcon className="h-8 w-8 text-green-600" />
@@ -502,11 +499,10 @@ export default function NotificationsPage() {
                         </div>
                     </div>
                 </div>
-                <div 
+                <div
                     onClick={() => handleCardClick('inactive')}
-                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
-                        filterType === 'inactive' ? 'ring-2 ring-red-500 bg-red-50' : 'hover:bg-gray-50'
-                    }`}
+                    className={`bg-white rounded-lg shadow p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${filterType === 'inactive' ? 'ring-2 ring-red-500 bg-red-50' : 'hover:bg-gray-50'
+                        }`}
                 >
                     <div className="flex items-center">
                         <XMarkIcon className="h-8 w-8 text-red-600" />
@@ -528,14 +524,13 @@ export default function NotificationsPage() {
                         {filterType !== 'all' && (
                             <div className="flex items-center mt-1">
                                 <span className="text-sm text-gray-500">Filtered by: </span>
-                                <span className={`ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                    filterType === 'popup' ? 'bg-orange-100 text-orange-800' :
-                                    filterType === 'email' ? 'bg-green-100 text-green-800' :
-                                    'bg-red-100 text-red-800'
-                                }`}>
+                                <span className={`ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full ${filterType === 'popup' ? 'bg-orange-100 text-orange-800' :
+                                        filterType === 'email' ? 'bg-green-100 text-green-800' :
+                                            'bg-red-100 text-red-800'
+                                    }`}>
                                     {filterType === 'popup' ? 'Popup (Active)' :
-                                     filterType === 'email' ? 'Email (Active)' :
-                                     'Inactive Notifications'}
+                                        filterType === 'email' ? 'Email (Active)' :
+                                            'Inactive Notifications'}
                                 </span>
                                 <button
                                     onClick={() => handleCardClick('all')}
@@ -598,8 +593,8 @@ export default function NotificationsPage() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${notification.type === 'email'
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-blue-100 text-blue-800'
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-blue-100 text-blue-800'
                                             }`}>
                                             {notification.type}
                                         </span>
@@ -612,8 +607,8 @@ export default function NotificationsPage() {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${notification.status === 'active'
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-red-100 text-red-800'
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-red-100 text-red-800'
                                             }`}>
                                             {notification.status}
                                         </span>
