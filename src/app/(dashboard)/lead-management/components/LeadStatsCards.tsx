@@ -163,7 +163,6 @@ export default function LeadStatsCards({
             >
                 {stats.map((stat) => {
                     const ratio = calculateRatio(stat.count, stat.previousCount);
-                    const _periodComparison = getPeriodComparison(stat.period);
                     const isSelected = selectedStat === stat.id;
 
                     return (

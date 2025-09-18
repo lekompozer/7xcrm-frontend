@@ -34,8 +34,6 @@ interface LeadFilterPanelProps {
 export default function LeadFilterPanel({
     isOpen,
     onClose,
-    filters: _filters,
-    onFiltersChange: _onFiltersChange,
     onApplyFilters,
     onClearFilters
 }: LeadFilterPanelProps) {

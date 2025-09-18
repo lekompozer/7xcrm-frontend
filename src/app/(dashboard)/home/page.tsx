@@ -7,7 +7,6 @@ import {
     SpeakerWaveIcon,
     ChartBarIcon,
     ClockIcon,
-    EnvelopeIcon,
     ExclamationTriangleIcon,
     ArrowUpIcon,
     ArrowDownIcon,

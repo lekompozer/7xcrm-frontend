@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { UserIcon, CreditCardIcon, DocumentTextIcon, ClockIcon, ShieldCheckIcon, ChatBubbleLeftRightIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 export default function UsagePlanPage() {
@@ -9,7 +9,7 @@ export default function UsagePlanPage() {
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
 
-    const tabs = [
+    const tabs = useMemo(() => [
         { id: 'account-usage', name: 'Account Usage', icon: ClockIcon },
         { id: 'upgrade-plan', name: 'Upgrade Subscription Plan', icon: ArrowUpIcon },
         { id: 'marketing-assistant', name: 'Marketing Assistant', icon: ChatBubbleLeftRightIcon },
@@ -17,7 +17,7 @@ export default function UsagePlanPage() {
         { id: 'billing-info', name: 'Billing Information', icon: DocumentTextIcon },
         { id: 'billing-history', name: 'Billing History', icon: ClockIcon },
         { id: 'support', name: 'Support', icon: ShieldCheckIcon },
-    ];
+    ], []);
 
     // Check scroll position to show/hide arrows
     const checkScrollPosition = () => {
@@ -51,14 +51,6 @@ export default function UsagePlanPage() {
             return () => container.removeEventListener('scroll', checkScrollPosition);
         }
     }, [tabs]);
-
-    const userInfo = {
-        name: 'John Doe',
-        email: 'john.doe@company.com',
-        subscription: 'Trial',
-        status: 'Active',
-        trialDaysLeft: 12
-    };
 
     const renderTabContent = () => {
         switch (activeTab) {

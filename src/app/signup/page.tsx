@@ -2,14 +2,15 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import SignupStep1 from './components/SignupStep1';
 import SignupStep2 from './components/SignupStep2';
 import SignupIntro from './components/SignupIntro';
+import { SignupData } from './types';
 
 export default function SignupPage() {
     const [currentStep, setCurrentStep] = useState(1);
-    const [signupData, setSignupData] = useState({
+    const [signupData, setSignupData] = useState<SignupData>({
         // Step 1 data
         signupMethod: '', // 'google' or 'email'
         email: '',
@@ -24,7 +25,7 @@ export default function SignupPage() {
         businessGoals: []
     });
 
-    const handleNextStep = (stepData: any) => {
+    const handleNextStep = (stepData: Partial<SignupData>) => {
         setSignupData(prev => ({ ...prev, ...stepData }));
         setCurrentStep(2);
     };
@@ -33,7 +34,7 @@ export default function SignupPage() {
         setCurrentStep(1);
     };
 
-    const handleComplete = (stepData: any) => {
+    const handleComplete = (stepData: Partial<SignupData>) => {
         const finalData = { ...signupData, ...stepData };
         console.log('Signup completed:', finalData);
         // Handle final signup submission

@@ -24,8 +24,6 @@ interface LeadSearchBarProps {
 }
 
 export default function LeadSearchBar({
-    searchTerm: _searchTerm,
-    onSearchChange: _onSearchChange,
     onFilterToggle,
     filters,
     onFiltersChange

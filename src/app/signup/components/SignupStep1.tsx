@@ -2,30 +2,30 @@
 
 import { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { SignupStep1Props, SignupData } from '../types';
 
-interface SignupStep1Props {
-    onNext: (data: any) => void;
-    initialData: any;
+interface FormErrors {
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
 }
 
 export default function SignupStep1({ onNext, initialData }: SignupStep1Props) {
-    const [signupMethod, setSignupMethod] = useState(initialData.signupMethod || '');
     const [email, setEmail] = useState(initialData.email || '');
     const [password, setPassword] = useState(initialData.password || '');
     const [confirmPassword, setConfirmPassword] = useState(initialData.confirmPassword || '');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [errors, setErrors] = useState<any>({});
+    const [errors, setErrors] = useState<FormErrors>({});
 
     const handleGoogleSignup = () => {
-        setSignupMethod('google');
         // Handle Google OAuth signup
         console.log('Google signup clicked');
         onNext({ signupMethod: 'google' });
     };
 
     const validateForm = () => {
-        const newErrors: any = {};
+        const newErrors: FormErrors = {};
 
         if (!email) {
             newErrors.email = 'Email is required';

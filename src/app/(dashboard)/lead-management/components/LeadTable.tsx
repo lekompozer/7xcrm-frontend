@@ -97,7 +97,6 @@ const generateAvatar = (contactName: string, leadId?: string) => {
 export default function LeadTable({
     leads,
     onViewLead,
-    onScheduleAppointment: _onScheduleAppointment,
     isCustomizePanelOpen = false,
     onCustomizePanelClose = () => { }
 }: LeadTableProps) {
@@ -163,21 +162,21 @@ export default function LeadTable({
     };
 
     // Calculate right positions for sticky columns
-    const _getRightPosition = (columnId: string) => {
-        const columnIndex = visibleColumns.findIndex(col => col.id === columnId);
-        if (columnIndex === -1) return 0;
+    // const getRightPosition = (columnId: string) => {
+    //     const columnIndex = visibleColumns.findIndex(col => col.id === columnId);
+    //     if (columnIndex === -1) return 0;
 
-        let rightPosition = 0;
-        for (let i = visibleColumns.length - 1; i > columnIndex; i--) {
-            const col = visibleColumns[i];
-            if (col.sticky === 'right') {
-                rightPosition += col.width;
-            } else {
-                break;
-            }
-        }
-        return rightPosition;
-    };
+    //     let rightPosition = 0;
+    //     for (let i = visibleColumns.length - 1; i > columnIndex; i--) {
+    //         const col = visibleColumns[i];
+    //         if (col.sticky === 'right') {
+    //             rightPosition += col.width;
+    //         } else {
+    //             break;
+    //         }
+    //     }
+    //     return rightPosition;
+    // };
 
     const handleSelectLead = (leadId: string) => {
         const newSelected = new Set(selectedLeads);

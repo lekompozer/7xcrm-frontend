@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
-
-interface SignupStep2Props {
-    onPrevious: () => void;
-    onComplete: (data: any) => void;
-    initialData: any;
-}
+import { SignupStep2Props } from '../types';
 
 const subscriptionPlans = [
     {
@@ -79,7 +74,7 @@ export default function SignupStep2({ onPrevious, onComplete, initialData }: Sig
     const [phoneNumber, setPhoneNumber] = useState(initialData.phoneNumber || '');
     const [selectedPlan, setSelectedPlan] = useState(initialData.selectedPlan || 'trial');
     const [businessGoals, setBusinessGoals] = useState<string[]>(initialData.businessGoals || []);
-    const [errors, setErrors] = useState<any>({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const handleGoalToggle = (goal: string) => {
         setBusinessGoals(prev =>
@@ -90,7 +85,7 @@ export default function SignupStep2({ onPrevious, onComplete, initialData }: Sig
     };
 
     const validateForm = () => {
-        const newErrors: any = {};
+        const newErrors: Record<string, string> = {};
 
         if (!firstName.trim()) newErrors.firstName = 'First name is required';
         if (!lastName.trim()) newErrors.lastName = 'Last name is required';
@@ -200,8 +195,8 @@ export default function SignupStep2({ onPrevious, onComplete, initialData }: Sig
                                 key={plan.id}
                                 onClick={() => setSelectedPlan(plan.id)}
                                 className={`relative p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${selectedPlan === plan.id
-                                        ? 'border-blue-500 bg-blue-50'
-                                        : 'border-gray-200 hover:border-gray-300'
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-200 hover:border-gray-300'
                                     } ${plan.recommended ? 'ring-2 ring-blue-200' : ''}`}
                             >
                                 {plan.recommended && (
@@ -212,8 +207,8 @@ export default function SignupStep2({ onPrevious, onComplete, initialData }: Sig
                                 <div className="flex items-center justify-between mb-2">
                                     <h4 className="text-lg font-semibold text-gray-900">{plan.name}</h4>
                                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedPlan === plan.id
-                                            ? 'border-blue-500 bg-blue-500'
-                                            : 'border-gray-300'
+                                        ? 'border-blue-500 bg-blue-500'
+                                        : 'border-gray-300'
                                         }`}>
                                         {selectedPlan === plan.id && (
                                             <CheckIcon className="w-3 h-3 text-white" />
@@ -246,14 +241,14 @@ export default function SignupStep2({ onPrevious, onComplete, initialData }: Sig
                                 key={goal}
                                 onClick={() => handleGoalToggle(goal)}
                                 className={`p-3 border rounded-lg cursor-pointer transition-all duration-200 ${businessGoals.includes(goal)
-                                        ? 'border-blue-500 bg-blue-50'
-                                        : 'border-gray-200 hover:border-gray-300'
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-200 hover:border-gray-300'
                                     }`}
                             >
                                 <div className="flex items-center">
                                     <div className={`w-5 h-5 rounded border-2 flex items-center justify-center mr-3 ${businessGoals.includes(goal)
-                                            ? 'border-blue-500 bg-blue-500'
-                                            : 'border-gray-300'
+                                        ? 'border-blue-500 bg-blue-500'
+                                        : 'border-gray-300'
                                         }`}>
                                         {businessGoals.includes(goal) && (
                                             <CheckIcon className="w-3 h-3 text-white" />
