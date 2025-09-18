@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { PlusIcon, MagnifyingGlassIcon, UsersIcon, UserIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import AssistantDetailsModal from './components/AssistantDetailsModal';
+import AddAssistantModal from './components/AddAssistantModal';
 
 // Types
 interface MarketingAssistant {
@@ -39,6 +40,20 @@ export default function MarketingAssistantPage() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [selectedAssistant, setSelectedAssistant] = useState<MarketingAssistant | null>(null);
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [newAssistant, setNewAssistant] = useState<{
+        name: string;
+        email: string;
+        specialization: string;
+        phoneNumber: string;
+        status: 'Active' | 'Inactive';
+    }>({
+        name: '',
+        email: '',
+        specialization: '',
+        phoneNumber: '',
+        status: 'Active'
+    });
 
     const [assistants, setAssistants] = useState<MarketingAssistant[]>([
         {
@@ -219,6 +234,47 @@ export default function MarketingAssistantPage() {
         setSelectedAssistant(null);
     };
 
+    const handleAddAssistant = () => {
+        const newId = Math.max(...assistants.map(a => a.id)) + 1;
+        const assistant: MarketingAssistant = {
+            id: newId,
+            name: newAssistant.name,
+            email: newAssistant.email,
+            specialization: newAssistant.specialization,
+            phoneNumber: newAssistant.phoneNumber,
+            status: newAssistant.status,
+            customerCount: 0,
+            joinedDate: new Date().toLocaleDateString(),
+            startWorkDate: new Date().toLocaleDateString(),
+            address: '',
+            department: 'Marketing',
+            skills: [],
+            certifications: [],
+            cvFiles: []
+        };
+
+        setAssistants([...assistants, assistant]);
+        setNewAssistant({
+            name: '',
+            email: '',
+            specialization: '',
+            phoneNumber: '',
+            status: 'Active'
+        });
+        setShowAddModal(false);
+    };
+
+    const handleCloseAddModal = () => {
+        setShowAddModal(false);
+        setNewAssistant({
+            name: '',
+            email: '',
+            specialization: '',
+            phoneNumber: '',
+            status: 'Active'
+        });
+    };
+
     const handleStatusChange = (id: number, status: 'Active' | 'Inactive' | 'Paused') => {
         setAssistants(assistants.map(assistant =>
             assistant.id === id
@@ -248,7 +304,7 @@ export default function MarketingAssistantPage() {
                     <p className="text-gray-600">Manage your marketing assistants and track their performance</p>
                 </div>
                 <button
-                    onClick={() => console.log('Add Assistant modal will be implemented')}
+                    onClick={() => setShowAddModal(true)}
                     className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200 flex items-center gap-2"
                 >
                     <PlusIcon className="h-5 w-5" />
@@ -430,6 +486,15 @@ export default function MarketingAssistantPage() {
                 assistant={selectedAssistant}
                 customers={sampleCustomers}
                 onStatusChange={handleStatusChange}
+            />
+
+            {/* Add Assistant Modal */}
+            <AddAssistantModal
+                isOpen={showAddModal}
+                onClose={handleCloseAddModal}
+                onAdd={handleAddAssistant}
+                newAssistant={newAssistant}
+                setNewAssistant={setNewAssistant}
             />
         </div>
     );
