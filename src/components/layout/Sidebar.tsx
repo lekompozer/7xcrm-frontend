@@ -15,7 +15,8 @@ import {
     XMarkIcon,
     UsersIcon,
     UserPlusIcon,
-    BellIcon
+    BellIcon,
+    CubeIcon
 } from '@heroicons/react/24/outline'; const menuItems = [
     {
         name: 'Home',
@@ -26,6 +27,11 @@ import {
         name: 'Lead Management',
         href: '/lead-management',
         icon: UserPlusIcon,
+    },
+    {
+        name: 'Product Management',
+        href: '/product-management',
+        icon: CubeIcon,
     },
     {
         name: 'Subscription Management',
