@@ -14,7 +14,8 @@ import {
     Bars3Icon,
     XMarkIcon,
     UsersIcon,
-    UserPlusIcon
+    UserPlusIcon,
+    BellIcon
 } from '@heroicons/react/24/outline'; const menuItems = [
     {
         name: 'Home',
@@ -55,6 +56,11 @@ import {
                 name: 'Payment Management',
                 href: '/settings/payment-management',
                 icon: BanknotesIcon,
+            },
+            {
+                name: 'Notifications',
+                href: '/settings/notifications',
+                icon: BellIcon,
             },
         ],
     },
