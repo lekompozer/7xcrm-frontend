@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { ChevronDownIcon, UserIcon, EnvelopeIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { ChevronDownIcon, UserIcon, EnvelopeIcon, ArrowRightOnRectangleIcon, UserPlusIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 
 export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -36,6 +37,24 @@ export default function Header() {
                     </h2>
                 </div>
                 <div className="flex items-center gap-x-4 lg:gap-x-6">
+                    {/* Navigation Tabs */}
+                    <nav className="flex items-center space-x-1">
+                        <Link
+                            href="/signup"
+                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                        >
+                            <UserPlusIcon className="h-4 w-4" />
+                            <span className="hidden sm:inline">User Signup</span>
+                        </Link>
+                        <Link
+                            href="/usage-plan"
+                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200"
+                        >
+                            <ChartBarIcon className="h-4 w-4" />
+                            <span className="hidden sm:inline">Usage and Plan</span>
+                        </Link>
+                    </nav>
+
                     {/* User menu */}
                     <div className="relative" ref={dropdownRef}>
                         <button
