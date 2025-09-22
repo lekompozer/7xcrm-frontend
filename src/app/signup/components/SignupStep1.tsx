@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { SignupStep1Props, SignupData } from '../types';
+import { SignupStep1Props } from '../types';
 
 interface FormErrors {
     email?: string;

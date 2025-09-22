@@ -24,7 +24,14 @@ interface SidebarProps {
     mode?: 'admin' | 'app';
 }
 
-const adminMenuItems = [
+interface MenuItem {
+    name: string;
+    href: string;
+    icon: React.ComponentType<{ className?: string }>;
+    subItems?: MenuItem[];
+}
+
+const adminMenuItems: MenuItem[] = [
     {
         name: 'Home',
         href: '/admin/home',
@@ -84,7 +91,7 @@ const adminMenuItems = [
     },
 ];
 
-const appMenuItems = [
+const appMenuItems: MenuItem[] = [
     {
         name: 'Dashboard',
         href: '/app/home',

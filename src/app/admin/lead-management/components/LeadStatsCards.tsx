@@ -96,21 +96,6 @@ export default function LeadStatsCards({
         };
     };
 
-    const getPeriodComparison = (period: string) => {
-        switch (period) {
-            case 'this month':
-                return 'vs last month';
-            case 'this week':
-                return 'vs last week';
-            case 'this year':
-                return 'vs last year';
-            case 'all time':
-                return 'vs previous period';
-            default:
-                return 'vs previous period';
-        }
-    };
-
     // Define background colors for selected state - matching LeadTable stage colors
     const getSelectedBackgroundClass = (statId: string) => {
         switch (statId) {
