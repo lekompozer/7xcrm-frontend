@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { UserIcon, CreditCardIcon, DocumentTextIcon, ClockIcon, ShieldCheckIcon, ChatBubbleLeftRightIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { UserIcon, CreditCardIcon, DocumentTextIcon, ClockIcon, ShieldCheckIcon, ChatBubbleLeftRightIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon, EnvelopeIcon, PhoneIcon, UserGroupIcon, Cog6ToothIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 
 export default function UsagePlanPage() {
     const [activeTab, setActiveTab] = useState('account-usage');
@@ -143,16 +143,117 @@ export default function UsagePlanPage() {
 // Account Usage Tab Component
 function AccountUsageTab() {
     const usageStats = [
-        { label: 'Leads Created', value: '147', limit: '1,000', percentage: 14.7 },
-        { label: 'Emails Sent', value: '2,340', limit: '10,000', percentage: 23.4 },
-        { label: 'Team Members', value: '3', limit: '5', percentage: 60 },
-        { label: 'Storage Used', value: '1.2 GB', limit: '5 GB', percentage: 24 },
+        {
+            label: 'Total Email Sent',
+            value: '2,725',
+            limit: '10,000',
+            percentage: 25.7,
+            icon: EnvelopeIcon,
+            color: 'blue'
+        },
+        {
+            label: 'Total SMS Sent',
+            value: '680',
+            limit: '1,000',
+            percentage: 68.0,
+            icon: ChatBubbleOvalLeftEllipsisIcon,
+            color: 'green'
+        },
+        {
+            label: 'Total Leads Management',
+            value: '1,256',
+            limit: '5,000',
+            percentage: 25.1,
+            icon: UserGroupIcon,
+            color: 'purple'
+        },
+        {
+            label: 'Total Accounts using your CRM Workspace',
+            value: '1',
+            limit: '5',
+            percentage: 20.0,
+            icon: UserIcon,
+            color: 'indigo'
+        },
+        {
+            label: 'Total Pipeline Automation',
+            value: '1',
+            limit: '5',
+            percentage: 20.0,
+            icon: Cog6ToothIcon,
+            color: 'orange'
+        },
+        {
+            label: 'Total Call Minutes',
+            value: '34',
+            limit: '100',
+            percentage: 34.0,
+            icon: PhoneIcon,
+            color: 'pink'
+        }
+    ];
+
+    const callStats = [
+        {
+            label: 'Total Outbound Call Minutes',
+            value: '22',
+            percentage: 64.7,
+            color: 'emerald'
+        },
+        {
+            label: 'Total Inbound Call Minutes',
+            value: '12',
+            percentage: 35.3,
+            color: 'teal'
+        }
     ];
 
     const userInfo = {
         name: 'John Doe',
         email: 'john.doe@company.com',
         trialDaysLeft: 12
+    };
+
+    const getColorClasses = (color: string) => {
+        const colorMap = {
+            blue: 'bg-blue-50 border-blue-200',
+            green: 'bg-green-50 border-green-200',
+            purple: 'bg-purple-50 border-purple-200',
+            indigo: 'bg-indigo-50 border-indigo-200',
+            orange: 'bg-orange-50 border-orange-200',
+            pink: 'bg-pink-50 border-pink-200',
+            emerald: 'bg-emerald-50 border-emerald-200',
+            teal: 'bg-teal-50 border-teal-200'
+        };
+        return colorMap[color as keyof typeof colorMap] || 'bg-gray-50 border-gray-200';
+    };
+
+    const getProgressColor = (color: string) => {
+        const progressMap = {
+            blue: 'bg-blue-600',
+            green: 'bg-green-600',
+            purple: 'bg-purple-600',
+            indigo: 'bg-indigo-600',
+            orange: 'bg-orange-600',
+            pink: 'bg-pink-600',
+            emerald: 'bg-emerald-600',
+            teal: 'bg-teal-600'
+        };
+        return progressMap[color as keyof typeof progressMap] || 'bg-gray-600';
+    };
+
+    const getIconColor = (color: string) => {
+        const iconMap = {
+            blue: 'text-blue-600',
+            green: 'text-green-600',
+            purple: 'text-purple-600',
+            indigo: 'text-indigo-600',
+            orange: 'text-orange-600',
+            pink: 'text-pink-600',
+            emerald: 'text-emerald-600',
+            teal: 'text-teal-600'
+        };
+        return iconMap[color as keyof typeof iconMap] || 'text-gray-600';
     };
 
     return (
@@ -177,29 +278,73 @@ function AccountUsageTab() {
                 </div>
             </div>
 
-            <h3 className="text-lg font-medium text-gray-900 mb-6">Current Usage</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {usageStats.map((stat, index) => (
-                    <div key={index} className="bg-gray-50 rounded-lg p-4">
-                        <div className="flex justify-between items-center mb-2">
-                            <span className="text-sm font-medium text-gray-900">{stat.label}</span>
-                            <span className="text-sm text-gray-600">{stat.value} / {stat.limit}</span>
+            <h3 className="text-lg font-medium text-gray-900 mb-6">Current Usage Overview</h3>
+
+            {/* Main Usage Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {usageStats.map((stat, index) => {
+                    const Icon = stat.icon;
+                    return (
+                        <div key={index} className={`border rounded-lg p-6 ${getColorClasses(stat.color)}`}>
+                            <div className="flex items-center justify-between mb-4">
+                                <Icon className={`h-8 w-8 ${getIconColor(stat.color)}`} />
+                                <span className="text-2xl font-bold text-gray-900">{stat.value}</span>
+                            </div>
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">{stat.label}</h4>
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-xs text-gray-600">Usage</span>
+                                <span className="text-xs text-gray-600">{stat.value} / {stat.limit}</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                <div
+                                    className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(stat.color)}`}
+                                    style={{ width: `${Math.min(stat.percentage, 100)}%` }}
+                                ></div>
+                            </div>
+                            <div className="text-xs text-gray-500">{stat.percentage}% used</div>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${Math.min(stat.percentage, 100)}%` }}
-                            ></div>
+                    );
+                })}
+            </div>
+
+            {/* Call Minutes Breakdown */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h4 className="text-lg font-medium text-gray-900 mb-6 flex items-center">
+                    <PhoneIcon className="h-6 w-6 text-gray-600 mr-2" />
+                    Call Minutes Breakdown
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {callStats.map((stat, index) => (
+                        <div key={index} className={`border rounded-lg p-4 ${getColorClasses(stat.color)}`}>
+                            <div className="flex justify-between items-center mb-2">
+                                <span className="text-sm font-medium text-gray-900">{stat.label}</span>
+                                <span className="text-lg font-bold text-gray-900">{stat.value}</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                <div
+                                    className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(stat.color)}`}
+                                    style={{ width: `${stat.percentage}%` }}
+                                ></div>
+                            </div>
+                            <div className="text-xs text-gray-500">{stat.percentage}% of total call time</div>
                         </div>
-                        <div className="mt-1 text-xs text-gray-500">{stat.percentage}% used</div>
+                    ))}
+                </div>
+
+                {/* Total Summary */}
+                <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-gray-700">Total Call Minutes Summary</span>
+                        <div className="text-right">
+                            <div className="text-lg font-bold text-gray-900">34 minutes</div>
+                            <div className="text-sm text-gray-600">34% of monthly limit (100 min)</div>
+                        </div>
                     </div>
-                ))}
+                </div>
             </div>
         </div>
     );
-}
-
-// Upgrade Plan Tab Component
+}// Upgrade Plan Tab Component
 function UpgradePlanTab() {
     const plans = [
         {
