@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import SignupStep1 from './components/SignupStep1';
@@ -9,6 +10,7 @@ import SignupIntro from './components/SignupIntro';
 import { SignupData } from './types';
 
 export default function SignupPage() {
+    const router = useRouter();
     const [currentStep, setCurrentStep] = useState(1);
     const [signupData, setSignupData] = useState<SignupData>({
         // Step 1 data
@@ -37,7 +39,12 @@ export default function SignupPage() {
     const handleComplete = (stepData: Partial<SignupData>) => {
         const finalData = { ...signupData, ...stepData };
         console.log('Signup completed:', finalData);
-        // Handle final signup submission
+
+        // Simulate signup processing
+        setTimeout(() => {
+            // Redirect to the new app dashboard
+            router.push('/app/home');
+        }, 1000);
     };
 
     return (
