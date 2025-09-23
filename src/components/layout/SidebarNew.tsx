@@ -3,12 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSidebar } from '@/contexts/SidebarContext';
 import {
     HomeIcon,
     CreditCardIcon,
     SpeakerWaveIcon,
     CogIcon,
     ChevronDownIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
     UserGroupIcon,
     BanknotesIcon,
     Bars3Icon,
@@ -212,9 +215,9 @@ const appMenuItems: MenuItem[] = [
 
 export default function Sidebar({ mode = 'admin' }: SidebarProps) {
     const pathname = usePathname();
-    const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+    const [openSubmenu, setOpenSubmenu] = useState<string | null>('Sales Hub'); // Set Sales Hub to open by default
     const [openNestedSubmenu, setOpenNestedSubmenu] = useState<string | null>(null);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { isCollapsed, setIsCollapsed, isMobileMenuOpen, toggleMobileMenu } = useSidebar();
 
     const menuItems = mode === 'admin' ? adminMenuItems : appMenuItems;
 
@@ -227,49 +230,69 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
         setOpenNestedSubmenu(openNestedSubmenu === menuName ? null : menuName);
     };
 
-    const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen);
+    const closeMobileMenu = () => {
+        // Using context function to close mobile menu
+        if (isMobileMenuOpen) {
+            toggleMobileMenu();
+        }
     };
 
-    const closeMobileMenu = () => {
-        setIsMobileMenuOpen(false);
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed);
+        // Close submenus when collapsing
+        if (!isCollapsed) {
+            setOpenSubmenu(null);
+            setOpenNestedSubmenu(null);
+        }
     };
 
     const renderMenuItem = (item: MenuItem, level: number = 0, onClose?: () => void) => {
         const hasSubItems = item.subItems && item.subItems.length > 0;
         const isOpen = level === 0 ? openSubmenu === item.name : openNestedSubmenu === item.name;
-        const paddingLeft = level === 0 ? 'pl-2' : level === 1 ? 'pl-8' : 'pl-12';
+        const paddingLeft = level === 0 ? 'pl-6' : level === 1 ? 'pl-12' : 'pl-16'; // Increased padding to align with header icon
+
+        // Don't render submenus when collapsed
+        if (isCollapsed && level > 0) {
+            return null;
+        }
 
         if (hasSubItems) {
             return (
                 <div key={item.name}>
                     <button
-                        onClick={() => level === 0 ? toggleSubmenu(item.name) : toggleNestedSubmenu(item.name)}
-                        className={`group flex w-full items-center gap-x-3 p-2 text-left leading-6 font-medium ${paddingLeft} ${pathname.startsWith(item.href)
-                                ? 'text-white border-l-4 border-blue-600 -mx-2'
-                                : 'hover:text-white hover:bg-gray-700 rounded-md'
+                        onClick={() => {
+                            if (isCollapsed) return; // Don't open submenus when collapsed
+                            level === 0 ? toggleSubmenu(item.name) : toggleNestedSubmenu(item.name);
+                        }}
+                        className={`group flex w-full items-center gap-x-3 p-2 text-left leading-6 ${level === 0 ? 'font-semibold' : 'font-medium'} relative -mx-2 ${isCollapsed ? 'justify-center pl-0' : paddingLeft
+                            } ${pathname.startsWith(item.href)
+                                ? 'text-blue-600'
+                                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                             }`}
                         style={{
-                            fontSize: '14px',
-                            color: pathname.startsWith(item.href) ? 'white' : '#AEBEE1',
-                            backgroundColor: pathname.startsWith(item.href) ? '#0A1330' : undefined
+                            fontSize: '16px'
                         }}
+                        title={isCollapsed ? item.name : undefined}
                     >
                         <item.icon
-                            className="h-5 w-5 shrink-0"
+                            className={`h-6 w-6 shrink-0 ${isCollapsed ? 'mx-auto' : ''}`}
                             aria-hidden="true"
                         />
-                        {item.name}
-                        <ChevronDownIcon
-                            className={`ml-auto h-4 w-4 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''
-                                }`}
-                            style={{
-                                color: pathname.startsWith(item.href) ? 'white' : '#AEBEE1'
-                            }}
-                            aria-hidden="true"
-                        />
+                        {!isCollapsed && (
+                            <>
+                                {item.name}
+                                <ChevronDownIcon
+                                    className={`ml-auto h-5 w-5 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''
+                                        }`}
+                                    style={{
+                                        color: pathname.startsWith(item.href) ? '#2563eb' : '#6b7280'
+                                    }}
+                                    aria-hidden="true"
+                                />
+                            </>
+                        )}
                     </button>
-                    {isOpen && (
+                    {isOpen && !isCollapsed && (
                         <ul className="mt-1 space-y-1">
                             {item.subItems?.map((subItem) => (
                                 <li key={subItem.name}>
@@ -287,21 +310,21 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                 key={item.name}
                 href={item.href}
                 onClick={onClose}
-                className={`group flex gap-x-3 p-2 leading-6 font-medium ${paddingLeft} ${pathname === item.href
-                        ? 'text-white border-l-4 border-blue-600 -mx-2'
-                        : 'hover:text-white hover:bg-gray-700 rounded-md'
+                className={`group flex gap-x-3 p-2 leading-6 ${level === 0 ? 'font-semibold' : 'font-medium'} relative -mx-2 ${isCollapsed ? 'justify-center pl-0' : paddingLeft
+                    } ${pathname === item.href
+                        ? 'text-blue-600 bg-blue-50 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-600'
+                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
                     }`}
                 style={{
-                    fontSize: '14px',
-                    color: pathname === item.href ? 'white' : '#AEBEE1',
-                    backgroundColor: pathname === item.href ? '#0A1330' : undefined
+                    fontSize: '16px'
                 }}
+                title={isCollapsed ? item.name : undefined}
             >
                 <item.icon
-                    className="h-5 w-5 shrink-0"
+                    className={`h-6 w-6 shrink-0 ${isCollapsed ? 'mx-auto' : ''}`}
                     aria-hidden="true"
                 />
-                {item.name}
+                {!isCollapsed && item.name}
             </Link>
         );
     };
@@ -323,16 +346,26 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
             </div>
 
             {/* Desktop sidebar */}
-            <div className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
-                <nav className="flex flex-1 flex-col bg-gray-800 px-4 pb-4 pt-5">
-                    <div className="flex h-16 flex-shrink-0 items-center px-4">
-                        <Link href={mode === 'admin' ? '/admin/home' : '/app/home'} className="text-white text-lg font-bold">
-                            7x CRM {mode === 'admin' ? 'Admin' : ''}
-                        </Link>
-                    </div>
+            <div className={`hidden md:flex md:flex-col md:fixed md:inset-y-0 transition-all duration-300 ${isCollapsed ? 'md:w-16' : 'md:w-64'
+                }`}>
+                <nav className="flex flex-1 flex-col bg-white border-r border-gray-200 pb-4 pt-16 relative shadow-sm"> {/* Changed pt-20 to pt-16 for smaller header */}
+                    {/* Collapse/Expand Toggle Button */}
+                    <button
+                        onClick={toggleCollapse}
+                        className="absolute -right-3 top-16 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800 border-2 border-gray-300 shadow-lg transition-all duration-200"
+                        title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+                    >
+                        {isCollapsed ? (
+                            <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+                        ) : (
+                            <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+                        )}
+                    </button>
+
+                    {/* Menu Items */}
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
-                            <ul role="list" className="-mx-2 space-y-1">
+                            <ul role="list" className="space-y-1 px-2">{/* Added px-2 to allow -mx-2 on items to extend to edges */}
                                 {menuItems.map((item) => (
                                     <li key={item.name}>
                                         {renderMenuItem(item, 0)}
@@ -344,30 +377,31 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                 </nav>
             </div>
 
-            {/* Mobile sidebar */}
-            {isMobileMenuOpen && (
-                <div className="fixed inset-0 z-40 md:hidden">
-                    <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={closeMobileMenu}></div>
-                    <nav className="fixed top-0 left-0 bottom-0 flex w-5/6 max-w-sm flex-col bg-gray-800 px-4 pb-4 pt-16">
-                        <div className="flex h-16 flex-shrink-0 items-center px-4">
-                            <Link href={mode === 'admin' ? '/admin/home' : '/app/home'} className="text-white text-lg font-bold">
-                                7x CRM {mode === 'admin' ? 'Admin' : ''}
-                            </Link>
-                        </div>
-                        <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                            <li>
-                                <ul role="list" className="-mx-2 space-y-1">
-                                    {menuItems.map((item) => (
-                                        <li key={item.name}>
-                                            {renderMenuItem(item, 0, closeMobileMenu)}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            )}
+            {/* Mobile sidebar overlay */}
+            <div className={`fixed inset-0 z-40 md:hidden transition-opacity duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                }`}>
+                {/* Background overlay - Glass effect để nhìn thấy content phía sau */}
+                <div
+                    className="fixed inset-0 bg-transparent backdrop-blur-sm"
+                    onClick={closeMobileMenu}
+                ></div>
+                {/* Sidebar with slide animation - Fixed 220px width */}
+                <nav className={`fixed top-0 left-0 bottom-0 flex w-[240px] flex-col bg-white border-r border-gray-200 px-4 pb-4 pt-16 shadow-xl transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+                    }`}>
+                    {/* Menu Items - No branding section needed since it's in header */}
+                    <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                        <li>
+                            <ul role="list" className="space-y-1 px-2">{/* Consistent with desktop version, added px-2 */}
+                                {menuItems.map((item) => (
+                                    <li key={item.name}>
+                                        {renderMenuItem(item, 0, closeMobileMenu)}
+                                    </li>
+                                ))}
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </>
     );
 }
