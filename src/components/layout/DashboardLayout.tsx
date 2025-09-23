@@ -1,7 +1,8 @@
 'use client';
 
 import SidebarNew from './SidebarNew';
-import Header from './Header';
+import AdminHeader from './AdminHeader';
+import AppHeader from './AppHeader';
 import MobileFloatingMenu from './MobileFloatingMenu';
 import { usePathname } from 'next/navigation';
 import { SidebarProvider, useSidebar } from '@/contexts/SidebarContext';
@@ -18,8 +19,8 @@ function DashboardContent({ children }: DashboardLayoutProps) {
     return (
         <div className="flex h-screen bg-gray-100">
             <SidebarNew mode={isAdminMode ? 'admin' : 'app'} />
-            {/* Header spans full width */}
-            <Header />
+            {/* Header spans full width - use appropriate header based on route */}
+            {isAdminMode ? <AdminHeader /> : <AppHeader />}
             {/* Mobile Floating Menu */}
             <MobileFloatingMenu />
             {/* Main content area with sidebar margin */}
