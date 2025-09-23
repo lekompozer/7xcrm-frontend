@@ -4,30 +4,14 @@ import { useState, useMemo, useCallback } from 'react';
 import {
     PlusIcon,
     ArrowDownTrayIcon,
-    CalendarIcon,
     MagnifyingGlassIcon,
     Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 import LeadStatsCards from '../../../admin/lead-management/components/LeadStatsCards';
-import LeadSearchBar from '../../../admin/lead-management/components/LeadSearchBar';
 import LeadFilterPanel from '../../../admin/lead-management/components/LeadFilterPanel';
 import LeadTable from '../../../admin/lead-management/components/LeadTable';
 import { sampleLeads } from '../../../admin/lead-management/data/sampleLeads';
 import { Lead, LeadStats } from '@/types/lead';
-
-interface FilterOption {
-    value: string;
-    label: string;
-    selected: boolean;
-}
-
-interface LeadFilters {
-    owners: FilterOption[];
-    leadTypes: FilterOption[];
-    stages: FilterOption[];
-    statuses: FilterOption[];
-    sources: FilterOption[];
-}
 
 // Sample stats data for the cards
 const statsData: LeadStats[] = [
@@ -78,7 +62,7 @@ export default function LeadsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isCustomizeOpen, setIsCustomizeOpen] = useState(false);
-    const [filters, setFilters] = useState<Record<string, any>>({});
+    const [filters, setFilters] = useState<Record<string, string>>({});
     const [timePeriod, setTimePeriod] = useState('this_month');
 
     // Filter leads based on selected stat
@@ -125,11 +109,7 @@ export default function LeadsPage() {
         });
 
         return filtered;
-    }, [sampleLeads, selectedStat, searchTerm, filters]);
-
-    const handleStatClick = useCallback((statId: string) => {
-        setSelectedStat(statId === selectedStat ? null : statId);
-    }, [selectedStat]);
+    }, [selectedStat, searchTerm, filters]);
 
     const handleClearFilters = useCallback(() => {
         setSelectedStat('total');
@@ -174,8 +154,8 @@ export default function LeadsPage() {
             </div>
 
             {/* Stats Cards */}
-            <LeadStatsCards 
-                stats={statsData} 
+            <LeadStatsCards
+                stats={statsData}
                 selectedStat={selectedStat}
                 onStatSelect={setSelectedStat}
                 timePeriod={timePeriod}

@@ -27,17 +27,15 @@ export default function Header() {
     const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
     const [isSupportDropdownOpen, setIsSupportDropdownOpen] = useState(false);
     const [currentLanguage, setCurrentLanguage] = useState('EN');
-    const [isTrialUser, setIsTrialUser] = useState(true); // State để kiểm tra user có phải trial không
+    const [isTrialUser] = useState(true); // State để kiểm tra user có phải trial không
     const dropdownRef = useRef<HTMLDivElement>(null);
     const languageDropdownRef = useRef<HTMLDivElement>(null);
     const supportDropdownRef = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
     const isAdminMode = pathname.startsWith('/admin');
-    const { isCollapsed, setIsCollapsed, toggleMobileMenu } = useSidebar();
+    const { toggleMobileMenu } = useSidebar();
 
-    const toggleSidebar = () => {
-        setIsCollapsed(!isCollapsed);
-    };    // Close dropdown when clicking outside
+    // Close dropdown when clicking outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {

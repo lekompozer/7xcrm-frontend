@@ -28,7 +28,8 @@ import {
     MegaphoneIcon,
     CurrencyDollarIcon,
     UserCircleIcon,
-    LockClosedIcon
+    LockClosedIcon,
+    CircleStackIcon
 } from '@heroicons/react/24/outline';
 
 interface SidebarProps {
@@ -92,11 +93,6 @@ const appMenuItems: MenuItem[] = [
         name: 'Dashboard',
         href: '/app/home',
         icon: HomeIcon,
-    },
-    {
-        name: 'Product Management',
-        href: '/app/product-management',
-        icon: CubeIcon,
     },
     {
         name: 'Sales Hub',
@@ -170,9 +166,14 @@ const appMenuItems: MenuItem[] = [
         icon: CogIcon,
         subItems: [
             {
+                name: 'Products',
+                href: '/app/product-management',
+                icon: CubeIcon,
+            },
+            {
                 name: 'Data Configuration',
                 href: '/app/settings/data-configuration',
-                icon: CubeIcon,
+                icon: CircleStackIcon,
             },
             {
                 name: 'User',
