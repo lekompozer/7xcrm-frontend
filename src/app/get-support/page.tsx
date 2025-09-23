@@ -8,7 +8,7 @@ export default function GetSupportPage() {
                     {/* Header */}
                     <div className="text-center mb-12">
                         <h1 className="text-3xl font-bold text-gray-900 mb-4">Get Support</h1>
-                        <p className="text-lg text-gray-600">We're here to help you succeed with 7x CRM</p>
+                        <p className="text-lg text-gray-600">We&apos;re here to help you succeed with 7x CRM</p>
                     </div>
 
                     {/* Support Options */}
@@ -42,7 +42,7 @@ export default function GetSupportPage() {
                                 </svg>
                             </div>
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">Email Support</h3>
-                            <p className="text-gray-600 mb-4">Send us a detailed message and we'll respond quickly</p>
+                            <p className="text-gray-600 mb-4">Send us a detailed message and we&apos;ll respond quickly</p>
                             <div className="text-sm text-gray-500 mb-4">
                                 <div>Response time: 2-4 hours</div>
                                 <div>support@7xcrm.com</div>

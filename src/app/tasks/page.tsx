@@ -21,7 +21,7 @@ export default function TasksPage() {
                             </div>
                             <h3 className="text-xl font-semibold text-gray-900 mb-2">Tasks Feature Coming Soon</h3>
                             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                                We're working hard to bring you a comprehensive task management system. Stay tuned for updates!
+                                We&apos;re working hard to bring you a comprehensive task management system. Stay tuned for updates!
                             </p>
                             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
                                 <h4 className="font-medium text-blue-900 mb-2">What to expect:</h4>

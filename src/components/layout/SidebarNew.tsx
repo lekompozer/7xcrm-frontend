@@ -313,7 +313,11 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                     <button
                         onClick={() => {
                             if (isCollapsed) return; // Don't open submenus when collapsed
-                            level === 0 ? toggleSubmenu(item.name) : toggleNestedSubmenu(item.name);
+                            if (level === 0) {
+                                toggleSubmenu(item.name);
+                            } else {
+                                toggleNestedSubmenu(item.name);
+                            }
                         }}
                         className={`group flex w-full items-center text-left leading-6 ${level === 0 ? 'font-semibold' : 'font-medium'} relative ${isCollapsed
                             ? 'justify-center p-2 mx-0'

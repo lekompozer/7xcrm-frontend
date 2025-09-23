@@ -9,7 +9,7 @@ export default function ContactSalesPage() {
                     <div className="text-center mb-12">
                         <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Sales</h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Ready to transform your business with 7x CRM? Let's discuss how we can help you achieve your goals.
+                            Ready to transform your business with 7x CRM? Let&apos;s discuss how we can help you achieve your goals.
                         </p>
                     </div>
 
@@ -277,7 +277,7 @@ export default function ContactSalesPage() {
                             <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-lg p-8 border border-green-200">
                                 <h3 className="text-xl font-semibold text-gray-900 mb-4">Customer Success</h3>
                                 <blockquote className="text-gray-700 mb-4">
-                                    "7x CRM transformed our sales process. We've seen a 40% increase in conversion rates and saved 15 hours per week on administrative tasks."
+                                    &ldquo;7x CRM transformed our sales process. We&apos;ve seen a 40% increase in conversion rates and saved 15 hours per week on administrative tasks.&rdquo;
                                 </blockquote>
                                 <div className="flex items-center">
                                     <div className="h-12 w-12 bg-gray-300 rounded-full mr-4"></div>
