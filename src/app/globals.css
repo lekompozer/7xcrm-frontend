@@ -28,24 +28,29 @@ body {
   scrollbar-width: none;
 }
 
-/* Responsive stats container */
-@media (max-width: 1023px) {
-  .stats-scroll-container {
-    display: flex !important;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-  }
-
-  .stats-scroll-container>div {
-    scroll-snap-align: start;
-    flex-shrink: 0;
-  }
+/* Stats container behavior */
+.stats-scroll-container {
+  display: flex !important;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
 }
 
-@media (min-width: 1024px) {
+.stats-scroll-container>div {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* Only use grid for very large screens (4xl and above) */
+@media (min-width: 1920px) {
   .stats-scroll-container {
     display: grid !important;
     overflow: visible !important;
+    scroll-snap-type: none;
+  }
+
+  .stats-scroll-container>div {
+    scroll-snap-align: none;
+    flex-shrink: 1;
   }
 }
 

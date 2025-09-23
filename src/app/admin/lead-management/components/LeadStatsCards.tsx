@@ -5,18 +5,12 @@ import { useRef, useState, useEffect } from 'react';
  * LeadStatsCards Component
  *
  * Responsive stats cards that display lead metrics with the following behavior:
- * - Mobile (< lg): Horizontal scrollable flex layout with navigation arrows
- * - Desktop (>= lg): Responsive grid layout that adapts to screen size:
- *   - lg: 3 columns
- *   - xl: 4 columns
- *   - 2xl: 5 columns
- *   - 3xl: 6 columns (1680px+)
- *   - 4xl: 7 columns (1920px+)
+ * - All screens (< 4xl): Horizontal scrollable flex layout with navigation arrows (258px per card)
+ * - Very large screens (>= 4xl/1920px+): Grid layout with 7 columns for maximum utilization
  *
- * This ensures stats cards utilize full width on large 24+ inch monitors
- */
-
-interface LeadStat {
+ * This ensures stats cards stay on one row with horizontal scrolling for MacBook Pro 13"
+ * and similar screen sizes, only switching to grid on very large monitors.
+ */interface LeadStat {
     id: string;
     name: string;
     count: number;
@@ -135,20 +129,20 @@ export default function LeadStatsCards({
 
     return (
         <div className="relative mb-6">
-            {/* Left scroll arrow - only visible on smaller screens */}
+            {/* Left scroll arrow - visible for all scrollable screens */}
             <button
                 onClick={scrollLeft}
-                className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 border border-gray-200 transition-opacity duration-200 lg:hidden ${canScrollLeft ? 'opacity-100 hover:bg-gray-50' : 'opacity-0 pointer-events-none'
+                className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 border border-gray-200 transition-opacity duration-200 4xl:hidden ${canScrollLeft ? 'opacity-100 hover:bg-gray-50' : 'opacity-0 pointer-events-none'
                     }`}
                 style={{ transform: 'translateY(-50%) translateX(-50%)' }}
             >
                 <ChevronLeftIcon className="h-5 w-5 text-gray-600" />
             </button>
 
-            {/* Right scroll arrow - only visible on smaller screens */}
+            {/* Right scroll arrow - visible for all scrollable screens */}
             <button
                 onClick={scrollRight}
-                className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 border border-gray-200 transition-opacity duration-200 lg:hidden ${canScrollRight ? 'opacity-100 hover:bg-gray-50' : 'opacity-0 pointer-events-none'
+                className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg rounded-full p-2 border border-gray-200 transition-opacity duration-200 4xl:hidden ${canScrollRight ? 'opacity-100 hover:bg-gray-50' : 'opacity-0 pointer-events-none'
                     }`}
                 style={{ transform: 'translateY(-50%) translateX(50%)' }}
             >
@@ -158,7 +152,7 @@ export default function LeadStatsCards({
             {/* Scrollable container */}
             <div
                 ref={scrollContainerRef}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 3xl:grid-cols-6 4xl:grid-cols-7 gap-6 lg:overflow-visible overflow-x-auto lg:grid stats-scroll-container"
+                className="flex gap-6 overflow-x-auto 4xl:grid 4xl:grid-cols-7 4xl:overflow-visible stats-scroll-container"
                 onScroll={checkScrollPosition}
             >
                 {stats.map((stat) => {
@@ -169,11 +163,11 @@ export default function LeadStatsCards({
                         <div
                             key={stat.id}
                             onClick={() => onStatSelect(selectedStat === stat.id ? null : stat.id)}
-                            className={`relative rounded-lg shadow cursor-pointer transition-all duration-200 hover:shadow-lg border-2 overflow-hidden lg:flex-shrink flex-shrink-0 ${isSelected
+                            className={`relative rounded-lg shadow cursor-pointer transition-all duration-200 hover:shadow-lg border-2 overflow-hidden flex-shrink-0 4xl:flex-shrink ${isSelected
                                 ? `${getSelectedBackgroundClass(stat.id)} border-transparent`
                                 : 'bg-white border-transparent hover:border-gray-200'
                                 }`}
-                            style={{ minWidth: '240px', width: '100%', height: '114px', padding: '24px' }}
+                            style={{ minWidth: '258px', width: '258px', height: '114px', padding: '24px' }}
                         >
                             {/* Time Period Selector only for Total - positioned at top right */}
                             {stat.id === 'total' && (
