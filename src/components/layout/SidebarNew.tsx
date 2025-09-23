@@ -49,16 +49,6 @@ const adminMenuItems: MenuItem[] = [
         icon: HomeIcon,
     },
     {
-        name: 'Lead Management',
-        href: '/admin/lead-management',
-        icon: UserPlusIcon,
-    },
-    {
-        name: 'Product Management',
-        href: '/admin/product-management',
-        icon: CubeIcon,
-    },
-    {
         name: 'Subscription Management',
         href: '/admin/subscription-management',
         icon: CreditCardIcon,
@@ -72,11 +62,6 @@ const adminMenuItems: MenuItem[] = [
         name: 'Marketing Assistant',
         href: '/admin/marketing-assistants',
         icon: UsersIcon,
-    },
-    {
-        name: 'Usage & Plan',
-        href: '/admin/usage-plan',
-        icon: ChartBarIcon,
     },
     {
         name: 'Settings',
@@ -107,6 +92,11 @@ const appMenuItems: MenuItem[] = [
         name: 'Dashboard',
         href: '/app/home',
         icon: HomeIcon,
+    },
+    {
+        name: 'Product Management',
+        href: '/app/product-management',
+        icon: CubeIcon,
     },
     {
         name: 'Sales Hub',
@@ -215,15 +205,35 @@ const appMenuItems: MenuItem[] = [
 
 export default function Sidebar({ mode = 'admin' }: SidebarProps) {
     const pathname = usePathname();
-    const [openSubmenu, setOpenSubmenu] = useState<string | null>('Sales Hub'); // Set Sales Hub to open by default
+    const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set(['Sales Hub'])); // Use Set to track multiple open submenus
     const [openNestedSubmenu, setOpenNestedSubmenu] = useState<string | null>(null);
     const { isCollapsed, setIsCollapsed, isMobileMenuOpen, toggleMobileMenu } = useSidebar();
 
     const menuItems = mode === 'admin' ? adminMenuItems : appMenuItems;
 
     const toggleSubmenu = (menuName: string) => {
-        setOpenSubmenu(openSubmenu === menuName ? null : menuName);
-        setOpenNestedSubmenu(null); // Close nested when parent closes
+        setOpenSubmenus(prev => {
+            const newSet = new Set(prev);
+            if (menuName === 'Sales Hub') {
+                // Allow Sales Hub to be toggled only if user explicitly clicks it
+                if (newSet.has('Sales Hub')) {
+                    newSet.delete('Sales Hub');
+                } else {
+                    newSet.add('Sales Hub');
+                }
+            } else {
+                // For other menus, toggle them but always keep Sales Hub open
+                if (newSet.has(menuName)) {
+                    newSet.delete(menuName);
+                } else {
+                    newSet.add(menuName);
+                }
+                // Always ensure Sales Hub stays open
+                newSet.add('Sales Hub');
+            }
+            return newSet;
+        });
+        setOpenNestedSubmenu(null); // Close nested when parent changes
     };
 
     const toggleNestedSubmenu = (menuName: string) => {
@@ -239,16 +249,19 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
 
     const toggleCollapse = () => {
         setIsCollapsed(!isCollapsed);
-        // Close submenus when collapsing
+        // Close submenus when collapsing, but keep Sales Hub open when expanding
         if (!isCollapsed) {
-            setOpenSubmenu(null);
+            setOpenSubmenus(new Set());
             setOpenNestedSubmenu(null);
+        } else {
+            // When expanding, restore Sales Hub as default open
+            setOpenSubmenus(new Set(['Sales Hub']));
         }
     };
 
     const renderMenuItem = (item: MenuItem, level: number = 0, onClose?: () => void) => {
         const hasSubItems = item.subItems && item.subItems.length > 0;
-        const isOpen = level === 0 ? openSubmenu === item.name : openNestedSubmenu === item.name;
+        const isOpen = level === 0 ? openSubmenus.has(item.name) : openNestedSubmenu === item.name;
         const paddingLeft = level === 0 ? 'pl-6' : level === 1 ? 'pl-12' : 'pl-16'; // Increased padding to align with header icon
 
         // Don't render submenus when collapsed
@@ -264,7 +277,9 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                             if (isCollapsed) return; // Don't open submenus when collapsed
                             level === 0 ? toggleSubmenu(item.name) : toggleNestedSubmenu(item.name);
                         }}
-                        className={`group flex w-full items-center gap-x-3 p-2 text-left leading-6 ${level === 0 ? 'font-semibold' : 'font-medium'} relative -mx-2 ${isCollapsed ? 'justify-center pl-0' : paddingLeft
+                        className={`group flex w-full items-center text-left leading-6 ${level === 0 ? 'font-semibold' : 'font-medium'} relative ${isCollapsed
+                            ? 'justify-center p-2 mx-0'
+                            : `gap-x-3 p-2 -mx-2 ${paddingLeft}`
                             } ${pathname.startsWith(item.href)
                                 ? 'text-blue-600'
                                 : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
@@ -275,7 +290,7 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                         title={isCollapsed ? item.name : undefined}
                     >
                         <item.icon
-                            className={`h-6 w-6 shrink-0 ${isCollapsed ? 'mx-auto' : ''}`}
+                            className="h-6 w-6 shrink-0"
                             aria-hidden="true"
                         />
                         {!isCollapsed && (
@@ -310,7 +325,7 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                 key={item.name}
                 href={item.href}
                 onClick={onClose}
-                className={`group flex gap-x-3 p-2 leading-6 ${level === 0 ? 'font-semibold' : 'font-medium'} relative -mx-2 ${isCollapsed ? 'justify-center pl-0' : paddingLeft
+                className={`group flex gap-x-3 p-2 leading-6 ${level === 0 ? 'font-semibold' : 'font-medium'} relative -mx-2 ${isCollapsed ? 'justify-center px-0' : paddingLeft
                     } ${pathname === item.href
                         ? 'text-blue-600 bg-blue-50 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-600'
                         : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
@@ -321,7 +336,7 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                 title={isCollapsed ? item.name : undefined}
             >
                 <item.icon
-                    className={`h-6 w-6 shrink-0 ${isCollapsed ? 'mx-auto' : ''}`}
+                    className={`h-6 w-6 shrink-0 ${isCollapsed ? '' : ''}`}
                     aria-hidden="true"
                 />
                 {!isCollapsed && item.name}

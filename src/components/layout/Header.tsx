@@ -18,7 +18,8 @@ import {
     DocumentTextIcon,
     PhoneIcon,
     StarIcon,
-    Bars3Icon
+    Bars3Icon,
+    ClipboardDocumentListIcon
 } from '@heroicons/react/24/outline';
 
 export default function Header() {
@@ -74,7 +75,16 @@ export default function Header() {
                 </button>
 
                 {/* Logo and Brand */}
-                <div className="flex items-center gap-3 ml-6 md:ml-6 min-w-0 flex-shrink-0" style={{ marginLeft: '5px' }}>
+                <div className="logo-container flex items-center gap-3 min-w-0 flex-shrink-0" style={{ marginLeft: '5px' }}>
+                    <style dangerouslySetInnerHTML={{
+                        __html: `
+                            @media (min-width: 768px) {
+                                .logo-container {
+                                    margin-left: 25px !important;
+                                }
+                            }
+                        `
+                    }} />
                     <Image
                         src="/7xCRM-icon.png"
                         alt="7x CRM"
@@ -89,14 +99,14 @@ export default function Header() {
                 </div>
 
                 {/* Desktop Navigation Menu - Hidden on mobile */}
-                <div className="hidden md:flex items-center gap-6" style={{ marginLeft: '130px' }}>
+                <div className="hidden md:flex items-center gap-6" style={{ marginLeft: '115px' }}>
                     <nav className="flex items-center space-x-3">
                         <Link
-                            href="/usage-plan"
+                            href="/tasks"
                             className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200 whitespace-nowrap"
                         >
-                            <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
-                            <span>Usage and Plan</span>
+                            <ClipboardDocumentListIcon className="h-4 w-4 flex-shrink-0" />
+                            <span>Tasks</span>
                         </Link>
 
                         <Link
@@ -105,6 +115,14 @@ export default function Header() {
                         >
                             <UserGroupIcon className="h-4 w-4 flex-shrink-0" />
                             <span>Marketing Assistant</span>
+                        </Link>
+
+                        <Link
+                            href="/app/usage-plan"
+                            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200 whitespace-nowrap"
+                        >
+                            <ChartBarIcon className="h-4 w-4 flex-shrink-0" />
+                            <span>Usage and Plan</span>
                         </Link>
 
                         {/* Support Dropdown */}
