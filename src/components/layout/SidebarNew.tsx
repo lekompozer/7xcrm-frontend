@@ -396,13 +396,13 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
             {/* Mobile sidebar overlay */}
             <div className={`fixed inset-0 z-40 md:hidden transition-opacity duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
                 }`}>
-                {/* Background overlay - Glass effect để nhìn thấy content phía sau */}
+                {/* Background overlay - Match Customize Panel styling */}
                 <div
-                    className="fixed inset-0 bg-transparent backdrop-blur-sm"
+                    className="fixed inset-0 bg-black/30 backdrop-blur-sm mobile-sidebar-backdrop"
                     onClick={closeMobileMenu}
                 ></div>
-                {/* Sidebar with slide animation - Fixed 220px width */}
-                <nav className={`fixed top-0 left-0 bottom-0 flex w-[240px] flex-col bg-white border-r border-gray-200 px-4 pb-4 pt-16 shadow-xl transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+                {/* Sidebar with slide animation - Match Customize Panel styling */}
+                <nav className={`fixed top-0 left-0 bottom-0 flex w-[240px] flex-col bg-white/90 backdrop-blur-md border-r border-gray-200/50 px-4 pb-4 pt-16 shadow-2xl mobile-sidebar-glass transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
                     }`}>
                     {/* Menu Items - No branding section needed since it's in header */}
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
