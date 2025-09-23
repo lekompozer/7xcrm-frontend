@@ -43,6 +43,8 @@ interface MenuItem {
     subItems?: MenuItem[];
 }
 
+type ThemeType = 'light' | 'blue' | 'dark';
+
 const adminMenuItems: MenuItem[] = [
     {
         name: 'Home',
@@ -208,6 +210,7 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
     const pathname = usePathname();
     const [openSubmenus, setOpenSubmenus] = useState<Set<string>>(new Set(['Sales Hub'])); // Use Set to track multiple open submenus
     const [openNestedSubmenu, setOpenNestedSubmenu] = useState<string | null>(null);
+    const [sidebarTheme, setSidebarTheme] = useState<ThemeType>('light');
     const { isCollapsed, setIsCollapsed, isMobileMenuOpen, toggleMobileMenu } = useSidebar();
 
     const menuItems = mode === 'admin' ? adminMenuItems : appMenuItems;
@@ -260,6 +263,40 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
         }
     };
 
+    const getThemeStyles = () => {
+        switch (sidebarTheme) {
+            case 'blue':
+                return {
+                    background: '#f5fafdff',
+                    textColor: 'text-gray-700',
+                    hoverBg: 'hover:bg-blue-100',
+                    activeBg: 'bg-blue-100',
+                    activeText: 'text-blue-800',
+                    borderColor: 'border-blue-200',
+                };
+            case 'dark':
+                return {
+                    background: '#1f2937',
+                    textColor: 'text-gray-300',
+                    hoverBg: 'hover:bg-gray-700',
+                    activeBg: 'bg-gray-600',
+                    activeText: 'text-white',
+                    borderColor: 'border-gray-600',
+                };
+            default: // light
+                return {
+                    background: 'white',
+                    textColor: 'text-gray-700',
+                    hoverBg: 'hover:bg-gray-100',
+                    activeBg: 'bg-blue-50',
+                    activeText: 'text-blue-600',
+                    borderColor: 'border-gray-200',
+                };
+        }
+    };
+
+    const themeStyles = getThemeStyles();
+
     const renderMenuItem = (item: MenuItem, level: number = 0, onClose?: () => void) => {
         const hasSubItems = item.subItems && item.subItems.length > 0;
         const isOpen = level === 0 ? openSubmenus.has(item.name) : openNestedSubmenu === item.name;
@@ -281,9 +318,9 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                         className={`group flex w-full items-center text-left leading-6 ${level === 0 ? 'font-semibold' : 'font-medium'} relative ${isCollapsed
                             ? 'justify-center p-2 mx-0'
                             : `gap-x-3 p-2 -mx-2 ${paddingLeft}`
-                            } ${pathname.startsWith(item.href)
-                                ? 'text-blue-600'
-                                : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                            } ${pathname === item.href
+                                ? `${themeStyles.activeText} ${themeStyles.activeBg}`
+                                : `${themeStyles.textColor} ${themeStyles.hoverBg}`
                             }`}
                         style={{
                             fontSize: '16px'
@@ -298,11 +335,10 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                             <>
                                 {item.name}
                                 <ChevronDownIcon
-                                    className={`ml-auto h-5 w-5 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''
+                                    className={`ml-auto h-5 w-5 shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''} ${pathname === item.href
+                                        ? sidebarTheme === 'dark' ? 'text-white' : 'text-blue-600'
+                                        : sidebarTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'
                                         }`}
-                                    style={{
-                                        color: pathname.startsWith(item.href) ? '#2563eb' : '#6b7280'
-                                    }}
                                     aria-hidden="true"
                                 />
                             </>
@@ -328,8 +364,8 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                 onClick={onClose}
                 className={`group flex gap-x-3 p-2 leading-6 ${level === 0 ? 'font-semibold' : 'font-medium'} relative -mx-2 ${isCollapsed ? 'justify-center px-0' : paddingLeft
                     } ${pathname === item.href
-                        ? 'text-blue-600 bg-blue-50 before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-600'
-                        : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
+                        ? `${themeStyles.activeText} ${themeStyles.activeBg} before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1 before:bg-blue-600`
+                        : `${themeStyles.textColor} ${themeStyles.hoverBg}`
                     }`}
                 style={{
                     fontSize: '16px'
@@ -364,7 +400,10 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
             {/* Desktop sidebar */}
             <div className={`hidden md:flex md:flex-col md:fixed md:inset-y-0 transition-all duration-300 ${isCollapsed ? 'md:w-16' : 'md:w-64'
                 }`}>
-                <nav className="flex flex-1 flex-col bg-white border-r border-gray-200 pb-4 pt-16 relative shadow-sm"> {/* Changed pt-20 to pt-16 for smaller header */}
+                <nav
+                    className={`flex flex-1 flex-col border-r ${themeStyles.borderColor} pb-4 pt-16 relative shadow-sm`}
+                    style={{ backgroundColor: themeStyles.background }}
+                > {/* Changed pt-20 to pt-16 for smaller header */}
                     {/* Collapse/Expand Toggle Button */}
                     <button
                         onClick={toggleCollapse}
@@ -390,6 +429,48 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                             </ul>
                         </li>
                     </ul>
+
+                    {/* Footer - Only show for app mode */}
+                    {mode === 'app' && !isCollapsed && (
+                        <div className={`px-4 py-3 border-t ${themeStyles.borderColor} mt-auto`}>
+                            {/* Version and Theme Color Picker in same line */}
+                            <div className="flex items-center justify-between">
+                                <span className={`text-xs ${themeStyles.textColor}`}>7x CRM v1.01</span>
+                                <div className="flex gap-2">
+                                    {/* Light Theme */}
+                                    <button
+                                        onClick={() => setSidebarTheme('light')}
+                                        className={`w-4 h-4 rounded-sm bg-white border-2 transition-all duration-200 ${sidebarTheme === 'light'
+                                            ? 'border-blue-500 shadow-md scale-110'
+                                            : 'border-gray-300 hover:border-gray-400'
+                                            }`}
+                                        title="Light Theme"
+                                    />
+
+                                    {/* Blue Theme */}
+                                    <button
+                                        onClick={() => setSidebarTheme('blue')}
+                                        className={`w-4 h-4 rounded-sm border-2 transition-all duration-200 ${sidebarTheme === 'blue'
+                                            ? 'border-blue-500 shadow-md scale-110'
+                                            : 'border-gray-300 hover:border-gray-400'
+                                            }`}
+                                        style={{ backgroundColor: '#e8f4f8' }}
+                                        title="Blue Theme"
+                                    />
+
+                                    {/* Dark Theme */}
+                                    <button
+                                        onClick={() => setSidebarTheme('dark')}
+                                        className={`w-4 h-4 rounded-sm bg-gray-800 border-2 transition-all duration-200 ${sidebarTheme === 'dark'
+                                            ? 'border-blue-500 shadow-md scale-110'
+                                            : 'border-gray-300 hover:border-gray-400'
+                                            }`}
+                                        title="Dark Theme"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </nav>
             </div>
 
@@ -402,8 +483,10 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                     onClick={closeMobileMenu}
                 ></div>
                 {/* Sidebar with slide animation - Match Customize Panel styling */}
-                <nav className={`fixed top-0 left-0 bottom-0 flex w-[240px] flex-col bg-white/90 backdrop-blur-md border-r border-gray-200/50 px-4 pb-4 pt-16 shadow-2xl mobile-sidebar-glass transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-                    }`}>
+                <nav
+                    className={`fixed top-0 left-0 bottom-0 flex w-[240px] flex-col backdrop-blur-md border-r ${themeStyles.borderColor} px-4 pb-4 pt-16 shadow-2xl mobile-sidebar-glass transform transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                    style={{ backgroundColor: sidebarTheme === 'light' ? 'rgba(255, 255, 255, 0.9)' : sidebarTheme === 'blue' ? 'rgba(232, 244, 248, 0.9)' : 'rgba(31, 41, 55, 0.9)' }}
+                >
                     {/* Menu Items - No branding section needed since it's in header */}
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                         <li>
@@ -416,6 +499,48 @@ export default function Sidebar({ mode = 'admin' }: SidebarProps) {
                             </ul>
                         </li>
                     </ul>
+
+                    {/* Mobile Footer - Only show for app mode */}
+                    {mode === 'app' && (
+                        <div className={`px-2 py-3 border-t ${themeStyles.borderColor} mt-auto`}>
+                            {/* Version and Theme Color Picker in same line */}
+                            <div className="flex items-center justify-between">
+                                <span className={`text-xs ${themeStyles.textColor}`}>7x CRM v1.01</span>
+                                <div className="flex gap-2">
+                                    {/* Light Theme */}
+                                    <button
+                                        onClick={() => setSidebarTheme('light')}
+                                        className={`w-4 h-4 rounded-sm bg-white border-2 transition-all duration-200 ${sidebarTheme === 'light'
+                                            ? 'border-blue-500 shadow-md scale-110'
+                                            : 'border-gray-300 hover:border-gray-400'
+                                            }`}
+                                        title="Light Theme"
+                                    />
+
+                                    {/* Blue Theme */}
+                                    <button
+                                        onClick={() => setSidebarTheme('blue')}
+                                        className={`w-4 h-4 rounded-sm border-2 transition-all duration-200 ${sidebarTheme === 'blue'
+                                            ? 'border-blue-500 shadow-md scale-110'
+                                            : 'border-gray-300 hover:border-gray-400'
+                                            }`}
+                                        style={{ backgroundColor: '#e8f4f8' }}
+                                        title="Blue Theme"
+                                    />
+
+                                    {/* Dark Theme */}
+                                    <button
+                                        onClick={() => setSidebarTheme('dark')}
+                                        className={`w-4 h-4 rounded-sm bg-gray-800 border-2 transition-all duration-200 ${sidebarTheme === 'dark'
+                                            ? 'border-blue-500 shadow-md scale-110'
+                                            : 'border-gray-300 hover:border-gray-400'
+                                            }`}
+                                        title="Dark Theme"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </nav>
             </div>
         </>
