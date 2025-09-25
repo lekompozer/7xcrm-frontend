@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSidebar } from '../../contexts/SidebarContext';
+import { useLanguage } from '../../contexts/LanguageContext';
 import {
     ChevronDownIcon,
     UserIcon,
@@ -26,7 +27,6 @@ export default function Header() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
     const [isSupportDropdownOpen, setIsSupportDropdownOpen] = useState(false);
-    const [currentLanguage, setCurrentLanguage] = useState('EN');
     const [isTrialUser] = useState(true); // State để kiểm tra user có phải trial không
     const dropdownRef = useRef<HTMLDivElement>(null);
     const languageDropdownRef = useRef<HTMLDivElement>(null);
@@ -34,6 +34,7 @@ export default function Header() {
     const pathname = usePathname();
     const isAdminMode = pathname.startsWith('/admin');
     const { toggleMobileMenu } = useSidebar();
+    const { currentLanguage, setLanguage } = useLanguage();
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -205,7 +206,7 @@ export default function Header() {
                         className="flex items-center gap-1 p-2 text-gray-700 hover:text-gray-900 rounded-lg hover:bg-gray-50"
                     >
                         <GlobeAltIcon className="h-5 w-5" />
-                        <span className="text-sm font-medium">{currentLanguage}</span>
+                        <span className="text-sm font-medium">{currentLanguage.toUpperCase()}</span>
                         <ChevronDownIcon className="h-3 w-3" />
                     </button>
 
@@ -213,20 +214,20 @@ export default function Header() {
                         <div className="absolute top-full left-0 mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                             <button
                                 onClick={() => {
-                                    setCurrentLanguage('EN');
+                                    setLanguage('en');
                                     setIsLanguageDropdownOpen(false);
                                 }}
-                                className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${currentLanguage === 'EN' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'}`}
+                                className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${currentLanguage === 'en' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'}`}
                             >
                                 <span className="text-base">🇺🇸</span>
                                 <span>EN</span>
                             </button>
                             <button
                                 onClick={() => {
-                                    setCurrentLanguage('VI');
+                                    setLanguage('vi');
                                     setIsLanguageDropdownOpen(false);
                                 }}
-                                className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${currentLanguage === 'VI' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'}`}
+                                className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 ${currentLanguage === 'vi' ? 'bg-blue-50 text-blue-600' : 'text-gray-700'}`}
                             >
                                 <span className="text-base">🇻🇳</span>
                                 <span>VI</span>

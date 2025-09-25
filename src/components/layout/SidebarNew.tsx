@@ -163,6 +163,28 @@ const appMenuItems: MenuItem[] = [
         ]
     },
     {
+        name: 'Marketing',
+        href: '/app/marketing',
+        icon: SpeakerWaveIcon,
+        subItems: [
+            {
+                name: 'Conversations',
+                href: '/app/marketing/conversations',
+                icon: UserGroupIcon,
+            },
+            {
+                name: 'Contacts',
+                href: '/app/marketing/contacts',
+                icon: UsersIcon,
+            },
+            {
+                name: 'Workflow',
+                href: '/app/marketing/workflow',
+                icon: DocumentTextIcon,
+            }
+        ]
+    },
+    {
         name: 'Settings',
         href: '/app/settings',
         icon: CogIcon,

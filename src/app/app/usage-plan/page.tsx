@@ -2,22 +2,35 @@
 
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { UserIcon, CreditCardIcon, DocumentTextIcon, ClockIcon, ShieldCheckIcon, ChatBubbleLeftRightIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon, EnvelopeIcon, PhoneIcon, UserGroupIcon, Cog6ToothIcon, ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
+import { useLanguage } from '../../../contexts/LanguageContext';
+
+// Language content
+const tabNames = {
+    'account-usage': { en: 'Account Usage', vi: 'Sử Dụng Tài Khoản' },
+    'upgrade-plan': { en: 'Upgrade Subscription Plan', vi: 'Nâng Cấp Gói Dịch Vụ' },
+    'marketing-assistant': { en: 'Marketing Assistant', vi: 'Trợ Lý Marketing' },
+    'payment-method': { en: 'Payment Method', vi: 'Phương Thức Thanh Toán' },
+    'billing-info': { en: 'Billing Information', vi: 'Thông Tin Thanh Toán' },
+    'billing-history': { en: 'Billing History', vi: 'Lịch Sử Thanh Toán' },
+    'support': { en: 'Support', vi: 'Hỗ Trợ' }
+};
 
 export default function UsagePlanPage() {
     const [activeTab, setActiveTab] = useState('account-usage');
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+    const { t } = useLanguage();
 
     const tabs = useMemo(() => [
-        { id: 'account-usage', name: 'Account Usage', icon: ClockIcon },
-        { id: 'upgrade-plan', name: 'Upgrade Subscription Plan', icon: ArrowUpIcon },
-        { id: 'marketing-assistant', name: 'Marketing Assistant', icon: ChatBubbleLeftRightIcon },
-        { id: 'payment-method', name: 'Payment Method', icon: CreditCardIcon },
-        { id: 'billing-info', name: 'Billing Information', icon: DocumentTextIcon },
-        { id: 'billing-history', name: 'Billing History', icon: ClockIcon },
-        { id: 'support', name: 'Support', icon: ShieldCheckIcon },
-    ], []);
+        { id: 'account-usage', name: t(tabNames['account-usage']), icon: ClockIcon },
+        { id: 'upgrade-plan', name: t(tabNames['upgrade-plan']), icon: ArrowUpIcon },
+        { id: 'marketing-assistant', name: t(tabNames['marketing-assistant']), icon: ChatBubbleLeftRightIcon },
+        { id: 'payment-method', name: t(tabNames['payment-method']), icon: CreditCardIcon },
+        { id: 'billing-info', name: t(tabNames['billing-info']), icon: DocumentTextIcon },
+        { id: 'billing-history', name: t(tabNames['billing-history']), icon: ClockIcon },
+        { id: 'support', name: t(tabNames['support']), icon: ShieldCheckIcon },
+    ], [t]);
 
     // Check scroll position to show/hide arrows
     const checkScrollPosition = () => {
