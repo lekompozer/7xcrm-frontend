@@ -42,8 +42,8 @@ export default function SignupPage() {
 
         // Simulate signup processing
         setTimeout(() => {
-            // Redirect to the new app dashboard
-            router.push('/app/home');
+            // Redirect to the setup guide
+            router.push('/app/setup-guide');
         }, 1000);
     };
 

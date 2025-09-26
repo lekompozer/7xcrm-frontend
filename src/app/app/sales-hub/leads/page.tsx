@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
     PlusIcon,
     ArrowUpTrayIcon,
     MagnifyingGlassIcon,
     Cog6ToothIcon,
     TableCellsIcon,
-    ViewColumnsIcon
+    ViewColumnsIcon,
+    XMarkIcon
 } from '@heroicons/react/24/outline';
 import LeadStatsCards from '../../../admin/lead-management/components/LeadStatsCards';
 import LeadFilterPanel from '../../../admin/lead-management/components/LeadFilterPanel';
@@ -16,6 +17,232 @@ import LeadSearchBar from '../../../admin/lead-management/components/LeadSearchB
 import LeadActionPanel from '../../../admin/lead-management/components/LeadActionPanel';
 import { sampleLeads } from '../../../admin/lead-management/data/sampleLeads';
 import { Lead, LeadStats } from '@/types/lead';
+
+// Add Lead Modal Component
+interface AddLeadModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onAddLead: (lead: Lead) => void;
+}
+
+function AddLeadModal({ isOpen, onClose, onAddLead }: AddLeadModalProps) {
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        position: '',
+        source: '',
+        notes: ''
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        const newLead: Lead = {
+            id: `lead_${Date.now()}`,
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            company: formData.company,
+            position: formData.position,
+            leadType: 'Individual',
+            source: (formData.source as Lead['source']) || 'Website',
+            status: 'Cold',
+            stage: 'New',
+            owner: 'John Doe',
+            dateAdded: new Date().toISOString(),
+            value: 0,
+            notes: formData.notes
+        };
+
+        onAddLead(newLead);
+
+        // Reset form
+        setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            company: '',
+            position: '',
+            source: '',
+            notes: ''
+        });
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="flex min-h-screen items-center justify-center p-4">
+                {/* Backdrop */}
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose}></div>
+
+                {/* Modal */}
+                <div className="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl transition-all">
+                    {/* Glass effect overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/20 to-white/10 rounded-2xl"></div>
+
+                    <div className="relative p-6">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-2xl font-bold text-gray-900">Add New Lead</h3>
+                            <button
+                                onClick={onClose}
+                                className="p-2 rounded-lg hover:bg-black/10 transition-colors"
+                            >
+                                <XMarkIcon className="h-6 w-6 text-gray-600" />
+                            </button>
+                        </div>
+
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Name */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Full Name *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/70"
+                                        placeholder="John Doe"
+                                        required
+                                    />
+                                </div>
+
+                                {/* Email */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Email Address *
+                                    </label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/70"
+                                        placeholder="john@example.com"
+                                        required
+                                    />
+                                </div>
+
+                                {/* Phone */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Phone Number
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        value={formData.phone}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/70"
+                                        placeholder="+1 (555) 123-4567"
+                                    />
+                                </div>
+
+                                {/* Company */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Company
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="company"
+                                        value={formData.company}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/70"
+                                        placeholder="Company Name"
+                                    />
+                                </div>
+
+                                {/* Position */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Position/Title
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="position"
+                                        value={formData.position}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/70"
+                                        placeholder="Marketing Manager"
+                                    />
+                                </div>
+
+                                {/* Source */}
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Lead Source
+                                    </label>
+                                    <select
+                                        name="source"
+                                        value={formData.source}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/70"
+                                    >
+                                        <option value="">Select Source</option>
+                                        <option value="Website">Website</option>
+                                        <option value="Social Media">Social Media</option>
+                                        <option value="Referral">Referral</option>
+                                        <option value="Cold Call">Cold Call</option>
+                                        <option value="Email Campaign">Email Campaign</option>
+                                        <option value="Event">Event</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Notes */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Notes
+                                </label>
+                                <textarea
+                                    name="notes"
+                                    value={formData.notes}
+                                    onChange={handleInputChange}
+                                    rows={3}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/70"
+                                    placeholder="Additional notes about this lead..."
+                                />
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex justify-end space-x-3 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors"
+                                >
+                                    Add Lead
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 // Filter option interface
 interface FilterOption {
@@ -458,6 +685,19 @@ export default function LeadsPage() {
     const [isActionPanelOpen, setIsActionPanelOpen] = useState(false);
     const [selectedLeadForAction, setSelectedLeadForAction] = useState<Lead | null>(null);
 
+    // Add Lead popup state
+    const [isAddLeadOpen, setIsAddLeadOpen] = useState(false);
+
+    // Check URL params to auto-open Add Lead modal
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('addLead') === 'true') {
+            setIsAddLeadOpen(true);
+            // Clean up URL
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    }, []);
+
     // Filter leads based on selected stat
     const filteredLeads = useMemo(() => {
         let filtered = leads;
@@ -591,7 +831,10 @@ export default function LeadsPage() {
                         <ArrowUpTrayIcon className="h-4 w-4 mr-2" />
                         Import
                     </button>
-                    <button className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <button
+                        onClick={() => setIsAddLeadOpen(true)}
+                        className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
                         <PlusIcon className="h-4 w-4 mr-2" />
                         Add Lead
                     </button>
@@ -735,6 +978,16 @@ export default function LeadsPage() {
                     lead={selectedLeadForAction}
                 />
             )}
+
+            {/* Add Lead Modal */}
+            <AddLeadModal
+                isOpen={isAddLeadOpen}
+                onClose={() => setIsAddLeadOpen(false)}
+                onAddLead={(newLead) => {
+                    setLeads(prevLeads => [...prevLeads, newLead]);
+                    setIsAddLeadOpen(false);
+                }}
+            />
         </div>
     );
 }

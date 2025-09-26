@@ -98,6 +98,127 @@ const whyChooseItems = [
     }
 ];
 
+// Individual services data
+const individualServices = [
+    {
+        id: 'setup-account',
+        name: {
+            en: 'Account Setup & Platform Integration (Facebook, Phone, Email...)',
+            vi: 'Setup tài khoản & kết nối nền tảng (Facebook, Phone, Email...)'
+        },
+        price: 99
+    },
+    {
+        id: 'content-scheduling',
+        name: {
+            en: 'Multi-platform Content Scheduling (Facebook Page/Profile, TikTok, YouTube Shorts)',
+            vi: 'Lên lịch nội dung đa nền tảng (Facebook Page/Profile, TikTok,YouTube Shorts)'
+        },
+        price: 149
+    },
+    {
+        id: 'ads-optimization',
+        name: {
+            en: 'Create & Optimize Ads (Meta/Insta/Threads/Google/TikTok/Native)',
+            vi: 'Tạo & tối ưu quảng cáo (Meta/Insta/Threads/Google/TikTok/Native)'
+        },
+        price: 199
+    },
+    {
+        id: 'website-funnel',
+        name: {
+            en: 'Website/Funnel Design & Build',
+            vi: 'Website/Funnel Design & Build'
+        },
+        price: 299
+    },
+    {
+        id: 'crm-messaging',
+        name: {
+            en: 'Messaging & Follow-up Customers on CRM',
+            vi: 'Nhắn tin & Follow-up khách hàng trên crm'
+        },
+        price: 129
+    },
+    {
+        id: 'email-sms-workflow',
+        name: {
+            en: 'Setup & Operate & Optimize Email/SMS Workflow',
+            vi: 'Setup & Vận hành & tối ưu workflow email/SMS'
+        },
+        price: 179
+    },
+    {
+        id: 'content-production',
+        name: {
+            en: 'Monthly Content Production',
+            vi: 'Sản xuất nội dung hàng tháng'
+        },
+        price: 249
+    },
+    {
+        id: 'conversion-campaigns',
+        name: {
+            en: 'Create & Optimize Conversion Campaigns (Email/SMS)',
+            vi: 'Tạo & tối ưu chiến dịch chuyển đổi (Email/SMS)'
+        },
+        price: 159
+    },
+    {
+        id: 'graphic-design',
+        name: {
+            en: 'Graphic Design (Brand & Ads)',
+            vi: 'Graphic Design (Brand & Ads)'
+        },
+        price: 199
+    },
+    {
+        id: 'ads-funnel',
+        name: {
+            en: 'Create Funnel for Ads',
+            vi: 'Tạo Funnel phục vụ Ads'
+        },
+        price: 149
+    },
+    {
+        id: 'video-editing',
+        name: {
+            en: 'Video/Motion Editing',
+            vi: 'Edit Video/Motion'
+        },
+        price: 229
+    },
+    {
+        id: 'comment-group-management',
+        name: {
+            en: 'Comment & Group Management',
+            vi: 'Quản lý comment & group'
+        },
+        price: 119
+    }
+];
+
+// Content for Custom Services section
+const customServicesTitleContent = {
+    en: "Build Your Custom Marketing Package",
+    vi: "Xây Dựng Gói Marketing Tùy Chỉnh"
+};
+
+const customServicesSubtitleContent = {
+    en: "Select individual services that match your specific needs",
+    vi: "Chọn các dịch vụ riêng lẻ phù hợp với nhu cầu cụ thể của bạn"
+};
+
+const totalCostContent = {
+    en: "Total Cost",
+    vi: "Tổng Chi Phí"
+};
+
+const registerCustomContent = {
+    en: "Register Custom Package",
+    vi: "Đăng Ký Gói Tùy Chỉnh"
+};
+
 const marketingPackages = [
     {
         id: 'MA-1',
@@ -262,11 +383,34 @@ const marketingPackages = [
 export default function MarketingAssistantPage() {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [selectedPackage, setSelectedPackage] = useState('');
+    const [selectedServices, setSelectedServices] = useState<string[]>([]);
     const { currentLanguage, t } = useLanguage();
 
     const handleRegister = (packageName: string) => {
         setSelectedPackage(packageName);
         setShowSuccessModal(true);
+    };
+
+    const handleServiceToggle = (serviceId: string) => {
+        setSelectedServices(prev =>
+            prev.includes(serviceId)
+                ? prev.filter(id => id !== serviceId)
+                : [...prev, serviceId]
+        );
+    };
+
+    const calculateTotal = () => {
+        return selectedServices.reduce((total, serviceId) => {
+            const service = individualServices.find(s => s.id === serviceId);
+            return total + (service?.price || 0);
+        }, 0);
+    };
+
+    const handleCustomRegister = () => {
+        if (selectedServices.length > 0) {
+            setSelectedPackage(`Custom Package (${selectedServices.length} services)`);
+            setShowSuccessModal(true);
+        }
     };
 
     const handleCloseModal = () => {
@@ -316,6 +460,69 @@ export default function MarketingAssistantPage() {
                                     <p className="text-gray-600 text-sm leading-relaxed">{t(item.description)}</p>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+
+                    {/* Custom Services Selection */}
+                    <div className="mb-16">
+                        <div className="text-center mb-12">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                                {t(customServicesTitleContent)}
+                            </h2>
+                            <p className="text-xl text-gray-600">
+                                {t(customServicesSubtitleContent)}
+                            </p>
+                        </div>
+
+                        <div className="bg-white rounded-xl shadow-lg p-8">
+                            <div className="grid grid-cols-1 gap-4 mb-8">
+                                {individualServices.map((service) => (
+                                    <div
+                                        key={service.id}
+                                        className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${selectedServices.includes(service.id)
+                                                ? 'border-blue-500 bg-blue-50'
+                                                : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                                            }`}
+                                        onClick={() => handleServiceToggle(service.id)}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedServices.includes(service.id)}
+                                                    onChange={() => handleServiceToggle(service.id)}
+                                                    className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                                />
+                                                <span className="text-gray-900 font-medium">
+                                                    {t(service.name)}
+                                                </span>
+                                            </div>
+                                            <span className="text-lg font-bold text-blue-600">
+                                                ${service.price}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {selectedServices.length > 0 && (
+                                <div className="border-t pt-6">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <span className="text-xl font-semibold text-gray-900">
+                                            {t(totalCostContent)}:
+                                        </span>
+                                        <span className="text-2xl font-bold text-blue-600">
+                                            ${calculateTotal()}
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={handleCustomRegister}
+                                        className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
+                                    >
+                                        {t(registerCustomContent)}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
 

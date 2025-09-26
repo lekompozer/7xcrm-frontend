@@ -138,8 +138,16 @@ export default function AppHeader() {
                             {isSupportDropdownOpen && (
                                 <div className="absolute top-full right-0 mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                                     <Link
-                                        href="/documentation"
+                                        href="/app/setup-guide"
                                         className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 first:rounded-t-lg"
+                                        onClick={() => setIsSupportDropdownOpen(false)}
+                                    >
+                                        <ClipboardDocumentListIcon className="h-4 w-4" />
+                                        Setup Guide
+                                    </Link>
+                                    <Link
+                                        href="/documentation"
+                                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                                         onClick={() => setIsSupportDropdownOpen(false)}
                                     >
                                         <DocumentTextIcon className="h-4 w-4" />
