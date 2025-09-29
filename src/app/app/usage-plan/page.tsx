@@ -359,63 +359,213 @@ function AccountUsageTab() {
     );
 }// Upgrade Plan Tab Component
 function UpgradePlanTab() {
-    const plans = [
+    const plans = ['Essential', 'Standard', 'Professional', 'Elite'];
+
+    const featureCategories = [
         {
-            name: 'Essential',
-            price: '$29',
-            period: 'per month',
-            features: ['Up to 2,500 leads', '25,000 emails/month', '10 team members', '10 GB storage'],
-            current: false
+            title: 'Feature usage limits',
+            features: [
+                {
+                    name: 'Seats included',
+                    description: 'Number of user licenses included in the plan.',
+                    values: ['1', '3', '5', 'Customize']
+                },
+                {
+                    name: 'Contacts',
+                    description: 'Maximum number of contact records you can store.',
+                    values: ['5,000', '10,000', '50,000', '+200,000']
+                },
+                {
+                    name: 'Opportunity Pipeline',
+                    description: 'Number of sales pipelines you can maintain',
+                    values: ['3', '10', 'Unlimited', 'Unlimited']
+                },
+                {
+                    name: 'Automations',
+                    description: 'Number of active automation workflows allowed',
+                    values: ['5', '10', '50', 'Unlimited']
+                },
+                {
+                    name: 'Email sends / mo',
+                    description: 'Month sending cap per user (provider policies still apply).',
+                    values: ['2,000', '5,000', '10,000', '50,000']
+                },
+                {
+                    name: 'SMS/MMS sends / segment / mo',
+                    description: 'Monthly text/message cap per segment',
+                    values: ['1,000', '3,000', '10,000', '25,000']
+                },
+                {
+                    name: 'Reporting',
+                    description: 'Dashboards for conversion rates, top lead sources, and pipeline revenue. Export shareable reports fast.',
+                    values: ['Month', 'Month', 'Week + Realtime', 'BI + Attribution']
+                }
+            ]
         },
         {
-            name: 'Professional',
-            price: '$59',
-            period: 'per month',
-            features: ['Up to 10,000 leads', '100,000 emails/month', '25 team members', '50 GB storage'],
-            current: false,
-            recommended: true
-        },
-        {
-            name: 'Enterprise',
-            price: '$119',
-            period: 'per month',
-            features: ['Unlimited leads', 'Unlimited emails', 'Unlimited team members', '200 GB storage'],
-            current: false
+            title: 'CRM & Deals',
+            features: [
+                {
+                    name: 'Contacts & Custom Fields',
+                    description: 'Store customer profiles with tailored data points.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Opportunity Pipeline',
+                    description: 'Visual stages to track deal progress.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'File Attachments',
+                    description: 'Add and store files with contacts or deals for quick access in CRM.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Tasks/Notes',
+                    description: 'Keep every customer record, task, and note in one place so nothing slips.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Reminders (email/SMS)',
+                    description: 'Auto reminders for tasks, meetings, and renewals via email or SMS.',
+                    values: ['⛔', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Deal Management',
+                    description: 'Create, update, assign, and forecast deals.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Deal Card Customization',
+                    description: 'Choose which fields appear on the deal card.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Data Import/Export',
+                    description: 'Bulk CSV import/export with mapping.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Merge Duplicates',
+                    description: 'Find and merge duplicate contacts/deals.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Booking & Appointments',
+                    description: 'Self-serve scheduling with auto-reminders.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Sequences (Email/SMS)',
+                    description: 'Multi-step follow-ups sent on a schedule.',
+                    values: ['⛔', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Automations (Triggers)',
+                    description: 'Event-based actions (tag, task, send, route).',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Social Inbox (comments)',
+                    description: 'See and reply to all social comment from one post',
+                    values: ['⛔', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Inbox (Messenger, Email, SMS)',
+                    description: 'Send SMS, reply to emails, and manage Facebook messages in one place',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'If/Else Steps',
+                    description: 'Conditional branching to personalize flows.',
+                    values: ['✅', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Drip / Queue Node',
+                    description: 'Throttle releases to avoid campaign spikes.',
+                    values: ['⛔', '✅', '✅', '✅']
+                },
+                {
+                    name: 'Life Insurance Quoter (Premium Calculator)',
+                    description: 'Instantly calculate premiums and create shareable life insurance quotes—by carrier, product, coverage, term, and riders.',
+                    values: ['⛔', '⛔', '✅', '✅']
+                }
+            ]
         }
     ];
 
     return (
-        <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-6">Upgrade Your Plan</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {plans.map((plan, index) => (
-                    <div key={index} className={`border rounded-lg p-6 relative ${plan.recommended ? 'border-blue-500' : 'border-gray-200'}`}>
-                        {plan.recommended && (
-                            <span className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                Recommended
-                            </span>
-                        )}
-                        <h4 className="text-xl font-semibold text-gray-900 mb-2">{plan.name}</h4>
-                        <div className="mb-4">
-                            <span className="text-3xl font-bold text-gray-900">{plan.price}</span>
-                            <span className="text-gray-600 ml-1">{plan.period}</span>
+        <div className="space-y-8">
+            <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Upgrade Your Subscription Plan</h3>
+                <p className="text-gray-600">Choose the plan that best fits your business needs</p>
+            </div>
+
+            <div className="overflow-x-auto">
+                <div className="min-w-full">
+                    {/* Plan Headers */}
+                    <div className="grid grid-cols-6 gap-4 mb-6">
+                        <div className="col-span-2">
+                            <h4 className="font-semibold text-gray-900">Features</h4>
                         </div>
-                        <ul className="space-y-2 mb-6">
-                            {plan.features.map((feature, idx) => (
-                                <li key={idx} className="flex items-center text-sm text-gray-600">
-                                    <ShieldCheckIcon className="h-4 w-4 text-green-500 mr-2" />
-                                    {feature}
-                                </li>
-                            ))}
-                        </ul>
-                        <button className={`w-full py-2 px-4 rounded-md font-medium ${plan.recommended
-                            ? 'bg-blue-600 text-white hover:bg-blue-700'
-                            : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                            }`}>
-                            Upgrade to {plan.name}
-                        </button>
+                        {plans.map((plan, index) => (
+                            <div key={plan} className="text-center">
+                                <div className={`rounded-lg p-4 ${index === 1 ? 'bg-blue-50 border-2 border-blue-200' : 'bg-gray-50 border border-gray-200'}`}>
+                                    <h4 className="font-bold text-lg text-gray-900">{plan}</h4>
+                                    {index === 1 && (
+                                        <span className="text-xs bg-blue-500 text-white px-2 py-1 rounded-full mt-1 inline-block">
+                                            Most Popular
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                ))}
+
+                    {/* Feature Categories */}
+                    {featureCategories.map((category, categoryIndex) => (
+                        <div key={categoryIndex} className="mb-8">
+                            <h5 className="font-semibold text-gray-900 mb-4 text-base">{category.title}</h5>
+
+                            {category.features.map((feature, featureIndex) => (
+                                <div key={featureIndex} className="grid grid-cols-6 gap-4 py-3 border-b border-gray-100 hover:bg-gray-50">
+                                    <div className="col-span-2">
+                                        <div className="pr-4">
+                                            <h6 className="font-medium text-gray-900 text-sm">{feature.name}</h6>
+                                            <p className="text-xs text-gray-600 mt-1">{feature.description}</p>
+                                        </div>
+                                    </div>
+                                    {feature.values.map((value, valueIndex) => (
+                                        <div key={valueIndex} className="text-center text-sm">
+                                            <span className={`${value === '✅' ? 'text-green-600 text-lg' :
+                                                    value === '⛔' ? 'text-red-500 text-lg' :
+                                                        value.includes('Unlimited') ? 'text-blue-600 font-semibold' :
+                                                            'text-gray-700'
+                                                }`}>
+                                                {value}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    ))}
+
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-6 gap-4 mt-8">
+                        <div className="col-span-2"></div>
+                        {plans.map((plan, index) => (
+                            <div key={plan} className="text-center">
+                                <button className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${index === 1
+                                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                                    }`}>
+                                    Choose {plan}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     );
