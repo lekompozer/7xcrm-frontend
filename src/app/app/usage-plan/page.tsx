@@ -8,19 +8,433 @@ import { useLanguage } from '../../../contexts/LanguageContext';
 const tabNames = {
     'account-usage': { en: 'Account Usage', vi: 'Sử Dụng Tài Khoản' },
     'upgrade-plan': { en: 'Upgrade Subscription Plan', vi: 'Nâng Cấp Gói Dịch Vụ' },
-    'marketing-assistant': { en: 'Marketing Assistant', vi: 'Trợ Lý Marketing' },
+    'marketing-assistant': { en: 'Marketing Service', vi: 'Dịch Vụ Marketing' },
     'payment-method': { en: 'Payment Method', vi: 'Phương Thức Thanh Toán' },
     'billing-info': { en: 'Billing Information', vi: 'Thông Tin Thanh Toán' },
     'billing-history': { en: 'Billing History', vi: 'Lịch Sử Thanh Toán' },
     'support': { en: 'Support', vi: 'Hỗ Trợ' }
 };
 
+// Marketing Service content definitions
+const titleContent = {
+    en: "Ready to upgrade your Marketing?",
+    vi: "Sẵn sàng nâng cấp Marketing của bạn?"
+};
+
+const subtitleContent = {
+    en: "Start a conversation with Marketing Assistant and discover how we can help you achieve your marketing goals.",
+    vi: "Bắt đầu cuộc trò chuyện với Marketing Assistant và khám phá cách chúng tôi có thể giúp bạn đạt được mục tiêu marketing."
+};
+
+const whyChooseTitleContent = {
+    en: "Why Choose Marketing Services from 7xCRM",
+    vi: "Tại Sao Nên Chọn Marketing Services từ 7xCRM"
+};
+
+const packagesTitleContent = {
+    en: "Marketing Service Packages",
+    vi: "Các Gói Marketing Service"
+};
+
+const modalTitleContent = {
+    en: "Registration Successful!",
+    vi: "Đăng Ký Thành Công!"
+};
+
+const modalMessageContent = {
+    en: "Thank you for registering for",
+    vi: "Cảm ơn bạn đã đăng ký gói"
+};
+
+const modalDescriptionContent = {
+    en: "The 7x CRM Marketing Assistant team will contact you as soon as possible.",
+    vi: "Đội ngũ Marketing Assistant của 7x CRM sẽ liên hệ lại với bạn trong thời gian sớm nhất."
+};
+
+const modalButtonContent = {
+    en: "Go to Conversations",
+    vi: "Chuyển đến Conversations"
+};
+
+const startButtonContent = {
+    en: "Get Started",
+    vi: "Bắt Đầu Ngay"
+};
+
+const whyChooseItems = [
+    {
+        title: {
+            en: "Focus on selling, leave marketing to experts.",
+            vi: "Tập trung bán hàng, giao marketing cho chuyên gia."
+        },
+        description: {
+            en: "Maximize your revenue-generating time and double productivity.",
+            vi: "Tối ưu thời gian kiếm tiền, tăng gấp đôi hiệu suất làm việc."
+        },
+        icon: "🚀"
+    },
+    {
+        title: {
+            en: "Professional branding at minimal cost.",
+            vi: "Chuyên nghiệp hóa hình ảnh với chi phí cực thấp."
+        },
+        description: {
+            en: "Get a full-scale marketing strategy like having an in-house team.",
+            vi: "Sở hữu chiến lược marketing bài bản ngang một đội ngũ."
+        },
+        icon: "💼"
+    },
+    {
+        title: {
+            en: "CRM + Marketing: All-in-one power.",
+            vi: "CRM + Marketing: All-in-one siêu hiệu quả."
+        },
+        description: {
+            en: "Seamless lead capture and customer care on a single platform.",
+            vi: "Lead tự động đổ về, chăm sóc khách hàng liền mạch một nền tảng."
+        },
+        icon: "⚡"
+    },
+    {
+        title: {
+            en: "Data-driven results, clear ROI.",
+            vi: "Kết quả đo lường được, ROI rõ ràng."
+        },
+        description: {
+            en: "Optimize your budget to focus on channels that drive real customers.",
+            vi: "Tối ưa ngân sách tập trung vào kênh mang về khách hàng thật."
+        },
+        icon: "📊"
+    }
+];
+
+// Individual services data
+const individualServices = [
+    {
+        id: 'setup-account',
+        name: {
+            en: 'Account Setup & Platform Integration (Facebook, Phone, Email...)',
+            vi: 'Setup tài khoản & kết nối nền tảng (Facebook, Phone, Email...)'
+        },
+        price: 99
+    },
+    {
+        id: 'content-scheduling',
+        name: {
+            en: 'Multi-platform Content Scheduling (Facebook Page/Profile, TikTok, YouTube Shorts)',
+            vi: 'Lên lịch nội dung đa nền tảng (Facebook Page/Profile, TikTok,YouTube Shorts)'
+        },
+        price: 149
+    },
+    {
+        id: 'ads-optimization',
+        name: {
+            en: 'Create & Optimize Ads (Meta/Insta/Threads/Google/TikTok/Native)',
+            vi: 'Tạo & tối ưu quảng cáo (Meta/Insta/Threads/Google/TikTok/Native)'
+        },
+        price: 199
+    },
+    {
+        id: 'website-funnel',
+        name: {
+            en: 'Website/Funnel Design & Build',
+            vi: 'Website/Funnel Design & Build'
+        },
+        price: 299
+    },
+    {
+        id: 'crm-messaging',
+        name: {
+            en: 'Messaging & Follow-up Customers on CRM',
+            vi: 'Nhắn tin & Follow-up khách hàng trên crm'
+        },
+        price: 129
+    },
+    {
+        id: 'email-sms-workflow',
+        name: {
+            en: 'Setup & Operate & Optimize Email/SMS Workflow',
+            vi: 'Setup & Vận hành & tối ưu workflow email/SMS'
+        },
+        price: 179
+    },
+    {
+        id: 'content-production',
+        name: {
+            en: 'Monthly Content Production',
+            vi: 'Sản xuất nội dung hàng tháng'
+        },
+        price: 249
+    },
+    {
+        id: 'conversion-campaigns',
+        name: {
+            en: 'Create & Optimize Conversion Campaigns (Email/SMS)',
+            vi: 'Tạo & tối ưu chiến dịch chuyển đổi (Email/SMS)'
+        },
+        price: 159
+    },
+    {
+        id: 'graphic-design',
+        name: {
+            en: 'Graphic Design (Brand & Ads)',
+            vi: 'Graphic Design (Brand & Ads)'
+        },
+        price: 199
+    },
+    {
+        id: 'ads-funnel',
+        name: {
+            en: 'Create Funnel for Ads',
+            vi: 'Tạo Funnel phục vụ Ads'
+        },
+        price: 149
+    },
+    {
+        id: 'video-editing',
+        name: {
+            en: 'Video/Motion Editing',
+            vi: 'Edit Video/Motion'
+        },
+        price: 229
+    },
+    {
+        id: 'comment-group-management',
+        name: {
+            en: 'Comment & Group Management',
+            vi: 'Quản lý comment & group'
+        },
+        price: 119
+    }
+];
+
+// Content for Custom Services section
+const customServicesTitleContent = {
+    en: "Build Your Custom Marketing Package",
+    vi: "Xây Dựng Gói Marketing Tùy Chỉnh"
+};
+
+const customServicesSubtitleContent = {
+    en: "Select individual services that match your specific needs",
+    vi: "Chọn các dịch vụ riêng lẻ phù hợp với nhu cầu cụ thể của bạn"
+};
+
+const totalCostContent = {
+    en: "Total Cost",
+    vi: "Tổng Chi Phí"
+};
+
+const registerCustomContent = {
+    en: "Register Custom Package",
+    vi: "Đăng Ký Gói Tùy Chỉnh"
+};
+
+const marketingPackages = [
+    {
+        id: 'MA-1',
+        name: {
+            en: 'SevenX Launch & Enablement',
+            vi: 'SevenX Launch & Enablement'
+        },
+        subtitle: {
+            en: 'Marketing Contact',
+            vi: 'Marketing Contact'
+        },
+        description: {
+            en: 'Account setup & platform integration, email/SMS workflow operations',
+            vi: 'Setup tài khoản & kết nối nền tảng, vận hành workflow email/SMS'
+        },
+        price: '$199',
+        features: {
+            en: [
+                'Account setup & platform integration (Facebook, Phone, Email...)',
+                'Setup & operate & optimize email/SMS workflows; multi-channel calendar reminders; re-engage old leads',
+                '4 core workflows: New Lead, No-Answer, No-Show, After-Sale',
+                'Personalized startup library (email/SMS/call scripts)',
+                '120\' coaching + office-hour Q&A during the month'
+            ],
+            vi: [
+                'Setup tài khoản & kết nối nền tảng (Facebook, Phone, Email...)',
+                'Setup & Vận hành & tối ưu workflow email/SMS; nhắc lịch đa kênh; re-engage lead cũ',
+                '4 workflow cốt lõi: New Lead, No-Answer, No-Show, After-Sale',
+                'Thư viện khởi động (email/SMS/call script) cá nhân hoá',
+                'Coaching 120\' + office-hour Q&A trong tháng'
+            ]
+        },
+        icon: '🚀',
+        color: 'from-blue-500 to-cyan-600'
+    },
+    {
+        id: 'MA-2',
+        name: {
+            en: 'Social, Fanpage & Website Management',
+            vi: 'Social, Fanpage & Website Management'
+        },
+        subtitle: {
+            en: 'Marketing Contact',
+            vi: 'Marketing Contact'
+        },
+        description: {
+            en: 'Comprehensive social media and website management',
+            vi: 'Quản lý toàn diện social media và website'
+        },
+        price: '$399',
+        features: {
+            en: [
+                'Multi-platform content scheduling (Facebook Page/Profile, TikTok, YouTube Shorts)',
+                'Monthly content production',
+                'Fanpage & community management',
+                'Website management'
+            ],
+            vi: [
+                'Lên lịch nội dung đa nền tảng (Facebook Page/Profile, TikTok, YouTube Shorts)',
+                'Sản xuất nội dung hằng tháng',
+                'Quản trị fanpage & cộng đồng',
+                'Website management'
+            ]
+        },
+        icon: '📱',
+        color: 'from-purple-500 to-pink-600'
+    },
+    {
+        id: 'MA-3',
+        name: {
+            en: 'Performance Ads (Lead Generations)',
+            vi: 'Performance Ads (Lead Generations)'
+        },
+        subtitle: {
+            en: 'Marketing Contact',
+            vi: 'Marketing Contact'
+        },
+        description: {
+            en: 'Optimize advertising and lead conversion',
+            vi: 'Tối ưu quảng cáo và chuyển đổi lead'
+        },
+        price: '$599',
+        features: {
+            en: [
+                'Create & optimize ads (Meta/Insta/Threads/Google/TikTok/Native)',
+                'Create & optimize conversion campaigns (Email/SMS)',
+                'Create funnels for ads'
+            ],
+            vi: [
+                'Tạo & tối ưu quảng cáo (Meta/Insta/Threads/Google/TikTok/Native)',
+                'Tạo & tối ưu chiến dịch chuyển đổi (Email/SMS)',
+                'Tạo Funnel phục vụ Ads'
+            ]
+        },
+        icon: '🎯',
+        color: 'from-green-500 to-emerald-600'
+    },
+    {
+        id: 'MA-4',
+        name: {
+            en: 'Creative & Content Studio',
+            vi: 'Creative & Content Studio'
+        },
+        subtitle: {
+            en: 'Marketing Contact',
+            vi: 'Marketing Contact'
+        },
+        description: {
+            en: 'Professional design and content creation',
+            vi: 'Thiết kế và sáng tạo nội dung chuyên nghiệp'
+        },
+        price: '$799',
+        features: {
+            en: [
+                'Website/Funnel Design & Build',
+                'Graphic Design (Brand & Ads)',
+                'Video/Motion Editing',
+                'Copywriting & Script'
+            ],
+            vi: [
+                'Website/Funnel Design & Build',
+                'Graphic Design (Brand & Ads)',
+                'Edit Video/Motion',
+                'Copywriting & Script'
+            ]
+        },
+        icon: '🎨',
+        color: 'from-orange-500 to-red-600'
+    },
+    {
+        id: 'MA-5',
+        name: {
+            en: 'Contact & Conversion Management',
+            vi: 'Contact & Conversion Management'
+        },
+        subtitle: {
+            en: 'Marketing Contact',
+            vi: 'Marketing Contact'
+        },
+        description: {
+            en: 'Customer contact and conversion management',
+            vi: 'Quản lý liên lạc và chuyển đổi khách hàng'
+        },
+        price: '$999',
+        features: {
+            en: [
+                'Messaging & follow-up customers on CRM',
+                'Appointment requests & schedule management',
+                'Comment & group management'
+            ],
+            vi: [
+                'Nhắn tin & Follow-up khách hàng trên CRM',
+                'Xin cuộc hẹn & quản lý lịch hẹn',
+                'Quản lý comment & group'
+            ]
+        },
+        icon: '💬',
+        color: 'from-indigo-500 to-purple-600'
+    }
+];
+
 export default function UsagePlanPage() {
     const [activeTab, setActiveTab] = useState('account-usage');
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
-    const { t } = useLanguage();
+    const { t, currentLanguage } = useLanguage();
+
+    // Marketing Service states
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [selectedPackage, setSelectedPackage] = useState('');
+    const [selectedServices, setSelectedServices] = useState<string[]>([]);
+
+    // Marketing Service handler functions
+    const handleRegister = (packageName: string) => {
+        setSelectedPackage(packageName);
+        setShowSuccessModal(true);
+    };
+
+    const handleServiceToggle = (serviceId: string) => {
+        setSelectedServices(prev =>
+            prev.includes(serviceId)
+                ? prev.filter(id => id !== serviceId)
+                : [...prev, serviceId]
+        );
+    };
+
+    const calculateTotal = () => {
+        return selectedServices.reduce((total, serviceId) => {
+            const service = individualServices.find(s => s.id === serviceId);
+            return total + (service?.price || 0);
+        }, 0);
+    };
+
+    const handleCustomRegister = () => {
+        if (selectedServices.length > 0) {
+            setSelectedPackage(`Custom Package (${selectedServices.length} services)`);
+            setShowSuccessModal(true);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setShowSuccessModal(false);
+        // Navigate to conversations page after closing modal
+        window.location.href = '/app/marketing-assistant/conversations';
+    };
 
     const tabs = useMemo(() => [
         { id: 'account-usage', name: t(tabNames['account-usage']), icon: ClockIcon },
@@ -72,7 +486,171 @@ export default function UsagePlanPage() {
             case 'upgrade-plan':
                 return <UpgradePlanTab />;
             case 'marketing-assistant':
-                return <MarketingAssistantTab />;
+                return (
+                    <div className="max-w-7xl mx-auto">
+                        {/* CTA Banner - Moved to top */}
+                        <div
+                            className="rounded-2xl p-12 text-center text-white mb-16"
+                            style={{
+                                background: 'linear-gradient(to right, #E55D87, #5FC3E4)'
+                            }}
+                        >
+                            <h2 className="text-3xl font-bold mb-4">
+                                {t(titleContent)}
+                            </h2>
+                            <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+                                {t(subtitleContent)}
+                            </p>
+                            <button
+                                onClick={() => window.location.href = '/app/marketing-assistant/conversations'}
+                                className="inline-flex items-center px-8 py-4 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl"
+                            >
+                                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-3.582 8-8 8a8.955 8.955 0 01-4.126-.964L3 20l1.036-5.874A8.955 8.955 0 013 12a8 8 0 018-8c4.418 0 8 3.582 8 8z" />
+                                </svg>
+                                {t(startButtonContent)}
+                            </button>
+                        </div>
+
+                        {/* Why Choose Us */}
+                        <div className="mb-16">
+                            <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+                                {t(whyChooseTitleContent)}
+                            </h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                                {whyChooseItems.map((item, index) => (
+                                    <div key={index} className="text-center bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-8">
+                                        <div className="text-4xl mb-4">{item.icon}</div>
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-3">{t(item.title)}</h3>
+                                        <p className="text-gray-600 text-sm leading-relaxed">{t(item.description)}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Custom Services Selection */}
+                        <div className="mb-16">
+                            <div className="text-center mb-12">
+                                <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                                    {t(customServicesTitleContent)}
+                                </h2>
+                                <p className="text-xl text-gray-600">
+                                    {t(customServicesSubtitleContent)}
+                                </p>
+                            </div>
+
+                            <div className="bg-white rounded-xl shadow-lg p-8">
+                                <div className="grid grid-cols-1 gap-4 mb-8">
+                                    {individualServices.map((service) => (
+                                        <div
+                                            key={service.id}
+                                            className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${selectedServices.includes(service.id)
+                                                ? 'border-blue-500 bg-blue-50'
+                                                : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
+                                                }`}
+                                            onClick={() => handleServiceToggle(service.id)}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center space-x-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedServices.includes(service.id)}
+                                                        onChange={() => handleServiceToggle(service.id)}
+                                                        className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                                    />
+                                                    <span className="text-gray-900 font-medium">
+                                                        {t(service.name)}
+                                                    </span>
+                                                </div>
+                                                <span className="text-lg font-bold text-blue-600">
+                                                    ${service.price}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {selectedServices.length > 0 && (
+                                    <div className="border-t pt-6">
+                                        <div className="flex items-center justify-between mb-6">
+                                            <span className="text-xl font-semibold text-gray-900">
+                                                {t(totalCostContent)}:
+                                            </span>
+                                            <span className="text-2xl font-bold text-blue-600">
+                                                ${calculateTotal()}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={handleCustomRegister}
+                                            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors duration-200"
+                                        >
+                                            {t(registerCustomContent)}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Marketing Packages */}
+                        <div className="mb-16">
+                            <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
+                                {t(packagesTitleContent)}
+                            </h2>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                {marketingPackages.map((pkg) => (
+                                    <div key={pkg.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden hover:bg-blue-600 group">
+                                        <div className="p-8">
+                                            <div className="flex items-start justify-between mb-6">
+                                                <div>
+                                                    <div className="flex items-center mb-2">
+                                                        <span className="text-3xl mr-3">{pkg.icon}</span>
+                                                        <div>
+                                                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-white transition-colors duration-300">{pkg.id}</h3>
+                                                            <p className="text-lg font-semibold text-gray-800 group-hover:text-white transition-colors duration-300">{t(pkg.name)}</p>
+                                                        </div>
+                                                    </div>
+                                                    <span className="inline-block px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full group-hover:bg-white/20 group-hover:text-white transition-all duration-300">
+                                                        {t(pkg.subtitle)}
+                                                    </span>
+                                                </div>
+                                                <div className="text-right">
+                                                    <span className="text-2xl font-bold text-blue-600 group-hover:text-white transition-colors duration-300">
+                                                        {pkg.price}
+                                                    </span>
+                                                    <p className="text-sm text-gray-500 group-hover:text-white/80 transition-colors duration-300">
+                                                        /month
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <p className="text-gray-600 mb-8 group-hover:text-white transition-colors duration-300">{t(pkg.description)}</p>
+
+                                            <div className="space-y-3 mb-8">
+                                                {pkg.features[currentLanguage].map((feature: string, idx: number) => (
+                                                    <div key={idx} className="flex items-start">
+                                                        <svg className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0 group-hover:text-white transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                                        </svg>
+                                                        <span className="text-gray-700 text-sm leading-relaxed group-hover:text-white transition-colors duration-300">{feature}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            <div className="flex justify-center">
+                                                <button
+                                                    onClick={() => handleRegister(t(pkg.name))}
+                                                    className="w-[200px] py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl group-hover:bg-white group-hover:text-blue-600 group-hover:shadow-lg"
+                                                >
+                                                    Register
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
             case 'payment-method':
                 return <PaymentMethodTab />;
             case 'billing-info':
@@ -149,6 +727,38 @@ export default function UsagePlanPage() {
                     {renderTabContent()}
                 </div>
             </div>
+
+            {/* Success Modal */}
+            {showSuccessModal && (
+                <div
+                    className="fixed inset-0 bg-black/50 flex items-center justify-center z-60"
+                    onClick={handleCloseModal}
+                >
+                    <div
+                        className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 p-8"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="text-center">
+                            <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                                <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-4">{t(modalTitleContent)}</h3>
+                            <p className="text-gray-600 mb-6">
+                                {t(modalMessageContent)} <strong>{selectedPackage}</strong>.
+                                {t(modalDescriptionContent)}
+                            </p>
+                            <button
+                                onClick={handleCloseModal}
+                                className="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                {t(modalButtonContent)}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
@@ -538,9 +1148,9 @@ function UpgradePlanTab() {
                                     {feature.values.map((value, valueIndex) => (
                                         <div key={valueIndex} className="text-center text-sm">
                                             <span className={`${value === '✅' ? 'text-green-600 text-lg' :
-                                                    value === '⛔' ? 'text-red-500 text-lg' :
-                                                        value.includes('Unlimited') ? 'text-blue-600 font-semibold' :
-                                                            'text-gray-700'
+                                                value === '⛔' ? 'text-red-500 text-lg' :
+                                                    value.includes('Unlimited') ? 'text-blue-600 font-semibold' :
+                                                        'text-gray-700'
                                                 }`}>
                                                 {value}
                                             </span>
@@ -557,8 +1167,8 @@ function UpgradePlanTab() {
                         {plans.map((plan, index) => (
                             <div key={plan} className="text-center">
                                 <button className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${index === 1
-                                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                                        : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                                     }`}>
                                     Choose {plan}
                                 </button>
@@ -566,39 +1176,6 @@ function UpgradePlanTab() {
                         ))}
                     </div>
                 </div>
-            </div>
-        </div>
-    );
-}
-
-// Marketing Assistant Tab Component
-function MarketingAssistantTab() {
-    return (
-        <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-6">Marketing Assistant Services</h3>
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-6 border border-purple-200">
-                <div className="flex items-center space-x-4 mb-4">
-                    <div className="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-                        <ChatBubbleLeftRightIcon className="h-6 w-6 text-purple-600" />
-                    </div>
-                    <div>
-                        <h4 className="text-xl font-semibold text-gray-900">Professional Marketing Support</h4>
-                        <p className="text-gray-600">Get expert help with your marketing campaigns</p>
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div className="bg-white rounded-lg p-4">
-                        <h5 className="font-medium text-gray-900 mb-2">Campaign Creation</h5>
-                        <p className="text-sm text-gray-600">Professional assistance in creating effective marketing campaigns</p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4">
-                        <h5 className="font-medium text-gray-900 mb-2">Content Strategy</h5>
-                        <p className="text-sm text-gray-600">Expert guidance on content creation and marketing strategy</p>
-                    </div>
-                </div>
-                <button className="bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition-colors">
-                    Request Marketing Assistant
-                </button>
             </div>
         </div>
     );
